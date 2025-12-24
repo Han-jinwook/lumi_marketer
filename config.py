@@ -1,8 +1,11 @@
 import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    # Load environment variables (Local development)
+    load_dotenv()
+except ImportError:
+    # On Streamlit Cloud, variables are managed via Secrets, so dotenv is optional
+    pass
 
 # Supabase Settings
 SUPABASE_URL = os.getenv("SUPABASE_URL")
