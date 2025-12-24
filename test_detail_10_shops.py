@@ -67,8 +67,8 @@ async def run_crawler():
     
     async with async_playwright() as p:
         try:
+            # Generic Chromium for Linux/Container environments
             browser = await p.chromium.launch(
-                channel="msedge", 
                 headless=True,
                 args=[
                     "--disable-blink-features=AutomationControlled", 
@@ -78,16 +78,9 @@ async def run_crawler():
                     "--disable-gpu"
                 ]
             )
-        except:
-             logger.warning("Edge channel failed, trying chrome.")
-             browser = await p.chromium.launch(
-                channel="chrome",
-                headless=False,
-                args=[
-                    "--disable-blink-features=AutomationControlled", 
-                    "--no-sandbox", 
-                ]
-            )
+        except Exception as e:
+             logger.error(f"Browser launch failed: {e}")
+             return
         
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
