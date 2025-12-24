@@ -1,4 +1,4 @@
-# Optimized for Streamlit Cloud deployment
+# Emergency Fix: Minimal requirements for Cloud Dashboard stability
 streamlit
 pandas
 requests
@@ -7,5 +7,3 @@ supabase
 beautifulsoup4
 lxml
 geopy
-playwright
-playwright-stealth
