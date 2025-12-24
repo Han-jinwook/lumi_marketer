@@ -22,5 +22,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project code
 COPY . .
 
-# Run the crawler
-CMD ["python", "main.py"]
+# Expose Streamlit port
+EXPOSE 8501
+
+# Run the Streamlit dashboard
+CMD ["streamlit", "run", "admin_dashboard/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

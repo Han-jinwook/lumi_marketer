@@ -79,7 +79,14 @@ if st.sidebar.button("🚀 크롤링 시작"):
     try:
         # Assuming test_detail_10_shops.py is in parent dir
         script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test_detail_10_shops.py'))
-        subprocess.Popen([sys.executable, script_path, target_region], creationflags=subprocess.CREATE_NO_WINDOW)
+        
+        # Cross-platform subprocess handling
+        popen_kwargs = {}
+        if os.name == 'nt': # Windows only
+            if hasattr(subprocess, 'CREATE_NO_WINDOW'):
+                popen_kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
+        
+        subprocess.Popen([sys.executable, script_path, target_region], **popen_kwargs)
         st.sidebar.success("실행 완료! 잠시 후 새로고침하세요.")
     except Exception as e:
         st.sidebar.error(f"실행 실패: {e}")

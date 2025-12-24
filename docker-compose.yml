@@ -1,12 +1,13 @@
 version: '3.8'
 
 services:
-  crawler:
+  dashboard:
     build: .
-    container_name: skin_shop_crawler
+    container_name: skin_shop_dashboard
+    ports:
+      - "8501:8501"
     volumes:
-      - ./확장_피부샵_원장_데이터.csv:/app/확장_피부샵_원장_데이터.csv  # Persist CSV output
       - ./crawler.log:/app/crawler.log                     # Persist logs
     env_file:
       - .env
-    restart: "no"  # Don't restart automatically when finished
+    restart: "always"
