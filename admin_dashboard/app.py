@@ -51,6 +51,18 @@ def load_data():
         "naver_blog_id": "블로그ID",
         "source_link": "플레이스링크"
     })
+    
+    # Normalize Instagram links (handle both full URLs and simple handles)
+    def normalize_insta(val):
+        if not val or not isinstance(val, str) or val == "None":
+            return ""
+        if val.startswith("http"):
+            return val
+        return f"https://www.instagram.com/{val.replace('@', '').strip()}/"
+        
+    if '인스타' in df.columns:
+        df['인스타'] = df['인스타'].apply(normalize_insta)
+        
     return df
 
 df = load_data()
@@ -237,8 +249,9 @@ elif mode == "Track B (톡톡/인스타 반자동)":
                         talk_url = None
                     
                     # Instagram Check
-                    insta_handle = row.get('인스타', '')
-                    insta_url = f"https://www.instagram.com/{insta_handle}/" if insta_handle and isinstance(insta_handle, str) and insta_handle != "None" else None
+                    insta_url = row.get('인스타', '')
+                    if not isinstance(insta_url, str) or not insta_url.startswith("http"):
+                        insta_url = None
 
                 with col_msg:
                     competitors = get_competitors(idx, df) # Pass original df for context
@@ -267,7 +280,7 @@ elif mode == "전체 리스트 (조회용)":
     st.info("📊 DB에 등록된 전체 리스트입니다.")
     if not filtered_df.empty:
         # Reorder and filter columns for better view
-        display_cols = ['상호명', '주소', '번호', '이메일', '블로그ID', '플레이스링크', '톡톡링크']
+        display_cols = ['상호명', '주소', '번호', '이메일', '블로그ID', '플레이스링크', '톡톡링크', '인스타']
         existing_cols = [c for c in display_cols if c in filtered_df.columns]
         
         st.dataframe(
@@ -277,6 +290,7 @@ elif mode == "전체 리스트 (조회용)":
             column_config={
                 "플레이스링크": st.column_config.LinkColumn("플레이스링크", width="medium"),
                 "톡톡링크": st.column_config.LinkColumn("톡톡링크", width="medium"),
+                "인스타": st.column_config.LinkColumn("인스타", width="medium"),
                 "주소": st.column_config.TextColumn("주소", width="large"),
                 "이메일": st.column_config.TextColumn("이메일", width="medium"),
                 "번호": st.column_config.TextColumn("번호", width="medium"),
