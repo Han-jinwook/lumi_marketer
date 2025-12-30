@@ -35,20 +35,21 @@ def load_data():
         return pd.DataFrame()
     
     # Handle missing columns if any
-    required_cols = ["name", "email", "address", "talk_url", "instagram_handle"]
+    required_cols = ["name", "email", "address", "phone", "talk_url", "instagram_handle", "naver_blog_id", "source_link"]
     for col in required_cols:
         if col not in df.columns:
             df[col] = "" # Fill missing cols
             
-    # Rename for UI consistency (optional, or just use English keys)
-    # Let's map to Korean keys for the existing logic
+    # Rename for UI consistency
     df = df.rename(columns={
         "name": "상호명",
         "email": "이메일",
         "address": "주소",
-        "talk_url": "톡톡URL",
+        "phone": "번호",
+        "talk_url": "톡톡링크",
         "instagram_handle": "인스타",
-        # 'latitude', 'longitude' assumed to exist or we ignore roster distance for now
+        "naver_blog_id": "블로그ID",
+        "source_link": "플레이스링크"
     })
     return df
 
@@ -231,7 +232,7 @@ elif mode == "Track B (톡톡/인스타 반자동)":
                     st.caption(row['주소'])
                     
                     # TalkTalk URL Check
-                    talk_url = row.get('톡톡URL', '')
+                    talk_url = row.get('톡톡링크', '')
                     if not isinstance(talk_url, str) or not talk_url.startswith("http"):
                         talk_url = None
                     
@@ -265,14 +266,22 @@ elif mode == "Track B (톡톡/인스타 반자동)":
 elif mode == "전체 리스트 (조회용)":
     st.info("📊 DB에 등록된 전체 리스트입니다.")
     if not filtered_df.empty:
-        # Reorder columns for better view
-        display_cols = ['상호명', '이메일', '인스타', '주소', '톡톡URL']
+        # Reorder and filter columns for better view
+        display_cols = ['상호명', '주소', '번호', '이메일', '블로그ID', '플레이스링크', '톡톡링크']
         existing_cols = [c for c in display_cols if c in filtered_df.columns]
         
         st.dataframe(
             filtered_df[existing_cols],
             use_container_width=True,
-            hide_index=True
+            hide_index=True,
+            column_config={
+                "플레이스링크": st.column_config.LinkColumn("플레이스링크", width="medium"),
+                "톡톡링크": st.column_config.LinkColumn("톡톡링크", width="medium"),
+                "주소": st.column_config.TextColumn("주소", width="large"),
+                "이메일": st.column_config.TextColumn("이메일", width="medium"),
+                "번호": st.column_config.TextColumn("번호", width="medium"),
+                "블로그ID": st.column_config.TextColumn("블로그ID", width="small"),
+            }
         )
         st.caption(f"총 {len(filtered_df)}개의 데이터가 검색되었습니다.")
     else:
