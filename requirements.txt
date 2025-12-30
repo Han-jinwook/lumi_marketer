@@ -7,3 +7,4 @@ supabase
 beautifulsoup4
 lxml
 geopy
+playwright

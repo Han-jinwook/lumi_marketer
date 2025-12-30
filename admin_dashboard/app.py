@@ -164,6 +164,42 @@ if mode == "Track A (이메일 자동)":
                 st.session_state['email_body'] = new_body
                 st.success("템플릿이 저장되었습니다!")
 
+# --- Messenger Editor (Track B Only) ---
+elif mode == "Track B (톡톡/인스타 반자동)":
+    st.warning("🔥 이메일이 없는 샵을 위한 '스나이퍼 모드'입니다. 자동 발송 시 계정 차단에 주의하세요.")
+    
+    if 'msg_body' not in st.session_state:
+        st.session_state['msg_body'] = """안녕하세요 {상호명} 원장님. 
+인근 {지역} 내 1곳만 선정하는 루미PLUS 독점 제휴 제안입니다. 
+확인해 보세요: [링크]"""
+
+    with st.expander("🤖 자동 발송 설정 & 메시지 편집", expanded=True):
+        st.session_state['msg_body'] = st.text_area("발송 메시지 (치환자: {상호명}, {지역})", value=st.session_state['msg_body'], height=150)
+        
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            st.info("⚠️ 반드시 브라우저에서 먼저 로그인을 완료해야 합니다.")
+        with col_m2:
+            if st.button("🚀 선택 항목 자동 발송 시작", type="primary", use_container_width=True):
+                if 'selected_targets' in st.session_state and st.session_state['selected_targets']:
+                    targets = st.session_state['selected_targets']
+                    st.toast(f"{len(targets)}건 발송 시도 중...")
+                    
+                    # Run messenger worker as subprocess
+                    try:
+                        import json
+                        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'messenger', 'safe_messenger.py'))
+                        targets_json = json.dumps(targets)
+                        
+                        # Background execution
+                        subprocess.Popen([sys.executable, script_path, targets_json, st.session_state['msg_body']], 
+                                         creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+                        st.success("발송 프로세스가 백그라운드에서 시작되었습니다. 로그를 확인하세요.")
+                    except Exception as e:
+                        st.error(f"발송 실패: {e}")
+                else:
+                    st.error("발송할 대상을 먼저 선택해 주세요.")
+
 # --- Region Filter (Main Area) ---
 with st.container(border=True):
     col_f1, col_f2 = st.columns(2)
@@ -223,56 +259,74 @@ if mode == "Track A (이메일 자동)":
         st.write("데이터가 없습니다.")
 
 elif mode == "Track B (톡톡/인스타 반자동)":
-    st.warning("🔥 이메일이 없는 샵 목록입니다. '스나이퍼 모드'로 공략하세요.")
-    
     if not filtered_df.empty:
         # Filter rows WITHOUT email
         target_df = filtered_df[
             (filtered_df['이메일'].isna()) | 
             (filtered_df['이메일'] == "")
-        ]
+        ].copy()
         
         if target_df.empty:
             st.warning("이메일이 없는 샵이 없습니다. (모두 이메일 보유 중)")
-        
-        for idx, row in target_df.iterrows():
-            with st.container(border=True):
-                col_info, col_msg, col_action = st.columns([1.5, 3, 1.2])
-                
-                with col_info:
-                    st.subheader(row['상호명'])
-                    st.caption(row['주소'])
-                    
-                    # TalkTalk URL Check
-                    talk_url = row.get('톡톡링크', '')
-                    if not isinstance(talk_url, str) or not talk_url.startswith("http"):
-                        talk_url = None
-                    
-                    # Instagram Check
-                    insta_url = row.get('인스타', '')
-                    if not isinstance(insta_url, str) or not insta_url.startswith("http"):
-                        insta_url = None
+        else:
+            # Batch selection logic
+            if 'selected_targets' not in st.session_state:
+                st.session_state['selected_targets'] = []
 
-                with col_msg:
-                    competitors = get_competitors(idx, df) # Pass original df for context
-                    msg = f"""안녕하세요 {row['상호명']} 원장님. 
-인근 {competitors} 중 1곳만 선정하는 루미PLUS 독점 제휴 제안입니다. 
-확인해 보세요: [카페링크]"""
-                    # Native Copy Button provided by st.code
-                    st.code(msg, language=None)
+            col_sel, col_stat = st.columns([1, 4])
+            with col_sel:
+                if st.button("✅ 전체 선택"):
+                    st.session_state['selected_targets'] = target_df.to_dict('records')
+                    st.rerun()
+            with col_stat:
+                st.write(f"현재 **{len(st.session_state['selected_targets'])}**개 업체 선택됨")
 
-                with col_action:
-                    st.write("") # Spacer
-                    # Native Link Button (Reliable)
-                    if talk_url:
-                        st.link_button("🚀 톡톡 열기", talk_url, type="primary", use_container_width=True)
-                    else:
-                        st.button("톡톡 없음", disabled=True, key=f"no_talk_{idx}", use_container_width=True)
+            for idx, row in target_df.iterrows():
+                with st.container(border=True):
+                    col_check, col_info, col_msg, col_action = st.columns([0.3, 1.2, 3, 1.2])
                     
-                    if insta_url:
-                        st.link_button("📸 인스타 DM", insta_url, use_container_width=True)
-                    else:
-                        st.button("인스타 없음", disabled=True, key=f"no_insta_{idx}", use_container_width=True)
+                    # Checkbox for selection
+                    with col_check:
+                        is_selected = any(t['상호명'] == row['상호명'] for t in st.session_state['selected_targets'])
+                        if st.checkbox("Pick", value=is_selected, key=f"check_{idx}", label_visibility="collapsed"):
+                            if not is_selected:
+                                st.session_state['selected_targets'].append(row.to_dict())
+                        else:
+                            if is_selected:
+                                st.session_state['selected_targets'] = [t for t in st.session_state['selected_targets'] if t['상호명'] != row['상호명']]
+
+                    with col_info:
+                        st.subheader(row['상호명'])
+                        st.caption(row['주소'])
+                        
+                        # TalkTalk URL Check
+                        talk_url = row.get('톡톡링크', '')
+                        if not isinstance(talk_url, str) or not talk_url.startswith("http"):
+                            talk_url = None
+                        
+                        # Instagram Check
+                        insta_url = row.get('인스타', '')
+                        if not isinstance(insta_url, str) or not insta_url.startswith("http"):
+                            insta_url = None
+
+                    with col_msg:
+                        competitors = get_competitors(idx, df) # Pass original df for context
+                        # Use city/district if available
+                        region = row.get('시/군/구', '인근 구/동')
+                        personalized_msg = st.session_state['msg_body'].format(상호명=row['상호명'], 지역=region)
+                        st.code(personalized_msg, language=None)
+
+                    with col_action:
+                        st.write("") # Spacer
+                        if talk_url:
+                            st.link_button("🚀 톡톡 열기", talk_url, type="primary", use_container_width=True)
+                        else:
+                            st.button("톡톡 없음", disabled=True, key=f"no_talk_{idx}", use_container_width=True)
+                        
+                        if insta_url:
+                            st.link_button("📸 인스타 DM", insta_url, use_container_width=True)
+                        else:
+                            st.button("인스타 없음", disabled=True, key=f"no_insta_{idx}", use_container_width=True)
     else:
         st.write("데이터가 없습니다.")
 
