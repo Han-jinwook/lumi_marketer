@@ -176,14 +176,22 @@ elif mode == "Track B (톡톡/인스타 반자동)":
     with st.expander("🤖 자동 발송 설정 & 메시지 편집", expanded=True):
         st.session_state['msg_body'] = st.text_area("발송 메시지 (치환자: {상호명}, {지역})", value=st.session_state['msg_body'], height=150)
         
+        # Check environment
+        is_cloud = os.path.exists("/mount/src")
+        
         col_m1, col_m2 = st.columns(2)
         with col_m1:
             send_type = st.radio("발송 플랫폼 선택", ["톡톡만", "인스타 DM만", "전체 시도(톡톡 우선)"], horizontal=True)
             method_map = {"톡톡만": "talk", "인스타 DM만": "insta", "전체 시도(톡톡 우선)": "both"}
-            st.info("⚠️ 반드시 브라우저에서 먼저 로그인을 완료해야 합니다.")
+            
+            if is_cloud:
+                st.warning("⚠️ **자동 발송은 로컬 PC에서만 작동합니다.** \n\n클라우드(웹) 환경에서는 로그인 창을 띄울 수 없기 때문입니다. 로컬에서 실행하시려면 아래 명령어를 터미널에 입력하세요:\n`playwright install`")
+            else:
+                st.info("⚠️ 반드시 브라우저에서 먼저 로그인을 완료해야 합니다.")
+        
         with col_m2:
             st.write("") # Spacer
-            if st.button(f"🚀 {send_type} 자동 발송 시작", type="primary", use_container_width=True):
+            if st.button(f"🚀 {send_type} 자동 발송 시작", type="primary", use_container_width=True, disabled=is_cloud):
                 if 'selected_targets' in st.session_state and st.session_state['selected_targets']:
                     targets = st.session_state['selected_targets']
                     st.toast(f"{len(targets)}건 {send_type} 발송 시도 중...")
