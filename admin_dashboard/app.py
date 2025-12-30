@@ -18,7 +18,7 @@ st.set_page_config(page_title="루미-링크 B2B Admin", layout="wide")
 # ---------------------------------------------------------
 def load_data():
     # Use direct REST API to avoid supabase-py/httpx dependency conflicts
-    url = f"{config.SUPABASE_URL}/rest/v1/t_crawled_shops?select=*"
+    url = f"{config.SUPABASE_URL}/rest/v1/{config.SUPABASE_TABLE}?select=*"
     headers = {
         "apikey": config.SUPABASE_KEY,
         "Authorization": f"Bearer {config.SUPABASE_KEY}",
@@ -60,7 +60,7 @@ import subprocess
 # 3. Sidebar (Controls & Crawler)
 # ---------------------------------------------------------
 st.sidebar.title("🎮 통합 마케팅 센터")
-mode = st.sidebar.radio("작업 모드", ["Track A (이메일 자동)", "Track B (톡톡 반자동)"])
+mode = st.sidebar.radio("작업 모드", ["Track A (이메일 자동)", "Track B (톡톡/인스타 반자동)", "전체 리스트 (조회용)"])
 
 st.sidebar.divider()
 st.sidebar.subheader("🕵️‍♀️ 데이터 수집 (크롤러)")
@@ -81,13 +81,30 @@ if st.sidebar.button("🚀 크롤링 시작"):
         script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test_detail_10_shops.py'))
         
         # Cross-platform subprocess handling
-        popen_kwargs = {}
+        popen_kwargs = {
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "text": True,
+            "encoding": "utf-8"
+        }
         if os.name == 'nt': # Windows only
             if hasattr(subprocess, 'CREATE_NO_WINDOW'):
                 popen_kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
         
-        subprocess.Popen([sys.executable, script_path, target_region], **popen_kwargs)
-        st.sidebar.success("실행 완료! 잠시 후 새로고침하세요.")
+        # We start it, and wait 2 seconds to see if it crashes immediately
+        process = subprocess.Popen([sys.executable, script_path, target_region], **popen_kwargs)
+        
+        try:
+            outs, errs = process.communicate(timeout=2)
+            if process.returncode != 0:
+                st.sidebar.error(f"즉시 종료됨 (Code: {process.returncode})")
+                st.sidebar.code(errs)
+            else:
+                st.sidebar.success("실행 완료!")
+        except subprocess.TimeoutExpired:
+            # Still running after 2s, probably good!
+            st.sidebar.success("백그라운드에서 실행 중입니다. 잠시 후 새로고침하세요.")
+            
     except Exception as e:
         st.sidebar.error(f"실행 실패: {e}")
 
@@ -192,7 +209,7 @@ if mode == "Track A (이메일 자동)":
     else:
         st.write("데이터가 없습니다.")
 
-elif mode == "Track B (톡톡 반자동)":
+elif mode == "Track B (톡톡/인스타 반자동)":
     st.warning("🔥 이메일이 없는 샵 목록입니다. '스나이퍼 모드'로 공략하세요.")
     
     if not filtered_df.empty:
@@ -207,19 +224,22 @@ elif mode == "Track B (톡톡 반자동)":
         
         for idx, row in target_df.iterrows():
             with st.container(border=True):
-                col1, col2, col3 = st.columns([1.5, 3, 1])
+                col_info, col_msg, col_action = st.columns([1.5, 3, 1.2])
                 
-                with col1:
+                with col_info:
                     st.subheader(row['상호명'])
                     st.caption(row['주소'])
                     
                     # TalkTalk URL Check
                     talk_url = row.get('톡톡URL', '')
                     if not isinstance(talk_url, str) or not talk_url.startswith("http"):
-                        st.error("톡톡 링크 없음")
                         talk_url = None
+                    
+                    # Instagram Check
+                    insta_handle = row.get('인스타', '')
+                    insta_url = f"https://www.instagram.com/{insta_handle}/" if insta_handle and isinstance(insta_handle, str) and insta_handle != "None" else None
 
-                with col2:
+                with col_msg:
                     competitors = get_competitors(idx, df) # Pass original df for context
                     msg = f"""안녕하세요 {row['상호명']} 원장님. 
 인근 {competitors} 중 1곳만 선정하는 루미PLUS 독점 제휴 제안입니다. 
@@ -227,14 +247,33 @@ elif mode == "Track B (톡톡 반자동)":
                     # Native Copy Button provided by st.code
                     st.code(msg, language=None)
 
-                    with col3:
-                        st.write("") # Spacer
-                        st.write("") 
-                        # Native Link Button (Reliable)
-                        if talk_url:
-                            st.link_button("🚀 톡톡 열기", talk_url, type="primary")
-                        else:
-                            st.button("링크 없음", disabled=True, key=f"no_link_{idx}")
+                with col_action:
+                    st.write("") # Spacer
+                    # Native Link Button (Reliable)
+                    if talk_url:
+                        st.link_button("🚀 톡톡 열기", talk_url, type="primary", use_container_width=True)
+                    else:
+                        st.button("톡톡 없음", disabled=True, key=f"no_talk_{idx}", use_container_width=True)
+                    
+                    if insta_url:
+                        st.link_button("📸 인스타 DM", insta_url, use_container_width=True)
+                    else:
+                        st.button("인스타 없음", disabled=True, key=f"no_insta_{idx}", use_container_width=True)
     else:
         st.write("데이터가 없습니다.")
 
+elif mode == "전체 리스트 (조회용)":
+    st.info("📊 DB에 등록된 전체 리스트입니다.")
+    if not filtered_df.empty:
+        # Reorder columns for better view
+        display_cols = ['상호명', '이메일', '인스타', '주소', '톡톡URL']
+        existing_cols = [c for c in display_cols if c in filtered_df.columns]
+        
+        st.dataframe(
+            filtered_df[existing_cols],
+            use_container_width=True,
+            hide_index=True
+        )
+        st.caption(f"총 {len(filtered_df)}개의 데이터가 검색되었습니다.")
+    else:
+        st.write("데이터가 없습니다.")

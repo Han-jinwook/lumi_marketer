@@ -10,7 +10,8 @@ except ImportError:
 # Supabase Settings
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-SUPABASE_TABLE = "skin_shop_leads"
+SUPABASE_TABLE = "t_crawled_shops" # Standard table name for leads
+LEADS_TABLE = "t_crawled_shops"    # Unified name
 
 # Output Settings
 OUTPUT_CSV = "확장_피부샵_원장_데이터.csv"

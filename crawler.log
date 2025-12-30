@@ -478,3 +478,74 @@
 2025-12-16 13:50:05,076 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/hestia305/223569726814 (Attempt 1/3)
 2025-12-16 13:50:05,194 - crawler.extractor - INFO - No email found in https://blog.naver.com/hestia305/223569726814
 2025-12-16 13:50:05,195 - __main__ - INFO - Crawling finished. Successfully saved 0 new leads.
+2025-12-26 10:46:14,303 - __main__ - INFO - Starting Skin Shop Blog Crawler...
+2025-12-26 10:46:15,103 - crawler.db_handler - INFO - Initialized PostgrestClient directly
+2025-12-26 10:46:15,105 - __main__ - INFO - Loaded 20 keywords across 4 categories.
+2025-12-26 10:46:15,105 - crawler.db_handler - ERROR - Error fetching existing URLs: 'coroutine' object has no attribute 'data'
+2025-12-26 10:46:15,341 - __main__ - INFO - Skipping 0 already collected URLs.
+2025-12-26 10:46:15,358 - crawler.searcher - INFO - Searching Naver blogs for: 여드름 관리 후기
+2025-12-26 10:46:15,362 - crawler.safe_crawler - INFO - Waiting for 14.42 seconds...
+2025-12-26 10:46:29,790 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:46:31,375 - crawler.searcher - INFO - Found 5 Naver blogs for '여드름 관리 후기'
+2025-12-26 10:46:34,376 - crawler.searcher - INFO - Searching Naver blogs for: 성인 여드름 관리
+2025-12-26 10:46:34,376 - crawler.safe_crawler - INFO - Waiting for 8.30 seconds...
+2025-12-26 10:46:42,674 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:46:43,411 - crawler.searcher - INFO - Found 5 Naver blogs for '성인 여드름 관리'
+2025-12-26 10:46:46,412 - crawler.searcher - INFO - Searching Naver blogs for: 부산 피부미백 관리
+2025-12-26 10:46:46,412 - crawler.safe_crawler - INFO - Waiting for 14.44 seconds...
+2025-12-26 10:47:00,852 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:47:01,524 - crawler.searcher - INFO - Found 5 Naver blogs for '부산 피부미백 관리'
+2025-12-26 10:47:04,526 - crawler.searcher - INFO - Searching Naver blogs for: 대구 리프팅 케어
+2025-12-26 10:47:04,526 - crawler.safe_crawler - INFO - Waiting for 14.06 seconds...
+2025-12-26 10:47:18,590 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:47:19,312 - crawler.searcher - INFO - Found 5 Naver blogs for '대구 리프팅 케어'
+2025-12-26 10:47:22,315 - crawler.searcher - INFO - Searching Naver blogs for: 주름 개선 관리
+2025-12-26 10:47:22,315 - crawler.safe_crawler - INFO - Waiting for 7.56 seconds...
+2025-12-26 10:47:29,877 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:47:30,654 - crawler.searcher - INFO - Found 0 Naver blogs for '주름 개선 관리'
+2025-12-26 10:47:33,659 - crawler.searcher - INFO - Searching Naver blogs for: 고주파 관리
+2025-12-26 10:47:33,659 - crawler.safe_crawler - INFO - Waiting for 12.36 seconds...
+2025-12-26 10:47:46,025 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:47:46,805 - crawler.searcher - INFO - Found 5 Naver blogs for '고주파 관리'
+2025-12-26 10:47:49,807 - crawler.searcher - INFO - Searching Naver blogs for: 민감성 피부 관리 후기
+2025-12-26 10:47:49,807 - crawler.safe_crawler - INFO - Waiting for 8.11 seconds...
+2025-12-26 10:47:57,919 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:47:58,771 - crawler.searcher - INFO - Found 5 Naver blogs for '민감성 피부 관리 후기'
+2025-12-26 10:48:01,773 - crawler.searcher - INFO - Searching Naver blogs for: 피부 수분 관리
+2025-12-26 10:48:01,773 - crawler.safe_crawler - INFO - Waiting for 5.54 seconds...
+2025-12-26 10:48:07,334 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:48:08,378 - crawler.searcher - INFO - Found 5 Naver blogs for '피부 수분 관리'
+2025-12-26 10:48:11,381 - crawler.searcher - INFO - Searching Naver blogs for: 블랙헤드 제거 후기
+2025-12-26 10:48:11,381 - crawler.safe_crawler - INFO - Waiting for 7.50 seconds...
+2025-12-26 10:48:18,887 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:48:19,633 - crawler.searcher - INFO - Found 5 Naver blogs for '블랙헤드 제거 후기'
+2025-12-26 10:48:22,634 - crawler.searcher - INFO - Searching Naver blogs for: 인천 피부 재생 관리
+2025-12-26 10:48:22,634 - crawler.safe_crawler - INFO - Waiting for 6.80 seconds...
+2025-12-26 10:48:29,436 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:48:30,322 - crawler.searcher - INFO - Found 5 Naver blogs for '인천 피부 재생 관리'
+2025-12-26 10:48:33,344 - crawler.searcher - INFO - Searching Naver blogs for: LDM 관리
+2025-12-26 10:48:33,365 - crawler.safe_crawler - INFO - Waiting for 11.27 seconds...
+2025-12-26 10:48:44,643 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:48:45,390 - crawler.searcher - INFO - Found 5 Naver blogs for 'LDM 관리'
+2025-12-26 10:48:48,391 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 창업
+2025-12-26 10:48:48,391 - crawler.safe_crawler - INFO - Waiting for 9.10 seconds...
+2025-12-26 10:48:57,496 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:48:58,295 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 창업'
+2025-12-26 10:49:01,296 - crawler.searcher - INFO - Searching Naver blogs for: 1인 피부샵 운영
+2025-12-26 10:49:01,296 - crawler.safe_crawler - INFO - Waiting for 7.17 seconds...
+2025-12-26 10:49:08,465 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:49:09,245 - crawler.searcher - INFO - Found 5 Naver blogs for '1인 피부샵 운영'
+2025-12-26 10:49:12,246 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 마케팅
+2025-12-26 10:49:12,246 - crawler.safe_crawler - INFO - Waiting for 10.55 seconds...
+2025-12-26 10:49:22,802 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:49:23,457 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 마케팅'
+2025-12-26 10:49:26,458 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 운영 노하우
+2025-12-26 10:49:26,458 - crawler.safe_crawler - INFO - Waiting for 10.94 seconds...
+2025-12-26 10:49:37,395 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:49:38,090 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 운영 노하우'
+2025-12-26 10:49:41,092 - crawler.searcher - INFO - Searching Naver blogs for: 에스테티션 일상
+2025-12-26 10:49:41,092 - crawler.safe_crawler - INFO - Waiting for 7.28 seconds...
+2025-12-26 10:49:48,377 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2025-12-26 10:49:48,848 - crawler.searcher - INFO - Found 5 Naver blogs for '에스테티션 일상'
+2025-12-26 10:49:51,850 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 매출 올리기
+2025-12-26 10:49:51,850 - crawler.safe_crawler - INFO - Waiting for 12.98 seconds...

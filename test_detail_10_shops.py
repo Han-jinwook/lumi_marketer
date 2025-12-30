@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 # Supabase Config
 SUPABASE_URL = config.SUPABASE_URL
 SUPABASE_KEY = config.SUPABASE_KEY
-TABLE_NAME = "t_crawled_shops"
+TABLE_NAME = config.SUPABASE_TABLE
 
 def save_to_db(shop_data):
     """
@@ -100,14 +100,23 @@ async def run_crawler():
                 await page.goto(url, wait_until="networkidle")
                 await asyncio.sleep(random.uniform(2, 4))
                 
+                # Handle Map View vs List View
+                # Check for "목록보기" button which appears in map view
+                list_view_btn = page.locator("a:has-text('목록보기'), button:has-text('목록보기')")
+                if await list_view_btn.count() > 0:
+                    logger.info("🗺️ Map view detected. Switching to list view...")
+                    await list_view_btn.first.click()
+                    await asyncio.sleep(random.uniform(2, 3))
+                
                 # Scroll to load at least some
                 for _ in range(2):
                      await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
                      await asyncio.sleep(random.uniform(1, 2))
                 
                 # Check for items
-                list_items = await page.locator("li").all()
-                logger.info(f"Phase 1: Found {len(list_items)} list items. Extracting basic info...")
+                # VLTHu is a common class for shop items on mobile
+                list_items = await page.locator("li, div.VLTHu, div[data-shop-id]").all()
+                logger.info(f"Phase 1: Found {len(list_items)} potential items.")
                 
                 shops_to_process = []
                 

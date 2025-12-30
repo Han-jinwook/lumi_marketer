@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
-import subprocess
 import os
 import time
+import sys
+import requests
 import config
 
 # Set page config
@@ -21,22 +22,25 @@ with st.sidebar:
     
     if st.button("🚀 크롤링 지금 실행", type="primary"):
         with st.spinner('크롤러가 실행 중입니다... (로그 탭을 확인하세요)'):
-            # Run the crawler as a subprocess to keep independent
-            process = subprocess.Popen(
-                ["py", "main.py"], 
-                stdout=subprocess.PIPE, 
-                stderr=subprocess.PIPE,
-                text=True,
-                encoding='utf-8' # Force encoding
-            )
-            # Wait for it to finish for immediate feedback (optional, or just fire and forget)
-            stdout, stderr = process.communicate()
-            
-            if process.returncode == 0:
-                st.success("크롤링이 완료되었습니다!")
-            else:
-                st.error("크롤링 중 오류가 발생했습니다.")
-                st.error(stderr)
+            try:
+                # Use current python executable for stability
+                process = subprocess.Popen(
+                    [sys.executable, "main.py"], 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    encoding='utf-8'
+                )
+                stdout, stderr = process.communicate()
+                
+                if process.returncode == 0:
+                    st.success("크롤링이 완료되었습니다!")
+                else:
+                    st.error(f"크롤링 중 오류가 발생했습니다. (Exit Code: {process.returncode})")
+                    if stderr:
+                        st.error(f"Error Log: {stderr}")
+            except Exception as e:
+                st.error(f"실행 중 예외 발생: {e}")
                 
     st.markdown("---")
     st.info(f"""
@@ -50,35 +54,55 @@ with st.sidebar:
 tab1, tab2 = st.tabs(["📊 수집 데이터", "📝 시스템 로그"])
 
 with tab1:
-    st.subheader("수집된 원장님 데이터 목록")
+    st.subheader("수집된 원장님 데이터 목록 (From Supabase)")
     
-    csv_file = config.OUTPUT_CSV
+    # Fetch data from Supabase directly
+    url = f"{config.SUPABASE_URL}/rest/v1/{config.SUPABASE_TABLE}?select=*"
+    headers = {
+        "apikey": config.SUPABASE_KEY,
+        "Authorization": f"Bearer {config.SUPABASE_KEY}"
+    }
     
-    if os.path.exists(csv_file):
-        try:
-            # Read CSV
-            df = pd.read_csv(csv_file)
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        
+        if data:
+            df = pd.DataFrame(data)
             
+            # Use appropriate column names based on the table schema
+            # Mapping common fields if they exist
+            if 'blog_url' in df.columns:
+                df = df.rename(columns={'blog_url': '블로그 URL', 'title': '블로그 제목', 'email': '이메일'})
+            elif 'name' in df.columns:
+                # If t_crawled_shops schema is used
+                df = df.rename(columns={'name': '상호명', 'address': '주소', 'phone': '전화번호', 'email': '이메일'})
+
             # Show stats
             col1, col2 = st.columns(2)
-            col1.metric("총 수집된 블로그", f"{len(df)}개")
-            col2.metric("이메일 확보 수", f"{len(df[df['이메일'].notna()])}개")
+            col1.metric("총 수집된 업체", f"{len(df)}개")
+            if '이메일' in df.columns:
+                email_count = len(df[df['이메일'].notna() & (df['이메일'] != "")])
+                col2.metric("이메일 확보 수", f"{email_count}개")
             
             # Show dataframe
             st.dataframe(df, use_container_width=True)
             
             # Download button
-            with open(csv_file, "rb") as f:
-                st.download_button(
-                    label="📥 CSV 다운로드",
-                    data=f,
-                    file_name="skin_shop_leads.csv",
-                    mime="text/csv"
-                )
-        except Exception as e:
-            st.error(f"데이터 파일을 읽는 중 오류가 발생했습니다: {e}")
-    else:
-        st.warning("아직 수집된 데이터가 없습니다. 크롤링을 실행해 주세요.")
+            csv_data = df.to_csv(index=False).encode('utf-8-sig')
+            st.download_button(
+                label="📥 CSV 다운로드",
+                data=csv_data,
+                file_name="skin_shop_leads_live.csv",
+                mime="text/csv"
+            )
+        else:
+            st.warning("아직 수집된 데이터가 없습니다. 크롤링을 실행해 주세요.")
+            
+    except Exception as e:
+        st.error(f"데이터를 불러오는 중 오류가 발생했습니다: {e}")
+        st.info("Supabase 연결 설정을 확인해 주세요.")
 
 with tab2:
     st.subheader("실시간 로그")
