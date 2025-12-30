@@ -243,18 +243,49 @@ if mode == "Track A (이메일 자동)":
         target_df = filtered_df[
             (filtered_df['이메일'].notna()) & 
             (filtered_df['이메일'] != "")
-        ]
+        ].copy()
         
-        st.dataframe(
-            target_df[['상호명', '이메일', '주소']], 
-            use_container_width=True,
-            hide_index=True
-        )
-        
-        col1, col2 = st.columns([1, 4])
-        with col1:
-            if st.button("📧 전체 발송 (Gmail)"):
-                st.toast(f"제목: '{st.session_state['email_subject']}' 로 {len(target_df)}건 발송 시작...")
+        if target_df.empty:
+            st.warning("이메일이 있는 샵이 없습니다.")
+        else:
+            # Selection Logic for Track A
+            if 'track_a_sel' not in st.session_state:
+                st.session_state['track_a_sel'] = pd.DataFrame({'선택': [False] * len(target_df)})
+
+            # Toggle All Button
+            col_a1, col_a2 = st.columns([1, 4])
+            with col_a1:
+                if st.button("✅ 전체 선택", key="btn_a_all"):
+                    st.session_state['track_a_sel'] = pd.DataFrame({'선택': [True] * len(target_df)})
+                    st.rerun()
+            with col_a2:
+                if st.button("❌ 전체 해제", key="btn_a_none"):
+                    st.session_state['track_a_sel'] = pd.DataFrame({'선택': [False] * len(target_df)})
+                    st.rerun()
+
+            # Data Editor for selection
+            display_df = target_df[['상호명', '이메일', '주소']].reset_index(drop=True)
+            # Merge with selection state
+            if len(st.session_state['track_a_sel']) != len(display_df):
+                st.session_state['track_a_sel'] = pd.DataFrame({'선택': [False] * len(display_df)})
+            
+            edited_df = st.data_editor(
+                pd.concat([st.session_state['track_a_sel'], display_df], axis=1),
+                use_container_width=True,
+                hide_index=True,
+                key="editor_track_a"
+            )
+            # Update selection state
+            st.session_state['track_a_sel'] = edited_df[['선택']]
+            selected_count = len(edited_df[edited_df['선택']])
+
+            col1, col2 = st.columns([1, 4])
+            with col1:
+                if st.button(f"📧 {selected_count}건 발송 (Gmail)"):
+                    if selected_count > 0:
+                        st.toast(f"제목: '{st.session_state['email_subject']}' 로 {selected_count}건 발송 시작...")
+                    else:
+                        st.error("발송할 대상을 선택해 주세요.")
     else:
         st.write("데이터가 없습니다.")
 
@@ -269,64 +300,52 @@ elif mode == "Track B (톡톡/인스타 반자동)":
         if target_df.empty:
             st.warning("이메일이 없는 샵이 없습니다. (모두 이메일 보유 중)")
         else:
-            # Batch selection logic
-            if 'selected_targets' not in st.session_state:
-                st.session_state['selected_targets'] = []
+            # Selection Logic for Track B
+            if 'track_b_sel' not in st.session_state:
+                st.session_state['track_b_sel'] = pd.DataFrame({'선택': [False] * len(target_df)})
 
-            col_sel, col_stat = st.columns([1, 4])
-            with col_sel:
-                if st.button("✅ 전체 선택"):
-                    st.session_state['selected_targets'] = target_df.to_dict('records')
+            # Toggle All Buttons
+            col_b1, col_b2, col_b3 = st.columns([1, 1, 3])
+            with col_b1:
+                if st.button("✅ 전체 선택", key="btn_b_all"):
+                    st.session_state['track_b_sel'] = pd.DataFrame({'선택': [True] * len(target_df)})
                     st.rerun()
-            with col_stat:
-                st.write(f"현재 **{len(st.session_state['selected_targets'])}**개 업체 선택됨")
+            with col_b2:
+                if st.button("❌ 전체 해제", key="btn_b_none"):
+                    st.session_state['track_b_sel'] = pd.DataFrame({'선택': [False] * len(target_df)})
+                    st.rerun()
+            with col_b3:
+                selected_count = len(st.session_state['track_b_sel'][st.session_state['track_b_sel']['선택']])
+                st.write(f"현재 **{selected_count}**개 업체 선택됨")
 
-            for idx, row in target_df.iterrows():
-                with st.container(border=True):
-                    col_check, col_info, col_msg, col_action = st.columns([0.3, 1.2, 3, 1.2])
-                    
-                    # Checkbox for selection
-                    with col_check:
-                        is_selected = any(t['상호명'] == row['상호명'] for t in st.session_state['selected_targets'])
-                        if st.checkbox("Pick", value=is_selected, key=f"check_{idx}", label_visibility="collapsed"):
-                            if not is_selected:
-                                st.session_state['selected_targets'].append(row.to_dict())
-                        else:
-                            if is_selected:
-                                st.session_state['selected_targets'] = [t for t in st.session_state['selected_targets'] if t['상호명'] != row['상호명']]
+            # Data Editor for selection
+            display_df = target_df[['상호명', '주소', '번호', '블로그ID', '플레이스링크', '톡톡링크', '인스타']].reset_index(drop=True)
+            if len(st.session_state['track_b_sel']) != len(display_df):
+                st.session_state['track_b_sel'] = pd.DataFrame({'선택': [False] * len(display_df)})
 
-                    with col_info:
-                        st.subheader(row['상호명'])
-                        st.caption(row['주소'])
-                        
-                        # TalkTalk URL Check
-                        talk_url = row.get('톡톡링크', '')
-                        if not isinstance(talk_url, str) or not talk_url.startswith("http"):
-                            talk_url = None
-                        
-                        # Instagram Check
-                        insta_url = row.get('인스타', '')
-                        if not isinstance(insta_url, str) or not insta_url.startswith("http"):
-                            insta_url = None
+            edited_df = st.data_editor(
+                pd.concat([st.session_state['track_b_sel'], display_df], axis=1),
+                use_container_width=True,
+                hide_index=True,
+                key="editor_track_b",
+                column_config={
+                    "플레이스링크": st.column_config.LinkColumn(width="small"),
+                    "톡톡링크": st.column_config.LinkColumn(width="small"),
+                    "인스타": st.column_config.LinkColumn(width="small"),
+                }
+            )
+            # Sync selection state
+            st.session_state['track_b_sel'] = edited_df[['선택']]
+            st.session_state['selected_targets'] = edited_df[edited_df['선택']].to_dict('records')
 
-                    with col_msg:
-                        competitors = get_competitors(idx, df) # Pass original df for context
-                        # Use city/district if available
-                        region = row.get('시/군/구', '인근 구/동')
-                        personalized_msg = st.session_state['msg_body'].format(상호명=row['상호명'], 지역=region)
-                        st.code(personalized_msg, language=None)
-
-                    with col_action:
-                        st.write("") # Spacer
-                        if talk_url:
-                            st.link_button("🚀 톡톡 열기", talk_url, type="primary", use_container_width=True)
-                        else:
-                            st.button("톡톡 없음", disabled=True, key=f"no_talk_{idx}", use_container_width=True)
-                        
-                        if insta_url:
-                            st.link_button("📸 인스타 DM", insta_url, use_container_width=True)
-                        else:
-                            st.button("인스타 없음", disabled=True, key=f"no_insta_{idx}", use_container_width=True)
+            # Show personalized message sample for the first selected item
+            if not edited_df[edited_df['선택']].empty:
+                st.divider()
+                st.subheader("✉️ 발송 메시지 미리보기 (첫 번째 선택 대상)")
+                first_row = edited_df[edited_df['선택']].iloc[0]
+                region = first_row.get('시/군/구', '인근 구/동')
+                sample_msg = st.session_state['msg_body'].format(상호명=first_row['상호명'], 지역=region)
+                st.code(sample_msg, language=None)
     else:
         st.write("데이터가 없습니다.")
 
