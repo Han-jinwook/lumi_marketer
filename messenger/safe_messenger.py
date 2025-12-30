@@ -86,14 +86,15 @@ async def send_instagram_dm(page, insta_url, message):
         logger.error("Could not find Instagram 'Message' button. Private account?")
     return False
 
-async def main(target_list_json, message):
+async def main(target_list_json, message, method="both"):
     """
     Args:
         target_list_json: JSON string of shops to message
         message: The message body
+        method: 'talk', 'insta', or 'both'
     """
     targets = json.loads(target_list_json)
-    logger.info(f"Starting auto-messenger for {len(targets)} targets.")
+    logger.info(f"Starting auto-messenger for {len(targets)} targets. Method: {method}")
     
     async with async_playwright() as p:
         # Launch with persistent context
@@ -109,13 +110,16 @@ async def main(target_list_json, message):
             logger.info(f"[{idx+1}/{len(targets)}] Targeting: {shop['상호명']}")
             
             success = False
-            # Try TalkTalk first if available
-            if shop.get('톡톡링크'):
+            
+            # --- Naver TalkTalk ---
+            if method in ["talk", "both"] and shop.get('톡톡링크'):
                 success = await send_talktalk_message(page, shop['톡톡링크'], message)
             
-            # If TalkTalk failed or not available, try Instagram
-            if not success and shop.get('인스타'):
-                success = await send_instagram_dm(page, shop['인스타'], message)
+            # --- Instagram DM ---
+            # If both, only try insta if talk failed
+            if method == "insta" or (method == "both" and not success):
+                if shop.get('인스타'):
+                    success = await send_instagram_dm(page, shop['인스타'], message)
             
             if success:
                 # LONG delay between successful sends to avoid detection
@@ -123,7 +127,7 @@ async def main(target_list_json, message):
                 logger.info(f"Waiting {wait_time:.1f}s before next send...")
                 await asyncio.sleep(wait_time)
             else:
-                logger.warning(f"Failed to send to {shop['상호명']}")
+                logger.warning(f"Failed to send to {shop['상호명']} via {method}")
                 await human_delay(5, 10)
                 
         await context.close()
@@ -132,10 +136,11 @@ async def main(target_list_json, message):
 if __name__ == "__main__":
     import json
     if len(sys.argv) < 3:
-        print("Usage: python safe_messenger.py '<json_targets>' 'message'")
+        print("Usage: python safe_messenger.py '<json_targets>' 'message' [method]")
         sys.exit(1)
         
     targets_json = sys.argv[1]
     msg = sys.argv[2]
+    send_method = sys.argv[3] if len(sys.argv) > 3 else "both"
     
-    asyncio.run(main(targets_json, msg))
+    asyncio.run(main(targets_json, msg, send_method))

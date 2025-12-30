@@ -178,12 +178,15 @@ elif mode == "Track B (톡톡/인스타 반자동)":
         
         col_m1, col_m2 = st.columns(2)
         with col_m1:
+            send_type = st.radio("발송 플랫폼 선택", ["톡톡만", "인스타 DM만", "전체 시도(톡톡 우선)"], horizontal=True)
+            method_map = {"톡톡만": "talk", "인스타 DM만": "insta", "전체 시도(톡톡 우선)": "both"}
             st.info("⚠️ 반드시 브라우저에서 먼저 로그인을 완료해야 합니다.")
         with col_m2:
-            if st.button("🚀 선택 항목 자동 발송 시작", type="primary", use_container_width=True):
+            st.write("") # Spacer
+            if st.button(f"🚀 {send_type} 자동 발송 시작", type="primary", use_container_width=True):
                 if 'selected_targets' in st.session_state and st.session_state['selected_targets']:
                     targets = st.session_state['selected_targets']
-                    st.toast(f"{len(targets)}건 발송 시도 중...")
+                    st.toast(f"{len(targets)}건 {send_type} 발송 시도 중...")
                     
                     # Run messenger worker as subprocess
                     try:
@@ -191,10 +194,10 @@ elif mode == "Track B (톡톡/인스타 반자동)":
                         script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'messenger', 'safe_messenger.py'))
                         targets_json = json.dumps(targets)
                         
-                        # Background execution
-                        subprocess.Popen([sys.executable, script_path, targets_json, st.session_state['msg_body']], 
+                        # Background execution with method argument
+                        subprocess.Popen([sys.executable, script_path, targets_json, st.session_state['msg_body'], method_map[send_type]], 
                                          creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
-                        st.success("발송 프로세스가 백그라운드에서 시작되었습니다. 로그를 확인하세요.")
+                        st.success(f"{send_type} 발송 프로세스가 시작되었습니다. 로그를 확인하세요.")
                     except Exception as e:
                         st.error(f"발송 실패: {e}")
                 else:
@@ -318,8 +321,8 @@ elif mode == "Track B (톡톡/인스타 반자동)":
                 selected_count = len(st.session_state['track_b_sel'][st.session_state['track_b_sel']['선택']])
                 st.write(f"현재 **{selected_count}**개 업체 선택됨")
 
-            # Data Editor for selection
-            display_df = target_df[['상호명', '주소', '번호', '블로그ID', '플레이스링크', '톡톡링크', '인스타']].reset_index(drop=True)
+            # Data Editor for selection - Simplified View (Name, Talk, Insta only)
+            display_df = target_df[['상호명', '톡톡링크', '인스타']].reset_index(drop=True)
             if len(st.session_state['track_b_sel']) != len(display_df):
                 st.session_state['track_b_sel'] = pd.DataFrame({'선택': [False] * len(display_df)})
 
@@ -329,9 +332,8 @@ elif mode == "Track B (톡톡/인스타 반자동)":
                 hide_index=True,
                 key="editor_track_b",
                 column_config={
-                    "플레이스링크": st.column_config.LinkColumn(width="small"),
-                    "톡톡링크": st.column_config.LinkColumn(width="small"),
-                    "인스타": st.column_config.LinkColumn(width="small"),
+                    "톡톡링크": st.column_config.LinkColumn("톡톡링크", width="medium"),
+                    "인스타": st.column_config.LinkColumn("인스타 DM", width="medium"),
                 }
             )
             # Sync selection state
