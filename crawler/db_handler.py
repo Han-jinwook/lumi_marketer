@@ -125,3 +125,35 @@ class DBHandler:
         except Exception as e:
             logger.error(f"Error fetching existing URLs: {e}")
             return []
+    def save_session(self, platform: str, session_data: str) -> bool:
+        """Save browser session data (JSON string) to Supabase."""
+        if not self.supabase:
+            return False
+        try:
+            data = {
+                "platform": platform,
+                "session_json": session_data,
+                "updated_at": "now()"
+            }
+            # Table name: t_browser_sessions
+            self.supabase.table("t_browser_sessions").upsert(
+                data, on_conflict="platform"
+            ).execute()
+            logger.info(f"Saved session for {platform}")
+            return True
+        except Exception as e:
+            logger.error(f"Error saving session: {e}")
+            return False
+
+    def load_session(self, platform: str) -> Optional[str]:
+        """Load browser session data from Supabase."""
+        if not self.supabase:
+            return None
+        try:
+            response = self.supabase.table("t_browser_sessions").select("session_json").eq("platform", platform).execute()
+            if response.data:
+                return response.data[0]['session_json']
+            return None
+        except Exception as e:
+            logger.error(f"Error loading session: {e}")
+            return None

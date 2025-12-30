@@ -139,6 +139,25 @@ def get_competitors(current_idx, full_df):
 # ---------------------------------------------------------
 st.title(f"🚀 {mode}")
 
+# --- Sidebar: Account Settings ---
+st.sidebar.divider()
+st.sidebar.subheader("🔐 계정 설정 (자동 발송용)")
+with st.sidebar.expander("네이버/인스타 정보 입력"):
+    st.session_state['naver_user'] = st.sidebar.text_input("네이버 ID", value=st.session_state.get('naver_user', ''))
+    st.session_state['naver_pw'] = st.sidebar.text_input("네이버 PW", type="password", value=st.session_state.get('naver_pw', ''))
+    st.session_state['insta_user'] = st.sidebar.text_input("인스타 ID", value=st.session_state.get('insta_user', ''))
+    st.session_state['insta_pw'] = st.sidebar.text_input("인스타 PW", type="password", value=st.session_state.get('insta_pw', ''))
+    st.caption("※ 정보는 로그인을 위해서만 사용됩니다.")
+
+# --- Auto Install Playwright on Cloud ---
+if os.path.exists("/mount/src") and not os.path.exists("/home/appuser/.cache/ms-playwright"):
+    with st.spinner("서버 환경 설정 중 (최초 1회)..."):
+        try:
+            subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+            st.toast("Playwright 엔진 설치 완료!")
+        except Exception as e:
+            st.error(f"엔진 설치 실패: {e}")
+
 # Initialize session state for email template if not exists
 if 'email_subject' not in st.session_state:
     st.session_state['email_subject'] = "루미PLUS 독점 제휴 제안드립니다 (원장님 확인용)"
@@ -191,21 +210,25 @@ elif mode == "Track B (톡톡/인스타 반자동)":
         
         with col_m2:
             st.write("") # Spacer
-            if st.button(f"🚀 {send_type} 자동 발송 시작", type="primary", use_container_width=True, disabled=is_cloud):
+            if st.button(f"🚀 {send_type} 자동 발송 시작", type="primary", use_container_width=True):
                 if 'selected_targets' in st.session_state and st.session_state['selected_targets']:
                     targets = st.session_state['selected_targets']
                     st.toast(f"{len(targets)}건 {send_type} 발송 시도 중...")
                     
+                    # Prepare credentials
+                    n_arg = f"{st.session_state['naver_user']}:{st.session_state['naver_pw']}" if st.session_state.get('naver_user') else "None"
+                    i_arg = f"{st.session_state['insta_user']}:{st.session_state['insta_pw']}" if st.session_state.get('insta_user') else "None"
+
                     # Run messenger worker as subprocess
                     try:
                         import json
                         script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'messenger', 'safe_messenger.py'))
                         targets_json = json.dumps(targets)
                         
-                        # Background execution with method argument
-                        subprocess.Popen([sys.executable, script_path, targets_json, st.session_state['msg_body'], method_map[send_type]], 
+                        # Background execution with credentials
+                        subprocess.Popen([sys.executable, script_path, targets_json, st.session_state['msg_body'], method_map[send_type], n_arg, i_arg], 
                                          creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
-                        st.success(f"{send_type} 발송 프로세스가 시작되었습니다. 로그를 확인하세요.")
+                        st.success(f"{send_type} 발송 프로세스가 시작되었습니다. 휴대전화의 로그인 승인 알림을 확인해 주세요!")
                     except Exception as e:
                         st.error(f"발송 실패: {e}")
                 else:
