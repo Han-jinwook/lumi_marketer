@@ -3,6 +3,10 @@ import pandas as pd
 import requests
 import sys
 import os
+import time
+import random
+import json
+import subprocess
 
 # Add parent dir to path to import config
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -11,7 +15,71 @@ import config
 # ---------------------------------------------------------
 # 1. Config & Setup
 # ---------------------------------------------------------
-st.set_page_config(page_title="루미-링크 B2B Admin", layout="wide")
+st.set_page_config(page_title="루미-링크 B2B Admin", page_icon="🚀", layout="wide")
+
+# ---------------------------------------------------------
+# 1.1 Custom CSS (Premium UI/UX)
+# ---------------------------------------------------------
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .main {
+        background-color: #f8f9fa;
+    }
+    
+    .stButton>button {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    /* Header styling */
+    h1 {
+        color: #1e293b;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background-color: #ffffff;
+    }
+    
+    /* Card-like containers */
+    div.stBlock {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    
+    /* Metrics styling */
+    [data-testid="stMetricValue"] {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2563eb;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Import email sender
+try:
+    from messenger.email_sender import send_gmail
+except ImportError:
+    # If path issues, absolute import or sys.path fix
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    from messenger.email_sender import send_gmail
 
 # ---------------------------------------------------------
 # 2. Data Loading (REST API via Requests)
@@ -73,7 +141,7 @@ import subprocess
 # 3. Sidebar (Controls & Crawler)
 # ---------------------------------------------------------
 st.sidebar.title("🎮 통합 마케팅 센터")
-mode = st.sidebar.radio("작업 모드", ["Track A (이메일 자동)", "Track B (톡톡/인스타 반자동)", "전체 리스트 (조회용)"])
+mode = st.sidebar.radio("작업 모드", ["샵 검색 및 분석", "Track A (이메일 자동)", "Track B (톡톡/인스타 반자동)", "전체 리스트 (조회용)"])
 
 st.sidebar.divider()
 st.sidebar.subheader("🕵️‍♀️ 데이터 수집 (크롤러)")
@@ -147,7 +215,27 @@ with st.sidebar.expander("네이버/인스타 정보 입력"):
     st.session_state['naver_pw'] = st.sidebar.text_input("네이버 PW", type="password", value=st.session_state.get('naver_pw', ''))
     st.session_state['insta_user'] = st.sidebar.text_input("인스타 ID", value=st.session_state.get('insta_user', ''))
     st.session_state['insta_pw'] = st.sidebar.text_input("인스타 PW", type="password", value=st.session_state.get('insta_pw', ''))
-    st.caption("※ 정보는 로그인을 위해서만 사용됩니다.")
+    
+    st.divider()
+    st.sidebar.subheader("📧 Gmail 설정 (Track A)")
+    st.session_state['gmail_user'] = st.sidebar.text_input("Gmail 주소", value=st.session_state.get('gmail_user', ''))
+    st.session_state['gmail_app_pw'] = st.sidebar.text_input("Gmail 앱 비밀번호", type="password", value=st.session_state.get('gmail_app_pw', ''))
+    st.sidebar.caption("※ 설정 -> 보안 -> 2단계 인증 -> 앱 비밀번호에서 생성한 암호를 입력하세요.")
+    
+    st.divider()
+    st.caption("※ 정보는 발송을 위해서만 사용됩니다.")
+    
+    # Session Status Indicator
+    st.divider()
+    st.subheader("📡 세션 상태")
+    
+    platforms = ["naver", "insta"]
+    for p in platforms:
+        state_file = os.path.join(os.getcwd(), "browser_session", f"{p}_state.json")
+        if os.path.exists(state_file):
+            st.success(f"✅ {p.upper()} 세션 로드됨")
+        else:
+            st.warning(f"❌ {p.upper()} 세션 없음 (로그인 필요)")
 
 # --- Auto Install Playwright on Cloud ---
 if os.path.exists("/mount/src") and not os.path.exists("/home/appuser/.cache/ms-playwright"):
@@ -225,16 +313,156 @@ elif mode == "Track B (톡톡/인스타 반자동)":
                         script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'messenger', 'safe_messenger.py'))
                         targets_json = json.dumps(targets)
                         
-                        # Background execution with credentials
-                        subprocess.Popen([sys.executable, script_path, targets_json, st.session_state['msg_body'], method_map[send_type], n_arg, i_arg], 
-                                         creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
-                        st.success(f"{send_type} 발송 프로세스가 시작되었습니다. 휴대전화의 로그인 승인 알림을 확인해 주세요!")
+                        # Use st.empty to show real-time logs
+                        log_container = st.empty()
+                        log_text = "🚀 메시징 엔진 시작 중...\n"
+                        log_container.code(log_text)
+
+                        # Background execution with credentials - Use Popen with PIPE to stream output
+                        process = subprocess.Popen(
+                            [sys.executable, "-u", script_path, targets_json, st.session_state['msg_body'], method_map[send_type], n_arg, i_arg], 
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            text=True,
+                            bufsize=1, # Line buffered
+                            universal_newlines=True,
+                            creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                        )
+
+                        # Let's try a non-blocking loop with a status spinner
+                        with st.spinner("메시징 진행 중..."):
+                            while process.poll() is None:
+                                line = process.stdout.readline()
+                                if line:
+                                    log_text += line
+                                    lines = log_text.split('\n')
+                                    if len(lines) > 50:
+                                        log_text = '\n'.join(lines[-50:])
+                                    log_container.code(log_text)
+                                time.sleep(0.1)
+                        
+                        st.success(f"{send_type} 발송 프로세스 완료!")
                     except Exception as e:
                         st.error(f"발송 실패: {e}")
                 else:
                     st.error("발송할 대상을 먼저 선택해 주세요.")
 
-# --- Region Filter (Main Area) ---
+# --- Shop Search & Analysis Mode ---
+if mode == "샵 검색 및 분석":
+    st.subheader("🔍 정밀 샵 검색 및 데이터 분석")
+    
+    with st.container():
+        # Regional Filters
+        col_s1, col_s2, col_s3 = st.columns([1, 1, 2])
+        
+        with col_s1:
+            if not df.empty and '주소' in df.columns:
+                df['시/도'] = df['주소'].apply(lambda x: x.split()[0] if isinstance(x, str) and len(x.split()) > 0 else "")
+                unique_cities = [c for c in df['시/도'].unique() if c and isinstance(c, str)]
+                cities = ["전체"] + sorted(unique_cities)
+            else:
+                cities = ["전체"]
+            selected_city = st.selectbox("광역시/도", cities, key="search_city")
+            
+        with col_s2:
+            districts = ["전체"]
+            if not df.empty and '주소' in df.columns:
+                temp_df = df.copy()
+                if selected_city != "전체":
+                    temp_df = temp_df[temp_df['시/도'] == selected_city]
+                
+                temp_df['시/군/구'] = temp_df['주소'].apply(lambda x: x.split()[1] if isinstance(x, str) and len(x.split()) > 1 else "")
+                unique_districts = [d for d in temp_df['시/군/구'].unique() if d and isinstance(d, str)]
+                districts = ["전체"] + sorted(unique_districts)
+            selected_district = st.selectbox("시/군/구", districts, key="search_district")
+            
+        with col_s3:
+            # Search input for shop name
+            search_name = st.text_input("상호명 검색", placeholder="검색할 업체명을 입력하세요", key="search_name")
+            
+            # Filter pool for table
+            pool_df = df.copy()
+            if selected_city != "전체":
+                pool_df = pool_df[pool_df['시/도'] == selected_city]
+            if selected_district != "전체":
+                pool_df = pool_df[pool_df['주소'].str.contains(selected_district, na=False)]
+            if search_name:
+                pool_df = pool_df[pool_df['상호명'].str.contains(search_name, case=False, na=False)]
+            
+            st.info("💡 아래 리스트에서 업체를 **클릭**하면 상세 정보가 표시됩니다.")
+
+    # 1. Main Table with Selection
+    st.write(f"현재 지역 검색 결과: **{len(pool_df)}**건")
+    if not pool_df.empty:
+        # Reset index to ensure selection index matches pool_df row index
+        display_df = pool_df[['상호명', '주소', '번호', '이메일', '인스타', '톡톡링크']].reset_index(drop=True)
+        # Also need to reset pool_df to keep it in sync for detail view
+        pool_df = pool_df.reset_index(drop=True)
+        
+        selection = st.dataframe(
+            display_df,
+            use_container_width=True,
+            hide_index=True,
+            selection_mode="single-row",
+            on_select="rerun",
+            column_config={
+                "인스타": st.column_config.LinkColumn("인스타", width="small"),
+                "톡톡링크": st.column_config.LinkColumn("톡톡", width="small"),
+                "주소": st.column_config.TextColumn("주소", width="large")
+            }
+        )
+
+        # 2. Detail View (Shows when a row is selected)
+        selected_rows = selection.get("selection", {}).get("rows", [])
+        if selected_rows:
+            selected_idx = selected_rows[0]
+            shop_detail = pool_df.iloc[selected_idx]
+            
+            st.divider()
+            st.markdown(f"### 🎯 선택된 업체 상세 정보: {shop_detail['상호명']}")
+            
+            d_col1, d_col2 = st.columns([2, 1])
+            
+            with d_col1:
+                st.markdown(f"#### 📍 기본 상세")
+                st.write(f"**🏠 주소:** {shop_detail['주소']}")
+                st.write(f"**📞 전화번호:** {shop_detail['번호']}")
+                st.write(f"**📧 이메일:** {shop_detail.get('이메일', '없음')}")
+                
+                # Action Buttons
+                st.write("")
+                btn_col1, btn_col2, btn_col3 = st.columns(3)
+                if shop_detail['인스타']:
+                    btn_col1.link_button("📸 인스타그램", shop_detail['인스타'], use_container_width=True)
+                if shop_detail['톡톡링크']:
+                    btn_col2.link_button("💬 네이버 톡톡", shop_detail['톡톡링크'], use_container_width=True)
+                if shop_detail['플레이스링크']:
+                    btn_col3.link_button("🗺️ 네이버 플레이스", shop_detail['플레이스링크'], type="primary", use_container_width=True)
+            
+            with d_col2:
+                # Competitors Section
+                st.markdown("#### 🏆 인근 9개 경쟁샵 분석")
+                comp_data = shop_detail.get('top_9_competitors')
+                if comp_data:
+                    try:
+                        if isinstance(comp_data, str):
+                            comps = json.loads(comp_data)
+                        else:
+                            comps = comp_data
+                            
+                        for i, comp in enumerate(comps[:7]): # Show top 7
+                            st.write(f"{i+1}. **{comp['name']}** ({comp['distance_m']}m)")
+                            st.caption(f"  └ {comp['address']}")
+                    except:
+                        st.info("분석 데이터를 불러오는 중입니다...")
+                else:
+                    st.info("경쟁샵 분석 데이터가 아직 수집되지 않았습니다.")
+            st.divider()
+        
+    # Stop here if in search mode to prevent showing redundant filters/lists below
+    st.stop()
+
+# --- Region Filter (Main Area for Track A/B/All) ---
 with st.container(border=True):
     col_f1, col_f2 = st.columns(2)
     with col_f1:
@@ -245,7 +473,7 @@ with st.container(border=True):
             cities = ["전체"] + sorted(unique_cities)
         else:
             cities = ["전체"]
-        selected_city = st.selectbox("필터: 광역시/도", cities)
+        selected_city = st.selectbox("필터: 광역시/도", cities, key="main_city")
         
     with col_f2:
         # 2. Extract "District"
@@ -260,7 +488,7 @@ with st.container(border=True):
             unique_districts = [d for d in df['시/군/구'].unique() if d and isinstance(d, str)]
             districts = ["전체"] + sorted(unique_districts)
             
-        selected_district = st.selectbox("필터: 시/군/구", districts)
+        selected_district = st.selectbox("필터: 시/군/구", districts, key="main_district")
 
 # Filter Logic
 filtered_df = df.copy()
@@ -317,7 +545,40 @@ if mode == "Track A (이메일 자동)":
             with col1:
                 if st.button(f"📧 {selected_count}건 발송 (Gmail)"):
                     if selected_count > 0:
-                        st.toast(f"제목: '{st.session_state['email_subject']}' 로 {selected_count}건 발송 시작...")
+                        sender = st.session_state.get('gmail_user')
+                        pw = st.session_state.get('gmail_app_pw')
+                        
+                        if not sender or not pw:
+                            st.error("사이드바에서 Gmail 계정 정보를 먼저 설정해 주세요.")
+                        else:
+                            st.toast(f"메일 발송을 시작합니다...")
+                            success_count = 0
+                            fail_count = 0
+                            
+                            progress_bar = st.progress(0)
+                            selected_items = edited_df[edited_df['선택']].to_dict('records')
+                            
+                            for i, shop in enumerate(selected_items):
+                                try:
+                                    # Personalize content
+                                    subject = st.session_state['email_subject'].format(상호명=shop['상호명'], 지역=shop.get('주소', '인근 구/동').split()[1] if len(shop.get('주소', '').split()) > 1 else "인근")
+                                    body = st.session_state['email_body'].format(상호명=shop['상호명'], 지역=shop.get('주소', '인근 구/동').split()[1] if len(shop.get('주소', '').split()) > 1 else "인근")
+                                    
+                                    ok, msg = send_gmail(sender, pw, shop['이메일'], subject, body)
+                                    if ok:
+                                        success_count += 1
+                                    else:
+                                        st.error(f"실패: {shop['상호명']} ({shop['이메일']}) - {msg}")
+                                        fail_count += 1
+                                except Exception as e:
+                                    st.error(f"오류: {shop['상호명']} - {e}")
+                                    fail_count += 1
+                                
+                                # Update progress
+                                progress_bar.progress((i + 1) / len(selected_items))
+                                time.sleep(random.uniform(1, 3)) # Anti-spam delay
+                                
+                            st.success(f"발송 완료! (성공: {success_count}건, 실패: {fail_count}건)")
                     else:
                         st.error("발송할 대상을 선택해 주세요.")
     else:

@@ -3,6 +3,7 @@ import random
 import logging
 import os
 import sys
+import json
 from playwright.async_api import async_playwright
 
 # Add parent dir to path
@@ -19,24 +20,33 @@ USER_DATA_DIR = os.path.join(os.getcwd(), "browser_session")
 try:
     from crawler.db_handler import DBHandler
     db = DBHandler()
-except Exception:
+except Exception as e:
+    logger.warning(f"DBHandler not available: {e}")
     db = None
 
 async def download_session(platform):
     """Download session from Supabase and extract to USER_DATA_DIR."""
-    if not db: return
-    session_json = db.load_session(platform)
-    if session_json:
-        # Playwright persistent context actually stores files. 
-        # For simplicity, we'll store specific cookies/storage state if needed, 
-        # but persistent_context directory is better. 
-        # However, syncing a whole directory to DB is heavy.
-        # We will use 'storage_state' instead which is a JSON file.
-        state_path = os.path.join(USER_DATA_DIR, f"{platform}_state.json")
-        os.makedirs(USER_DATA_DIR, exist_ok=True)
-        with open(state_path, 'w', encoding='utf-8') as f:
-            f.write(session_json)
+    state_path = os.path.join(USER_DATA_DIR, f"{platform}_state.json")
+    
+    if db:
+        try:
+            session_json = db.load_session(platform)
+            if session_json:
+                os.makedirs(USER_DATA_DIR, exist_ok=True)
+                with open(state_path, 'w', encoding='utf-8') as f:
+                    f.write(session_json)
+                logger.info(f"Downloaded {platform} session from DB to {state_path}")
+                return state_path
+            else:
+                logger.warning(f"No {platform} session found in DB.")
+        except Exception as e:
+            logger.error(f"Failed to download session from DB: {e}")
+            
+    # Fallback: check if local file exists
+    if os.path.exists(state_path):
+        logger.info(f"Using existing local {platform} session: {state_path}")
         return state_path
+        
     return None
 
 async def upload_session(page, platform):
@@ -87,52 +97,190 @@ async def send_talktalk_message(page, talk_url, message):
     return False
 
 async def send_instagram_dm(page, insta_url, message):
-    """Automates sending an Instagram DM."""
-    logger.info(f"Opening Instagram: {insta_url}")
-    await page.goto(insta_url, wait_until="networkidle")
+    """Automates sending an Instagram DM with robust pop-up handling."""
+    logger.info(f"Opening Instagram Target: {insta_url}")
+    try:
+        await page.goto(insta_url, wait_until="networkidle", timeout=60000)
+    except Exception as e:
+        logger.error(f"Failed to load Instagram profile: {e}")
+        return False
+        
     await human_delay(4, 7)
     
+    # --- HANDLING COMMON POP-UPS ---
+    # Dialogs like 'Turn on Notifications' or 'Save Info' can block interactions
+    not_now_selectors = [
+        "//button[text()='Not Now']",
+        "//button[text()='나중에 하기']",
+        "button._a9--._ap3a._aade", # Common class for notify not now
+        "//button[contains(., '나중에')]"
+    ]
+    
+    # Check for modals 3 times with delays
+    for _ in range(2):
+        for selector in not_now_selectors:
+            try:
+                loc = page.locator(selector).first
+                if await loc.count() > 0 and await loc.is_visible():
+                    logger.info(f"Closing pop-up using selector: {selector}")
+                    await loc.click()
+                    await human_delay(1, 2)
+            except:
+                continue
+
     # 1. Click "Message" button on profile
-    msg_btn = page.locator("div[role='button']:has-text('메시지 보내기'), button:has-text('Message')").first
-    if await msg_btn.count() > 0:
+    msg_btn_selectors = [
+        "div[role='button']:has-text('메시지 보내기')",
+        "button:has-text('Message')",
+        "div[role='button']:has-text('Message')",
+        "button:has-text('메시지 보내기')",
+        "[aria-label='Message']",
+        "[aria-label='메시지 보내기']",
+        "//div[@role='button' and (text()='Message' or text()='메시지 보내기')]",
+        "//button[contains(., 'Message') or contains(., '메시지 보내기')]"
+    ]
+    
+    msg_btn = None
+    for selector in msg_btn_selectors:
+        try:
+            loc = page.locator(selector).first
+            if await loc.count() > 0 and await loc.is_visible():
+                msg_btn = loc
+                logger.info(f"Found Message button directly: {selector}")
+                break
+        except:
+            continue
+
+    # --- NEW: Handling hidden Message button behind '...' menu ---
+    if not msg_btn:
+        logger.info("Message button not found directly. Checking '...' (Options) menu...")
+        # Common selectors for the '...' menu button
+        options_btn_selectors = [
+            "svg[aria-label='옵션']",
+            "svg[aria-label='Options']",
+            "div[role='button']:has(svg[aria-label='옵션'])",
+            "div[role='button']:has(svg[aria-label='Options'])",
+            "button:has(svg[aria-label='옵션'])",
+            "button:has(svg[aria-label='Options'])",
+            "//div[@role='button']//svg[@aria-label='옵션']",
+            "//div[@role='button']//svg[@aria-label='More options']"
+        ]
+        
+        for selector in options_btn_selectors:
+            try:
+                loc = page.locator(selector).first
+                if await loc.count() > 0 and await loc.is_visible():
+                    logger.info(f"Found Options menu button: {selector}")
+                    await loc.click()
+                    await human_delay(2, 4)
+                    
+                    # Now look for Message button in the menu
+                    menu_msg_selectors = [
+                        "button:has-text('메시지 보내기')",
+                        "button:has-text('Send Message')",
+                        "//button[text()='메시지 보내기']",
+                        "//button[text()='Message']",
+                        "div[role='button']:has-text('메시지 보내기')"
+                    ]
+                    for m_selector in menu_msg_selectors:
+                        m_loc = page.locator(m_selector).first
+                        if await m_loc.count() > 0 and await m_loc.is_visible():
+                            msg_btn = m_loc
+                            logger.info(f"Found Message button in menu: {m_selector}")
+                            break
+                    if msg_btn: break
+            except:
+                continue
+
+    if msg_btn:
+        logger.info("Clicking Message button...")
         await msg_btn.click()
-        logger.info("Clicked message button, waiting for chat to load...")
         await human_delay(5, 8)
         
+        # Check for another potential 'Not Now' after navigation
+        for selector in not_now_selectors:
+            try:
+                loc = page.locator(selector).first
+                if await loc.count() > 0 and await loc.is_visible():
+                    await loc.click()
+                    await human_delay(1, 2)
+            except:
+                continue
+
         # 2. Look for the chat input
-        chat_input = page.locator("div[role='textbox'][aria-label*='메시지'], textarea[placeholder*='메시지']").first
-        if await chat_input.count() > 0:
+        # Instagram's DM box is often a div with role='textbox' and aria-label='Message' or '메시지...'
+        chat_input_selectors = [
+            "div[role='textbox'][aria-label*='메시지']",
+            "div[role='textbox'][aria-label*='Message']",
+            "div[contenteditable='true'][aria-label*='메시지']",
+            "div[contenteditable='true'][aria-label*='Message']",
+            "textarea[placeholder*='메시지']",
+            "textarea[placeholder*='Message']"
+        ]
+        
+        chat_input = None
+        for selector in chat_input_selectors:
+            try:
+                # Need to be careful: sometimes there are multiple if multiple chats are open
+                loc = page.locator(selector).last 
+                if await loc.count() > 0:
+                    chat_input = loc
+                    logger.info(f"Found chat input with selector: {selector}")
+                    break
+            except:
+                continue
+
+        if chat_input:
+            logger.info("Typing message...")
             await chat_input.click()
             await human_delay(1, 2)
             await slow_type(chat_input, message)
             await human_delay(1, 2)
             
-            # Press Enter to send or find send button
+            # 3. Send message (Enter key is standard)
+            logger.info("Sending message (Pressing Enter)...")
             await chat_input.press("Enter")
-            logger.info("Instagram DM Sent!")
+            await human_delay(2, 4)
+            
+            # Final check - did we send it? (Optional, but good for logs)
+            logger.info("Instagram DM flow completed successfully.")
             return True
         else:
-            logger.error("Could not find Instagram chat input.")
+            logger.error("Could not find Instagram chat input box.")
+            await page.screenshot(path=os.path.join(USER_DATA_DIR, "debug_insta_no_input.png"))
     else:
-        logger.error("Could not find Instagram 'Message' button. Private account?")
+        logger.error("Could not find 'Message' button on profile. Profile might be private or UI changed.")
+        await page.screenshot(path=os.path.join(USER_DATA_DIR, "debug_insta_no_msg_btn.png"))
     return False
 
 async def login_instagram(page, username, password):
-    """Handles Instagram login."""
-    logger.info("Attempting Instagram login...")
-    await page.goto("https://www.instagram.com/accounts/login/")
-    await human_delay(3, 5)
-    
-    if await page.locator("input[name='username']").count() > 0:
-        await page.locator("input[name='username']").fill(username)
-        await page.locator("input[name='password']").fill(password)
-        await page.locator("button[type='submit']").click()
-        await human_delay(10, 15) # Wait for potential OTP or dashboard
+    """Handles Instagram login with intelligent session check."""
+    logger.info("Checking Instagram login status... (PLEASE DO NOT CLOSE THE BROWSER WINDOW)")
+    try:
+        # Check homepage first to see if we're already in
+        await page.goto("https://www.instagram.com/", wait_until="networkidle", timeout=60000)
+        await human_delay(3, 5)
         
-    if "login" in page.url or await page.locator("button[type='submit']").count() > 0:
-        logger.warning("Instagram needs verification or login failed.")
+        # If we see a login form, we need to log in
+        if await page.locator("input[name='username']").count() > 0:
+            logger.info("Instagram session expired or not found. Attempting login...")
+            await page.locator("input[name='username']").fill(username)
+            await page.locator("input[name='password']").fill(password)
+            await page.locator("button[type='submit']").click()
+            await human_delay(10, 15) # Wait for potential OTP or dashboard
+            
+            # Check success
+            if "login" in page.url or await page.locator("button[type='submit']").count() > 0:
+                logger.warning("Instagram login failed or needs verification.")
+                return False
+            logger.info("Instagram login successful!")
+        else:
+            logger.info("Already logged in to Instagram. Proceeding to target.")
+            
+        return True
+    except Exception as e:
+        logger.error(f"Error during Instagram login check: {e}")
         return False
-    return True
 
 
 async def login_naver(page, username, password):
@@ -158,22 +306,6 @@ async def login_naver(page, username, password):
         return False
     return True
 
-async def login_instagram(page, username, password):
-    """Handles Instagram login."""
-    logger.info("Attempting Instagram login...")
-    await page.goto("https://www.instagram.com/accounts/login/")
-    await human_delay(3, 5)
-    
-    if await page.locator("input[name='username']").count() > 0:
-        await page.locator("input[name='username']").fill(username)
-        await page.locator("input[name='password']").fill(password)
-        await page.locator("button[type='submit']").click()
-        await human_delay(10, 15) # Wait for potential OTP or dashboard
-        
-    if "login" in page.url or await page.locator("button[type='submit']").count() > 0:
-        logger.warning("Instagram needs verification or login failed.")
-        return False
-    return True
 
 async def main(target_list_json, message, method="both", naver_creds=None, insta_creds=None):
     """
@@ -196,17 +328,25 @@ async def main(target_list_json, message, method="both", naver_creds=None, insta
         # Launch browser
         browser = await p.chromium.launch(headless=is_cloud)
         
-        # Determine which state to load for the primary navigation
-        # Note: Playwright contexts are per-browser. 
-        # For 'both' mode, we'll use naver state as base if available.
-        base_state = n_state if n_state else i_state
+        # Determine which state to load
+        # FIX: We should ideally merge states if we want to use BOTH in one context.
+        # For now, let's use a smarter way: load Instagram if we prefer Instagram, or Naver if we prefer TalkTalk.
+        # Better: Launch with one, and we'll manually handle the other cookies if needed.
+        # But Playwright storage_state is easiest.
         
+        selected_state = i_state if method == "insta" else n_state
+        if not selected_state:
+            selected_state = n_state or i_state
+            
         context_args = {
             "viewport": {'width': 1280, 'height': 800},
             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         }
-        if base_state:
-            context_args["storage_state"] = base_state
+        if selected_state and os.path.exists(selected_state):
+            logger.info(f"Loading session state: {selected_state}")
+            context_args["storage_state"] = selected_state
+        else:
+            logger.warning("Starting browser without session state (logged out).")
 
         context = await browser.new_context(**context_args)
         page = await context.new_page()

@@ -1,5 +1,6 @@
 import logging
 import os
+import requests
 from supabase import create_client, Client
 from typing import Dict, List, Optional
 
@@ -127,18 +128,30 @@ class DBHandler:
             return []
     def save_session(self, platform: str, session_data: str) -> bool:
         """Save browser session data (JSON string) to Supabase."""
-        if not self.supabase:
-            return False
+        data = {
+            "platform": platform,
+            "session_json": session_data,
+            "updated_at": "now()"
+        }
+        
         try:
-            data = {
-                "platform": platform,
-                "session_json": session_data,
-                "updated_at": "now()"
-            }
-            # Table name: t_browser_sessions
-            self.supabase.table("t_browser_sessions").upsert(
-                data, on_conflict="platform"
-            ).execute()
+            if self.supabase:
+                # Table name: t_browser_sessions
+                self.supabase.table("t_browser_sessions").upsert(
+                    data, on_conflict="platform"
+                ).execute()
+            else:
+                # Direct requests fallback
+                url = f"{config.SUPABASE_URL}/rest/v1/t_browser_sessions?on_conflict=platform"
+                headers = {
+                    "apikey": config.SUPABASE_KEY,
+                    "Authorization": f"Bearer {config.SUPABASE_KEY}",
+                    "Content-Type": "application/json",
+                    "Prefer": "resolution=merge-duplicates"
+                }
+                resp = requests.post(url, headers=headers, json=data)
+                resp.raise_for_status()
+                
             logger.info(f"Saved session for {platform}")
             return True
         except Exception as e:
@@ -147,12 +160,23 @@ class DBHandler:
 
     def load_session(self, platform: str) -> Optional[str]:
         """Load browser session data from Supabase."""
-        if not self.supabase:
-            return None
         try:
-            response = self.supabase.table("t_browser_sessions").select("session_json").eq("platform", platform).execute()
-            if response.data:
-                return response.data[0]['session_json']
+            if self.supabase:
+                response = self.supabase.table("t_browser_sessions").select("session_json").eq("platform", platform).execute()
+                if response.data:
+                    return response.data[0]['session_json']
+            else:
+                # Direct requests fallback
+                url = f"{config.SUPABASE_URL}/rest/v1/t_browser_sessions?select=session_json&platform=eq.{platform}"
+                headers = {
+                    "apikey": config.SUPABASE_KEY,
+                    "Authorization": f"Bearer {config.SUPABASE_KEY}"
+                }
+                resp = requests.get(url, headers=headers)
+                resp.raise_for_status()
+                data = resp.json()
+                if data:
+                    return data[0]['session_json']
             return None
         except Exception as e:
             logger.error(f"Error loading session: {e}")
