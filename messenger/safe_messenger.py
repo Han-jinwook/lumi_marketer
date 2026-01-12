@@ -96,8 +96,8 @@ async def send_talktalk_message(page, talk_url, message):
         logger.error("Could not find TalkTalk input area. Is the user logged in?")
     return False
 
-async def send_instagram_dm(page, insta_url, message):
-    """Automates sending an Instagram DM with robust pop-up handling."""
+async def send_instagram_dm(page, insta_url, message, image_path=None):
+    """Automates sending an Instagram DM with robust pop-up handling and optional image."""
     logger.info(f"Opening Instagram Target: {insta_url}")
     try:
         await page.goto(insta_url, wait_until="networkidle", timeout=60000)
@@ -242,6 +242,30 @@ async def send_instagram_dm(page, insta_url, message):
             await chat_input.press("Enter")
             await human_delay(2, 4)
             
+            # --- IMAGE UPLOAD ---
+            if image_path and os.path.exists(image_path):
+                logger.info(f"Attaching image: {image_path}")
+                try:
+                    # Target the hidden file input
+                    file_input = page.locator("input[type='file']").last
+                    await file_input.set_input_files(image_path)
+                    await human_delay(4, 7) # Wait for upload to complete
+                    logger.info("Image attached. Pressing Enter to send image...")
+                    
+                    # Press Enter to send the attached image
+                    await page.keyboard.press("Enter")
+                    await human_delay(2, 4)
+                    
+                    # Fallback: Sometimes a 'Send' button appears for media
+                    send_btn = page.locator("button:has-text('Send'), button:has-text('보내기')").first
+                    if await send_btn.count() > 0 and await send_btn.is_visible():
+                        await send_btn.click()
+                        await human_delay(2, 4)
+                        
+                    logger.info("Image send action triggered.")
+                except Exception as e:
+                    logger.error(f"Failed to attach image: {e}")
+
             # Final check - did we send it? (Optional, but good for logs)
             logger.info("Instagram DM flow completed successfully.")
             return True
@@ -307,7 +331,7 @@ async def login_naver(page, username, password):
     return True
 
 
-async def main(target_list_json, message, method="both", naver_creds=None, insta_creds=None):
+async def main(target_list_json, message, method="both", naver_creds=None, insta_creds=None, image_path=None):
     """
     Args:
         target_list_json: JSON string of shops to message
@@ -315,6 +339,7 @@ async def main(target_list_json, message, method="both", naver_creds=None, insta
         method: 'talk', 'insta', or 'both'
         naver_creds: (user, pw)
         insta_creds: (user, pw)
+        image_path: Optional path to an image to send
     """
     targets = json.loads(target_list_json)
     is_cloud = os.path.exists("/mount/src")
@@ -374,7 +399,7 @@ async def main(target_list_json, message, method="both", naver_creds=None, insta
             # --- Instagram DM ---
             if method == "insta" or (method == "both" and not success):
                 if shop.get('인스타'):
-                    success = await send_instagram_dm(page, shop['인스타'], message)
+                    success = await send_instagram_dm(page, shop['인스타'], message, image_path=image_path)
             
             if success:
                 wait_time = random.uniform(60, 120) 
@@ -406,4 +431,6 @@ if __name__ == "__main__":
     if len(sys.argv) > 5 and ":" in sys.argv[5]:
         i_creds = tuple(sys.argv[5].split(":", 1))
     
-    asyncio.run(main(targets_json, msg, send_method, n_creds, i_creds))
+    img_path = sys.argv[6] if len(sys.argv) > 6 and sys.argv[6] != "NONE" else None
+    
+    asyncio.run(main(targets_json, msg, send_method, n_creds, i_creds, image_path=img_path))
