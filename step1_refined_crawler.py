@@ -6,6 +6,7 @@ import json
 import csv
 from playwright.async_api import async_playwright
 import config
+from crawler.db_handler import DBHandler
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -18,34 +19,14 @@ TABLE_NAME = "t_crawled_shops"
 
 def save_to_db(shop_data):
     """
-    Saves a single shop dict to Supabase directly via HTTP.
+    Saves a single shop dict to Firebase via DBHandler.
     """
-    if not SUPABASE_URL or not SUPABASE_KEY:
-        logger.error("Supabase credentials missing.")
-        return False
-        
-    headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates"
-    }
-    
-    endpoint = f"{SUPABASE_URL}/rest/v1/{TABLE_NAME}?on_conflict=detail_url"
-    
-    try:
-        resp = requests.post(endpoint, headers=headers, json=shop_data)
-        if resp.status_code in [200, 201, 204]:
-            logger.info(f"✅ DB Saved: {shop_data.get('name')}")
-            return True
-        elif resp.status_code == 409:
-             logger.info(f"⚠️ DB Duplicate: {shop_data.get('name')}")
-             return True
-        else:
-            logger.error(f"❌ DB Save Failed: {resp.status_code} {resp.text}")
-            return False
-    except Exception as e:
-        logger.error(f"❌ DB Request Error: {e}")
+    db = DBHandler()
+    if db.insert_shop_fs(shop_data):
+        logger.info(f"✅ Firebase Saved: {shop_data.get('name')}")
+        return True
+    else:
+        logger.error(f"❌ Firebase Save Failed: {shop_data.get('name')}")
         return False
 
 async def run_crawler():

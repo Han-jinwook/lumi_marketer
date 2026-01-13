@@ -11,26 +11,38 @@ from playwright.async_api import async_playwright
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import config
 
-async def research_shop(shop_id):
-    url = config.SUPABASE_URL
-    key = config.SUPABASE_KEY
-    headers = {
-        "apikey": key,
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json"
-    }
+def research_shop(shop_id):
+    from crawler.db_handler import DBHandler
+    db = DBHandler()
     
-    # 1. Fetch shop info
-    query_url = f"{url}/rest/v1/t_crawled_shops?id=eq.{shop_id}&select=id,name,source_link"
-    resp = requests.get(query_url, headers=headers)
+    # 1. Fetch shop info from Firebase
+    # We need to find the document. If shop_id is the document ID, we use it.
+    # But since shop_id from dashboard might be from Supabase, let's search by ID field if available, 
+    # or Assume the caller provides a key that insert_shop_fs can use.
+    # In app.py, st.session_state['last_selected_shop'] is the whole dict.
     
-    if resp.status_code != 200 or not resp.json():
-        print(f"[-] Failed to fetch shop info or shop not found: {resp.status_code}")
+    # Let's use Firestore to find the doc
+    docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where("id", "==", int(shop_id) if shop_id.isdigit() else shop_id).stream()
+    shop = None
+    for d in docs:
+        shop = d.to_dict()
+        shop['_doc_id'] = d.id
+        break
+    
+    if not shop:
+        # Fallback: maybe shop_id is the document ID itself
+        doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
+        doc = doc_ref.get()
+        if doc.exists:
+            shop = doc.to_dict()
+            shop['_doc_id'] = doc.id
+    
+    if not shop:
+        print(f"[-] Shop not found in Firebase: {shop_id}")
         return
     
-    shop = resp.json()[0]
-    name = shop['name']
-    link = shop['source_link']
+    name = shop.get('name') or shop.get('상호명')
+    link = shop.get('source_link') or shop.get('플레이스링크')
     
     if not link:
         print(f"[-] No source_link for {name}. Cannot re-search.")
@@ -105,12 +117,13 @@ async def research_shop(shop_id):
             
             if update_data:
                 print(f"    [+] Found: {update_data}")
-                upd_url = f"{url}/rest/v1/t_crawled_shops?id=eq.{shop_id}"
-                upd_resp = requests.patch(upd_url, headers=headers, json=update_data)
-                if upd_resp.status_code in [200, 204]:
-                    print("    [+] DB Updated successfully.")
-                else:
-                    print(f"    [-] DB Update Failed: {upd_resp.status_code}")
+                # Update Firebase (New)
+                full_data = shop.copy()
+                if '_doc_id' in full_data: del full_data['_doc_id']
+                full_data.update(update_data)
+                db.insert_shop_fs(full_data)
+                
+                print("    [+] Firebase DB Updated successfully.")
             else:
                 print("    [-] No new information found.")
                 

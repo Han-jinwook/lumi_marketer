@@ -2,6 +2,8 @@ import logging
 import os
 import requests
 from supabase import create_client, Client
+import firebase_admin
+from firebase_admin import credentials, firestore
 from typing import Dict, List, Optional
 
 try:
@@ -16,167 +18,94 @@ logger = logging.getLogger(__name__)
 
 class DBHandler:
     def __init__(self):
-        self.supabase: Optional[Client] = None
-        self.init_supabase()
+        self.db_fs = None # Firestore Client
+        self.init_firebase()
         
-    def init_supabase(self):
-        """Initialize Supabase client."""
-        url = config.SUPABASE_URL
-        key = config.SUPABASE_KEY
-        
-        if not url or not key or url == "your_supabase_url_here":
-            logger.warning("Supabase credentials not found or invalid in .env. DB features will be disabled.")
-            return
-
+    def init_firebase(self):
+        """Initialize Firebase Admin SDK."""
         try:
-            self.supabase = create_client(url, key)
-            logger.info("Supabase client initialized successfully")
+            if not firebase_admin._apps:
+                cred = credentials.Certificate(config.FIREBASE_KEY_PATH)
+                firebase_admin.initialize_app(cred)
+            self.db_fs = firestore.client()
+            logger.info("Firebase Firestore initialized successfully")
         except Exception as e:
-            logger.warning(f"Supabase wrapper init failed: {e}. Using direct requests fallback.")
-            self.supabase = None # Will use requests fallback in methods
+            logger.error(f"Firebase initialization failed: {e}")
+            self.db_fs = None
             
-    def insert_lead(self, data: Dict) -> bool:
-        """
-        Insert a lead into Supabase.
-        Expected data format:
-        {
-            "blog_url": "...",
-            "title": "...",
-            "email": "..."
-        }
-        """
-        if not self.supabase:
-            return False
-            
-        try:
-            if self.supabase:
-                response = self.supabase.table(config.SUPABASE_TABLE).upsert(
-                    data, 
-                    on_conflict="blog_url"
-                ).execute()
-            else:
-                # Direct requests fallback
-                url = f"{config.SUPABASE_URL}/rest/v1/{config.SUPABASE_TABLE}?on_conflict=blog_url"
-                headers = {
-                    "apikey": config.SUPABASE_KEY,
-                    "Authorization": f"Bearer {config.SUPABASE_KEY}",
-                    "Content-Type": "application/json",
-                    "Prefer": "resolution=merge-duplicates"
-                }
-                resp = requests.post(url, headers=headers, json=data)
-                resp.raise_for_status()
-            
-            logger.info(f"Successfully saved lead: {data.get('blog_url')}")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error saving to Supabase: {e}")
-            return False
-
     def insert_shop(self, data: Dict) -> bool:
-        """
-        Insert a shop into the unified leads table.
-        """
-        if not self.supabase:
-            return self.insert_lead(data) # Fallback to requests in insert_lead
-            
-        try:
-            # Handle different client interfaces
-            if hasattr(self.supabase, 'table'):
-                query = self.supabase.table(config.SUPABASE_TABLE)
-            else:
-                query = self.supabase.from_(config.SUPABASE_TABLE)
-                
-            # Upsert based on detail_url or blog_url
-            conflict_key = "detail_url" if "detail_url" in data else "blog_url"
-            response = query.upsert(
-                data, 
-                on_conflict=conflict_key
-            ).execute()
-            
-            logger.info(f"Successfully saved entry to {config.SUPABASE_TABLE}: {data.get('name') or data.get('blog_url')}")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error saving to Supabase table {config.SUPABASE_TABLE}: {e}")
+        """Insert or update shop in Firebase Firestore."""
+        if not self.db_fs:
             return False
-            
-    def fetch_existing_urls(self) -> List[str]:
-        """Fetch all existing blog URLs to avoid re-crawling."""
-        if not self.supabase:
-            return []
-            
         try:
-            if self.supabase:
-                response = self.supabase.table(config.SUPABASE_TABLE).select("blog_url").execute()
-                urls = [item['blog_url'] for item in response.data]
-            else:
-                # Direct requests fallback
-                url = f"{config.SUPABASE_URL}/rest/v1/{config.SUPABASE_TABLE}?select=blog_url"
-                headers = {
-                    "apikey": config.SUPABASE_KEY,
-                    "Authorization": f"Bearer {config.SUPABASE_KEY}"
-                }
-                resp = requests.get(url, headers=headers)
-                resp.raise_for_status()
-                urls = [item['blog_url'] for item in resp.json()]
+            # Unified key for shops
+            key = data.get("detail_url") or data.get("source_link") or data.get("blog_url") or data.get("플레이스링크")
+            if not key: return False
+            doc_id = key.replace("/", "_").replace(":", "_")
+            
+            self.db_fs.collection(config.FIREBASE_COLLECTION).document(doc_id).set(data, merge=True)
+            logger.info(f"Successfully saved shop to Firebase: {data.get('name') or data.get('상호명')}")
+            return True
+        except Exception as e:
+            logger.error(f"Error saving shop to Firebase: {e}")
+            return False
 
-            logger.info(f"Fetched {len(urls)} existing URLs from DB")
+    def insert_shop_fs(self, data: Dict) -> bool:
+        """Alias for backward compatibility."""
+        return self.insert_shop(data)
+
+    def insert_lead(self, data: Dict) -> bool:
+        """Alias for lead insertion."""
+        return self.insert_shop(data)
+
+    def insert_lead_fs(self, data: Dict) -> bool:
+        """Alias for lead insertion."""
+        return self.insert_shop(data)
+
+    def fetch_existing_urls(self) -> List[str]:
+        """Fetch existing shop URLs from Firebase."""
+        if not self.db_fs:
+                return []
+        try:
+            docs = self.db_fs.collection(config.FIREBASE_COLLECTION).stream()
+            urls = []
+            for doc in docs:
+                d = doc.to_dict()
+                url = d.get("detail_url") or d.get("source_link") or d.get("blog_url") or d.get("플레이스링크")
+                if url: urls.append(url)
             return urls
         except Exception as e:
-            logger.error(f"Error fetching existing URLs: {e}")
+            logger.error(f"Error fetching URLs: {e}")
             return []
+
     def save_session(self, platform: str, session_data: str) -> bool:
-        """Save browser session data (JSON string) to Supabase."""
-        data = {
-            "platform": platform,
-            "session_json": session_data,
-            "updated_at": "now()"
-        }
-        
+        """Save browser session data to Firebase."""
+        if not self.db_fs:
+            return False
         try:
-            if self.supabase:
-                # Table name: t_browser_sessions
-                self.supabase.table("t_browser_sessions").upsert(
-                    data, on_conflict="platform"
-                ).execute()
-            else:
-                # Direct requests fallback
-                url = f"{config.SUPABASE_URL}/rest/v1/t_browser_sessions?on_conflict=platform"
-                headers = {
-                    "apikey": config.SUPABASE_KEY,
-                    "Authorization": f"Bearer {config.SUPABASE_KEY}",
-                    "Content-Type": "application/json",
-                    "Prefer": "resolution=merge-duplicates"
-                }
-                resp = requests.post(url, headers=headers, json=data)
-                resp.raise_for_status()
-                
-            logger.info(f"Saved session for {platform}")
+            data = {
+                "platform": platform,
+                "session_json": session_data,
+                "updated_at": firestore.SERVER_TIMESTAMP
+            }
+            self.db_fs.collection(config.FIREBASE_SESSION_COLLECTION).document(platform).set(data)
+            logger.info(f"Saved session for {platform} to Firebase")
             return True
         except Exception as e:
-            logger.error(f"Error saving session: {e}")
+            logger.error(f"Error saving session to Firebase: {e}")
             return False
 
+    def save_session_fs(self, platform: str, session_data: str) -> bool:
+        return self.save_session(platform, session_data)
+
     def load_session(self, platform: str) -> Optional[str]:
-        """Load browser session data from Supabase."""
+        """Load browser session data from Firebase."""
+        if not self.db_fs:
+            return None
         try:
-            if self.supabase:
-                response = self.supabase.table("t_browser_sessions").select("session_json").eq("platform", platform).execute()
-                if response.data:
-                    return response.data[0]['session_json']
-            else:
-                # Direct requests fallback
-                url = f"{config.SUPABASE_URL}/rest/v1/t_browser_sessions?select=session_json&platform=eq.{platform}"
-                headers = {
-                    "apikey": config.SUPABASE_KEY,
-                    "Authorization": f"Bearer {config.SUPABASE_KEY}"
-                }
-                resp = requests.get(url, headers=headers)
-                resp.raise_for_status()
-                data = resp.json()
-                if data:
-                    return data[0]['session_json']
+            doc = self.db_fs.collection(config.FIREBASE_SESSION_COLLECTION).document(platform).get()
+            if doc.exists:
+                return doc.to_dict().get('session_json')
             return None
         except Exception as e:
             logger.error(f"Error loading session: {e}")

@@ -6,6 +6,7 @@ import json
 import re
 from playwright.async_api import async_playwright
 import config
+from crawler.db_handler import DBHandler
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -18,53 +19,50 @@ TABLE_NAME = config.SUPABASE_TABLE
 
 def save_to_db(shop_data):
     """
-    Saves a single shop dict to Supabase directly via HTTP.
+    Saves a single shop dict to Firebase via DBHandler.
     """
-    if not SUPABASE_URL or not SUPABASE_KEY:
-        logger.error("Supabase credentials missing.")
-        return False
-        
-    headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates"
-    }
-    
-    # Updated Conflict Key: source_link
-    endpoint = f"{SUPABASE_URL}/rest/v1/{TABLE_NAME}?on_conflict=source_link"
-    
-    try:
-        resp = requests.post(endpoint, headers=headers, json=shop_data)
-        if resp.status_code in [200, 201, 204]:
-            logger.info(f"✅ DB Saved: {shop_data.get('name')}")
-            return True
-        elif resp.status_code == 409:
-            logger.info(f"⚠️ DB Duplicate: {shop_data.get('name')}")
-            return True
-        else:
-            logger.error(f"❌ DB Save Failed: {resp.status_code} {resp.text}")
-            return False
-    except Exception as e:
-        logger.error(f"❌ DB Request Error: {e}")
+    db = DBHandler()
+    if db.insert_shop_fs(shop_data):
+        logger.info(f"✅ Firebase Saved: {shop_data.get('name')}")
+        return True
+    else:
+        logger.error(f"❌ Firebase Save Failed: {shop_data.get('name')}")
         return False
 
 import sys
 
 async def run_crawler():
     # Target Keywords (from CLI or default)
+    target_count = 10
     if len(sys.argv) > 1:
-        # Join all args in case of spaces, e.g. "Seoul Gangnam"
-        raw_keyword = " ".join(sys.argv[1:])
-        # Ensure it has "피부관리샵" suffix if not present? 
-        # Or just trust user input. user said "Select Region", so I'll construct the keyword in app.py.
+        # Try to see if the last argument is a number (count)
+        try:
+            if sys.argv[-1].isdigit():
+                target_count = int(sys.argv[-1])
+                raw_keyword = " ".join(sys.argv[1:-1])
+            else:
+                raw_keyword = " ".join(sys.argv[1:])
+        except:
+            raw_keyword = " ".join(sys.argv[1:])
+            
+        if not raw_keyword:
+            raw_keyword = "인천 부평구 부평동"
+            
         keywords = [f"{raw_keyword} 피부관리샵"]
-        logger.info(f"🚀 CLI Triggered: Searching for '{keywords[0]}'")
+        logger.info(f"🚀 CLI Triggered: Searching for '{keywords[0]}' (Target: {target_count})")
     else:
         keywords = ["인천 부평구 부평동 피부관리샵"] 
-    target_count = 10
+    
     total_saved = 0
     
+    # Stealth User Agents
+    UA_LIST = [
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (iPad; CPU OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36"
+    ]
+    user_agent = random.choice(UA_LIST)
+
     async with async_playwright() as p:
         try:
             # Generic Chromium for Linux/Container environments
@@ -83,7 +81,10 @@ async def run_crawler():
              return
         
         context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            user_agent=user_agent,
+            viewport={'width': 390, 'height': 844},
+            locale="ko-KR",
+            timezone_id="Asia/Seoul"
         )
         
         await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
@@ -97,8 +98,14 @@ async def run_crawler():
             url = f"https://m.place.naver.com/place/list?query={keyword}"
             
             try:
-                await page.goto(url, wait_until="networkidle")
-                await asyncio.sleep(random.uniform(2, 4))
+                await page.goto(url, wait_until="networkidle", timeout=60000)
+                await asyncio.sleep(random.uniform(3, 6))
+                
+                # Block Detection
+                if "서비스 이용이 제한되었습니다" in await page.content():
+                    logger.error("🛑 Naver blocked this IP. Please wait or use a different network.")
+                    await page.screenshot(path="naver_block_detected.png")
+                    break
                 
                 # Handle Map View vs List View
                 # Check for "목록보기" button which appears in map view
@@ -106,16 +113,40 @@ async def run_crawler():
                 if await list_view_btn.count() > 0:
                     logger.info("🗺️ Map view detected. Switching to list view...")
                     await list_view_btn.first.click()
-                    await asyncio.sleep(random.uniform(2, 3))
+                    await asyncio.sleep(random.uniform(3, 5))
                 
                 # Scroll to load at least some
                 for _ in range(2):
                      await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                     await asyncio.sleep(random.uniform(1, 2))
+                     await asyncio.sleep(random.uniform(2, 4))
                 
+                # Debug: Save screenshot of the search results
+                await page.screenshot(path="debug_search_results.png")
+                logger.info("📸 Saved debug_search_results.png")
+
                 # Check for items
-                # VLTHu is a common class for shop items on mobile
-                list_items = await page.locator("li, div.VLTHu, div[data-shop-id]").all()
+                # Try multiple common selectors
+                selectors = [
+                    "div.ApCpt", 
+                    "li.VLTHu", 
+                    "div[data-shop-id]", 
+                    "a[href*='/place/']", # Fallback to any place link
+                    ".place_bluelink"
+                ]
+                
+                list_items = []
+                for sel in selectors:
+                    items = await page.locator(sel).all()
+                    if len(items) > 0:
+                        logger.info(f"🔍 Found {len(items)} items with selector '{sel}'")
+                        list_items = items
+                        break
+                
+                if len(list_items) == 0:
+                    # Very broad fallback
+                    list_items = await page.locator("div, li").all() # Too broad, but let's see
+                    logger.warning("⚠️ No specific items found. Using broad div/li search.")
+                    
                 logger.info(f"Phase 1: Found {len(list_items)} potential items.")
                 
                 shops_to_process = []

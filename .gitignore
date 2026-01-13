@@ -19,3 +19,9 @@ Thumbs.db
 browser_session/
 *.log
 crawled_shops_full.json
+debug_search_results.png
+naver_block_detected.png
+
+# Firebase Key (SENSITIVE)
+firebase_key.json
+write_key.py

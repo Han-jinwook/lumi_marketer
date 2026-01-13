@@ -13,6 +13,11 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 SUPABASE_TABLE = "t_crawled_shops" # Standard table name for leads
 LEADS_TABLE = "t_crawled_shops"    # Unified name
 
+# Firebase Settings
+FIREBASE_KEY_PATH = os.path.join(os.path.dirname(__file__), "firebase_key.json")
+FIREBASE_COLLECTION = "crawled_shops"
+FIREBASE_SESSION_COLLECTION = "browser_sessions"
+
 # Output Settings
 OUTPUT_CSV = "확장_피부샵_원장_데이터.csv"
 

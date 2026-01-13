@@ -87,15 +87,20 @@ with st.sidebar:
     st.write("---")
     s_city = st.selectbox("수집 지역 (시/도)", ["서울", "인천", "경기", "부산", "대구", "대전", "광주", "울산", "세종", "제주"], key="sb_city")
     s_dist = st.text_input("상세 지역 (군/구/명칭)", placeholder="부평동, 강남역 등", key="sb_dist")
+    s_count = st.slider("수집 개수", 5, 100, 10, step=5, key="sb_count")
     
     if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
         target = f"{s_city} {s_dist}" if s_dist else s_city
-        st.toast(f"'{target}' 수집을 시작합니다.")
+        st.toast(f"'{target}' 수집을 시작합니다. (목표: {s_count}개)")
         try:
             script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test_detail_10_shops.py'))
-            subprocess.Popen([sys.executable, script_path, target], creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+            subprocess.Popen([sys.executable, script_path, target, str(s_count)], creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
         except Exception as e:
             st.error(f"엔진 가동 실패: {e}")
+            
+    if st.button("🔄 데이터 새로고침", use_container_width=True, key="btn_sb_refresh"):
+        st.cache_data.clear()
+        st.rerun()
     st.write("---")
     st.info("완료 후 '데이터 새로고침'을 눌러주세요.")
 
@@ -282,35 +287,79 @@ st.divider()
 # --- 2.2 Data Logic ---
 @st.cache_data(ttl=60)
 def load_data():
-    url = f"{config.SUPABASE_URL}/rest/v1/{config.SUPABASE_TABLE}?select=*"
-    headers = {"apikey": config.SUPABASE_KEY, "Authorization": f"Bearer {config.SUPABASE_KEY}", "Content-Type": "application/json"}
+    # 2. Load from Firebase
+    f_df = pd.DataFrame()
     try:
-        response = requests.get(url, headers=headers)
-        df = pd.DataFrame(response.json())
-        df = df.rename(columns={"id": "ID", "name": "상호명", "email": "이메일", "address": "주소", "phone": "번호", "talk_url": "톡톡링크", "instagram_handle": "인스타", "source_link": "플레이스링크"})
-        def n_i(v):
-            if not v or v == "None": return ""
-            return v if v.startswith("http") else f"https://www.instagram.com/{v.replace('@', '').strip()}/"
-        if '인스타' in df.columns: df['인스타'] = df['인스타'].apply(n_i)
-        return df
-    except: return pd.DataFrame()
+        from crawler.db_handler import DBHandler
+        db = DBHandler()
+        if db.db_fs:
+            docs = db.db_fs.collection(config.FIREBASE_COLLECTION).stream()
+            data_list = []
+            for doc in docs:
+                d = doc.to_dict()
+                d['id'] = doc.id # Ensure we have an ID for selection
+                data_list.append(d)
+                
+            if data_list:
+                f_df = pd.DataFrame(data_list)
+    except Exception as e:
+        st.warning(f"Firebase 로드 실패: {e}")
+
+    if f_df.empty: return f_df
+    
+    # Simple deduplication strategy
+    combined = f_df.drop_duplicates(subset=['name', 'source_link'], keep='last') if not f_df.empty else f_df
+    
+    # Renaming and column mapping (consistent with previous view)
+    # Firebase might use different keys, let's map them if they exist
+    rename_map = {
+        "id": "ID", 
+        "name": "상호명", 
+        "email": "이메일", 
+        "address": "주소", 
+        "phone": "번호", 
+        "talk_url": "톡톡링크", 
+        "instagram_handle": "인스타", 
+        "source_link": "플레이스링크",
+        "naver_blog_id": "블로그ID"
+    }
+    
+    # Also handle Korean keys if they already exist in Firebase from migration
+    combined = combined.rename(columns=rename_map)
+    
+    def n_i(v):
+        if not v or v == "None": return ""
+        v = str(v)
+        return v if v.startswith("http") else f"https://www.instagram.com/{v.replace('@', '').strip()}/"
+    
+    if '인스타' in combined.columns: 
+        combined['인스타'] = combined['인스타'].apply(n_i)
+    
+    return combined
 
 def delete_shop(shop_id):
-    url = f"{config.SUPABASE_URL}/rest/v1/{config.SUPABASE_TABLE}?id=eq.{shop_id}"
-    headers = {"apikey": config.SUPABASE_KEY, "Authorization": f"Bearer {config.SUPABASE_KEY}", "Content-Type": "application/json"}
+    # Firebase Delete
     try:
-        res = requests.delete(url, headers=headers)
-        if res.status_code in [200, 204]:
-            st.toast("삭제 완료되었습니다.")
-            st.cache_data.clear()
-            st.session_state['last_selected_shop'] = None
-            time.sleep(1)
-            st.rerun()
-        else: 
-            st.error(f"삭제 실패 (Status: {res.status_code})")
-            st.write(res.text)
-    except Exception as e: 
-        st.error(f"오류 발생: {e}")
+        from crawler.db_handler import DBHandler
+        db = DBHandler()
+        if db.db_fs:
+            # First try as doc ID
+            doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
+            if doc_ref.get().exists:
+                doc_ref.delete()
+            else:
+                # Search by custom id field
+                docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where("id", "==", shop_id).stream()
+                for doc in docs:
+                    doc.reference.delete()
+    except Exception as e:
+        st.error(f"삭제 실패: {e}")
+    
+    st.toast("삭제 요청이 처리되었습니다.")
+    st.cache_data.clear()
+    st.session_state['last_selected_shop'] = None
+    time.sleep(1)
+    st.rerun()
 
 df = load_data()
 

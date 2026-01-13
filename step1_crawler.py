@@ -5,6 +5,7 @@ import random
 import json
 from playwright.async_api import async_playwright
 import config
+from crawler.db_handler import DBHandler
 
 # Ensure output directory exists if needed (current working dir)
 OUTPUT_FILE = config.RAW_DATA_FILE
@@ -171,11 +172,23 @@ async def run_crawler():
                                         except: pass
 
                                     # Save
-                                    if shop_data['Name']:
+                                        # Save to CSV
                                         with open(OUTPUT_FILE, 'a', encoding='utf-8', newline='') as f:
                                             writer = csv.DictWriter(f, fieldnames=shop_data.keys())
                                             writer.writerow(shop_data)
-                                        # print(f"    [Saved] {shop_data['Name']}")
+                                        
+                                        # Save to Firebase
+                                        db = DBHandler()
+                                        db.insert_shop_fs({
+                                            "name": shop_data['Name'],
+                                            "address": shop_data['Address'],
+                                            "phone": shop_data['Phone'],
+                                            "source_link": shop_data['Detail_Url'],
+                                            "latitude": shop_data['Latitude'],
+                                            "longitude": shop_data['Longitude'],
+                                            "keyword": shop_data['Keyword']
+                                        })
+                                        
                                         existing_urls.add(shop_url)
                                         
                                 except Exception as e:
