@@ -18,6 +18,32 @@ FIREBASE_KEY_PATH = os.path.join(os.path.dirname(__file__), "firebase_key.json")
 FIREBASE_COLLECTION = "crawled_shops"
 FIREBASE_SESSION_COLLECTION = "browser_sessions"
 
+# Load Firebase Service Account Info
+FIREBASE_SERVICE_ACCOUNT = None
+
+# 1. Try to load from Streamlit Secrets (Recommended for Cloud)
+try:
+    import streamlit as st
+    if "firebase" in st.secrets:
+        # Convert st.secrets proxy to a real dict
+        FIREBASE_SERVICE_ACCOUNT = dict(st.secrets["firebase"])
+except:
+    pass
+
+# 2. Try to load from Environment Variable (Single JSON String)
+if not FIREBASE_SERVICE_ACCOUNT:
+    env_key = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if env_key:
+        try:
+            import json
+            FIREBASE_SERVICE_ACCOUNT = json.loads(env_key)
+        except:
+            pass
+
+# 3. Fallback to local file path (Local Development)
+if not FIREBASE_SERVICE_ACCOUNT:
+    FIREBASE_SERVICE_ACCOUNT = FIREBASE_KEY_PATH
+
 # Output Settings
 OUTPUT_CSV = "확장_피부샵_원장_데이터.csv"
 

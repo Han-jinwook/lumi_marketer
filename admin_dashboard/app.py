@@ -306,35 +306,41 @@ def load_data():
         st.warning(f"Firebase 로드 실패: {e}")
 
     if f_df.empty: return f_df
-    
-    # Simple deduplication strategy
-    combined = f_df.drop_duplicates(subset=['name', 'source_link'], keep='last') if not f_df.empty else f_df
-    
-    # Renaming and column mapping (consistent with previous view)
-    # Firebase might use different keys, let's map them if they exist
+
+    # Mapping English keys to Korean keys (consistent with standard dashboard)
     rename_map = {
-        "id": "ID", 
         "name": "상호명", 
         "email": "이메일", 
         "address": "주소", 
         "phone": "번호", 
-        "talk_url": "톡톡링크", 
-        "instagram_handle": "인스타", 
+        "talktalk": "톡톡링크", 
+        "instagram": "인스타", 
         "source_link": "플레이스링크",
-        "naver_blog_id": "블로그ID"
+        "blog_id": "블로그ID",
+        "owner_name": "대표자"
     }
+    f_df = f_df.rename(columns=rename_map)
     
-    # Also handle Korean keys if they already exist in Firebase from migration
-    combined = combined.rename(columns=rename_map)
+    # Ensure mandatory columns exist to avoid KeyError later
+    mandatory_cols = ["상호명", "주소", "플레이스링크", "번호", "이메일", "인스타", "톡톡링크", "블로그ID"]
+    for col in mandatory_cols:
+        if col not in f_df.columns:
+            f_df[col] = ""
+
+    # Simple deduplication strategy (now using Korean keys)
+    combined = f_df.drop_duplicates(subset=['상호명', '플레이스링크'], keep='last')
     
     def n_i(v):
         if not v or v == "None": return ""
         v = str(v)
-        return v if v.startswith("http") else f"https://www.instagram.com/{v.replace('@', '').strip()}/"
+        if v.startswith("http"): return v
+        return f"https://www.instagram.com/{v.replace('@', '').strip()}/"
     
     if '인스타' in combined.columns: 
         combined['인스타'] = combined['인스타'].apply(n_i)
     
+    # Reorder columns for a cleaner view if possible
+    # (Optional: select only what we need or keep all)
     return combined
 
 def delete_shop(shop_id):

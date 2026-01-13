@@ -25,7 +25,18 @@ class DBHandler:
         """Initialize Firebase Admin SDK."""
         try:
             if not firebase_admin._apps:
-                cred = credentials.Certificate(config.FIREBASE_KEY_PATH)
+                # config.FIREBASE_SERVICE_ACCOUNT can be a dict (from secrets) or a string (file path)
+                cred_info = config.FIREBASE_SERVICE_ACCOUNT
+                
+                # If it's a dict, use it directly. If it's a string, treat it as a path.
+                if isinstance(cred_info, str):
+                    if not os.path.exists(cred_info):
+                        logger.warning(f"Firebase key file not found at {cred_info}. Skipping initialization.")
+                        return
+                    cred = credentials.Certificate(cred_info)
+                else:
+                    cred = credentials.Certificate(cred_info)
+                
                 firebase_admin.initialize_app(cred)
             self.db_fs = firestore.client()
             logger.info("Firebase Firestore initialized successfully")
