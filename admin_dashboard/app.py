@@ -348,21 +348,26 @@ def load_data():
     
     return combined
 
-def delete_shop(shop_id):
+def delete_shop(shop_id, place_link=None):
     # Firebase Delete
     success = False
     try:
         from crawler.db_handler import DBHandler
         db = DBHandler()
         if db.db_fs:
-            # Delete by doc ID directly (more efficient)
-            doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
-            doc_ref.delete()
+            # 1. Delete by doc ID directly
+            if shop_id:
+                doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
+                doc_ref.delete()
             
-            # Also try searching by fallback fields just in case
-            docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where("id", "==", shop_id).stream()
-            for doc in docs:
-                doc.reference.delete()
+            # 2. Identifier-based mass deletion (Handle duplicates)
+            if place_link:
+                # Query docs with same place link
+                # In Firestore, it could be 'source_link' or '플레이스링크'
+                for field in ["source_link", "플레이스링크"]:
+                    docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where(field, "==", place_link).stream()
+                    for doc in docs:
+                        doc.reference.delete()
                 
             success = True
         else:
@@ -586,7 +591,8 @@ if page == 'Shop Search':
                 with c_del:
                     st.markdown('<div class="delete-btn">', unsafe_allow_html=True)
                     if st.button("✕ 삭제", key="btn_del_shop"):
-                        delete_shop(st.session_state['last_selected_shop']['ID'])
+                        shop_to_del = st.session_state['last_selected_shop']
+                        delete_shop(shop_to_del['ID'], place_link=shop_to_del.get('플레이스링크'))
                     st.markdown('</div>', unsafe_allow_html=True)
                 with c_res:
                     st.markdown('<div class="research-btn">', unsafe_allow_html=True)
