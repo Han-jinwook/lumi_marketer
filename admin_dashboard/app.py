@@ -350,27 +350,32 @@ def load_data():
 
 def delete_shop(shop_id):
     # Firebase Delete
+    success = False
     try:
         from crawler.db_handler import DBHandler
         db = DBHandler()
         if db.db_fs:
-            # First try as doc ID
+            # Delete by doc ID directly (more efficient)
             doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
-            if doc_ref.get().exists:
-                doc_ref.delete()
-            else:
-                # Search by custom id field
-                docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where("id", "==", shop_id).stream()
-                for doc in docs:
-                    doc.reference.delete()
+            doc_ref.delete()
+            
+            # Also try searching by fallback fields just in case
+            docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where("id", "==", shop_id).stream()
+            for doc in docs:
+                doc.reference.delete()
+                
+            success = True
+        else:
+            st.error("데이터베이스 연결에 실패했습니다. (DBHandler.db_fs is None)")
     except Exception as e:
-        st.error(f"삭제 실패: {e}")
+        st.error(f"삭제 작업 중 오류 발생: {e}")
     
-    st.toast("삭제 요청이 처리되었습니다.")
-    st.cache_data.clear()
-    st.session_state['last_selected_shop'] = None
-    time.sleep(1)
-    st.rerun()
+    if success:
+        st.toast("데이터가 성공적으로 삭제되었습니다.")
+        st.cache_data.clear()
+        st.session_state['last_selected_shop'] = None
+        time.sleep(0.5)
+        st.rerun()
 
 df = load_data()
 
