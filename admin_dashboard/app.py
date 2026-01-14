@@ -642,8 +642,17 @@ def render_track(track_id, label, icon, column_filter, config_expander_name, df)
                                 
                                 targets = [{"상호명": s['상호명'], "인스타": s['인스타']} for _, s in selected_shops.iterrows()]
                                 script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'messenger', 'safe_messenger.py'))
-                                subprocess.Popen([sys.executable, script_path, json.dumps(targets), st.session_state['tpl_C'], "insta", "NONE", f"{u}:{p}", img_path], creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+                                log_path = os.path.abspath(os.path.join(os.getcwd(), 'messenger.log'))
+                                with open(log_path, "a", encoding="utf-8") as log_file:
+                                    log_file.write(f"\n--- New Execution: {time.strftime('%Y-%m-%d %H:%M:%S')} ---\n")
+                                    subprocess.Popen(
+                                        [sys.executable, script_path, json.dumps(targets), st.session_state['tpl_C'], "insta", "NONE", f"{u}:{p}", img_path],
+                                        stdout=log_file,
+                                        stderr=log_file,
+                                        creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                                    )
                                 st.success(f"엔진 가동됨 (이미지: {'유' if img_path != 'NONE' else '무'})")
+                                st.info("실행 로그는 messenger.log 파일에서 확인 가능합니다.")
 
             else: # Track B: 3-Column Grid View
                 st.write("---")

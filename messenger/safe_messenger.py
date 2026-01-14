@@ -137,7 +137,9 @@ async def send_instagram_dm(page, insta_url, message, image_path=None):
         "[aria-label='Message']",
         "[aria-label='메시지 보내기']",
         "//div[@role='button' and (text()='Message' or text()='메시지 보내기')]",
-        "//button[contains(., 'Message') or contains(., '메시지 보내기')]"
+        "//button[contains(., 'Message') or contains(., '메시지 보내기')]",
+        "a:has-text('Message')", # New: Links sometimes act as buttons
+        "a:has-text('메시지 보내기')"
     ]
     
     msg_btn = None
@@ -194,9 +196,19 @@ async def send_instagram_dm(page, insta_url, message, image_path=None):
 
     if msg_btn:
         logger.info("Clicking Message button...")
-        await msg_btn.click()
+        try:
+            await msg_btn.click()
+        except:
+            # Sometime it's blocked by a div, force click via JS
+            await msg_btn.evaluate("b => b.click()")
+            
         await human_delay(5, 8)
         
+        # Check for login wall (like previous screenshot)
+        if "login" in page.url or await page.locator("input[name='username']").count() > 0:
+            logger.warning("Still seeing login screen! Login might have failed.")
+            return False
+
         # Check for another potential 'Not Now' after navigation
         for selector in not_now_selectors:
             try:
@@ -208,20 +220,20 @@ async def send_instagram_dm(page, insta_url, message, image_path=None):
                 continue
 
         # 2. Look for the chat input
-        # Instagram's DM box is often a div with role='textbox' and aria-label='Message' or '메시지...'
         chat_input_selectors = [
             "div[role='textbox'][aria-label*='메시지']",
             "div[role='textbox'][aria-label*='Message']",
             "div[contenteditable='true'][aria-label*='메시지']",
             "div[contenteditable='true'][aria-label*='Message']",
             "textarea[placeholder*='메시지']",
-            "textarea[placeholder*='Message']"
+            "textarea[placeholder*='Message']",
+            "div[aria-placeholder*='메시지']",
+            "div[aria-placeholder*='Message']"
         ]
         
         chat_input = None
         for selector in chat_input_selectors:
             try:
-                # Need to be careful: sometimes there are multiple if multiple chats are open
                 loc = page.locator(selector).last 
                 if await loc.count() > 0:
                     chat_input = loc
@@ -232,49 +244,53 @@ async def send_instagram_dm(page, insta_url, message, image_path=None):
 
         if chat_input:
             logger.info("Typing message...")
-            await chat_input.click()
-            await human_delay(1, 2)
-            await slow_type(chat_input, message)
-            await human_delay(1, 2)
-            
-            # 3. Send message (Enter key is standard)
-            logger.info("Sending message (Pressing Enter)...")
-            await chat_input.press("Enter")
-            await human_delay(2, 4)
-            
-            # --- IMAGE UPLOAD ---
-            if image_path and os.path.exists(image_path):
-                logger.info(f"Attaching image: {image_path}")
-                try:
-                    # Target the hidden file input
-                    file_input = page.locator("input[type='file']").last
-                    await file_input.set_input_files(image_path)
-                    await human_delay(4, 7) # Wait for upload to complete
-                    logger.info("Image attached. Pressing Enter to send image...")
-                    
-                    # Press Enter to send the attached image
-                    await page.keyboard.press("Enter")
-                    await human_delay(2, 4)
-                    
-                    # Fallback: Sometimes a 'Send' button appears for media
-                    send_btn = page.locator("button:has-text('Send'), button:has-text('보내기')").first
-                    if await send_btn.count() > 0 and await send_btn.is_visible():
-                        await send_btn.click()
-                        await human_delay(2, 4)
+            try:
+                await chat_input.click()
+                await human_delay(1, 2)
+                await slow_type(chat_input, message)
+                await human_delay(1, 2)
+                
+                # 3. Send message (Enter key is standard)
+                logger.info("Sending message (Pressing Enter)...")
+                await chat_input.press("Enter")
+                await human_delay(2, 4)
+                
+                # --- IMAGE UPLOAD ---
+                if image_path and os.path.exists(image_path):
+                    logger.info(f"Attaching image: {image_path}")
+                    try:
+                        # Target the hidden file input
+                        file_input = page.locator("input[type='file']").last
+                        await file_input.set_input_files(image_path)
+                        await human_delay(5, 10) # Wait for upload to complete
+                        logger.info("Image attached. Pressing Enter to send image...")
                         
-                    logger.info("Image send action triggered.")
-                except Exception as e:
-                    logger.error(f"Failed to attach image: {e}")
+                        # Press Enter to send the attached image
+                        await page.keyboard.press("Enter")
+                        await human_delay(3, 5)
+                        
+                        # Fallback: Sometimes a 'Send' button appears for media
+                        send_btn = page.locator("button:has-text('Send'), button:has-text('보내기')").first
+                        if await send_btn.count() > 0 and await send_btn.is_visible():
+                            await send_btn.click()
+                            await human_delay(2, 4)
+                            
+                        logger.info("Image send action triggered.")
+                    except Exception as e:
+                        logger.error(f"Failed to attach image: {e}")
 
-            # Final check - did we send it? (Optional, but good for logs)
-            logger.info("Instagram DM flow completed successfully.")
-            return True
+                logger.info("Instagram DM flow completed successfully.")
+                return True
+            except Exception as e:
+                logger.error(f"Error during message typing/sending: {e}")
         else:
             logger.error("Could not find Instagram chat input box.")
-            await page.screenshot(path=os.path.join(USER_DATA_DIR, "debug_insta_no_input.png"))
+            try: await page.screenshot(path=os.path.join(USER_DATA_DIR, "debug_insta_no_input.png"))
+            except: pass
     else:
         logger.error("Could not find 'Message' button on profile. Profile might be private or UI changed.")
-        await page.screenshot(path=os.path.join(USER_DATA_DIR, "debug_insta_no_msg_btn.png"))
+        try: await page.screenshot(path=os.path.join(USER_DATA_DIR, "debug_insta_no_msg_btn.png"))
+        except: pass
     return False
 
 async def login_instagram(page, username, password):
@@ -294,9 +310,27 @@ async def login_instagram(page, username, password):
             await human_delay(10, 15) # Wait for potential OTP or dashboard
             
             # Check success
-            if "login" in page.url or await page.locator("button[type='submit']").count() > 0:
+            if "login" in page.url or await page.locator("input[name='username']").count() > 0:
                 logger.warning("Instagram login failed or needs verification.")
                 return False
+            
+            # --- Handling Post-Login Pop-ups ('Save Info', 'Notifications') ---
+            logger.info("Handling post-login pop-ups...")
+            post_login_selectors = [
+                 "//button[text()='Save Info']", "//button[text()='정보 저장']",
+                 "//button[text()='Not Now']", "//button[text()='나중에 하기']",
+                 "button._a9--._ap3a._aade"
+            ]
+            for _ in range(3):
+                for selector in post_login_selectors:
+                    try:
+                        loc = page.locator(selector).first
+                        if await loc.count() > 0 and await loc.is_visible():
+                            logger.info(f"Clicking post-login button: {selector}")
+                            await loc.click()
+                            await human_delay(2, 4)
+                    except: continue
+            
             logger.info("Instagram login successful!")
         else:
             logger.info("Already logged in to Instagram. Proceeding to target.")
