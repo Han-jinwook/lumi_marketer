@@ -357,19 +357,33 @@ def delete_shop(shop_id, place_link=None):
         if db.db_fs:
             # 1. Delete by doc ID directly
             if shop_id:
-                doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
-                doc_ref.delete()
+                try:
+                    doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
+                    doc_ref.delete()
+                    success = True
+                except Exception as e:
+                    logger.warning(f"ID 기반 삭제 실패 (ID: {shop_id}): {e}")
             
             # 2. Identifier-based mass deletion (Handle duplicates)
             if place_link:
-                # Query docs with same place link
-                # In Firestore, it could be 'source_link' or '플레이스링크'
-                for field in ["source_link", "플레이스링크"]:
-                    docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where(field, "==", place_link).stream()
-                    for doc in docs:
-                        doc.reference.delete()
+                # Use common identifier keys used in the DB
+                # Avoiding direct Korean field names in where() if possible to prevent 'Path not consumed' error
+                search_fields = ["source_link", "detail_url", "url", "플레이스링크"]
+                for field in search_fields:
+                    try:
+                        docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where(field, "==", place_link).stream()
+                        for doc in docs:
+                            doc.reference.delete()
+                            success = True
+                    except Exception as e:
+                        # Log error but continue with other fields
+                        if "플레이스링크" in field:
+                            # Skip legacy Korean field names if they cause issues
+                            continue
+                        logger.warning(f"필드 {field} 검색 중 오류: {e}")
                 
-            success = True
+            if not success:
+                 st.warning("삭제할 수 있는 데이터를 찾지 못했습니다.")
         else:
             st.error("데이터베이스 연결에 실패했습니다. (DBHandler.db_fs is None)")
     except Exception as e:
