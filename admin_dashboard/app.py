@@ -459,7 +459,8 @@ df = load_data()
 def render_page_header(title, key):
     st.markdown(f"#### {title}")
 
-# --- Helper: Render Filter Bar (Full Width) ---
+# --- Helper: Render Filter Bar (v14) ---
+def render_filters_v14(df_input, key):
     df_input = df_input.copy()
     if df_input.empty:
         st.info("표시할 데이터가 없습니다.")
