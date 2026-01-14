@@ -326,6 +326,11 @@ def load_data():
     }
     f_df = f_df.rename(columns=rename_map)
     
+    # 2.1 Handle duplicate columns (e.g., from multiple sources mapping to same UI label)
+    if not f_df.empty:
+        # Keep the one with more data/not null if possible, or just the last one
+        f_df = f_df.loc[:, ~f_df.columns.duplicated(keep='last')]
+    
     # Ensure mandatory columns exist even if empty
     for col in mandatory_cols:
         if col not in f_df.columns:
@@ -334,7 +339,7 @@ def load_data():
     if f_df.empty: 
         return f_df
 
-    # 3. Deduplicate and Format
+    # 3. Deduplicate rows and Reset Index
     combined = f_df.drop_duplicates(subset=['상호명', '플레이스링크'], keep='last').reset_index(drop=True)
     
     def n_i(v):
