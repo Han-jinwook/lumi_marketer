@@ -663,16 +663,34 @@ if page == 'Shop Search':
                 with c_res:
                     st.markdown('<div class="research-btn">', unsafe_allow_html=True)
                     if st.button("✦ 데이터 재검색", key="btn_res_shop"):
-                        shop_id = st.session_state['last_selected_shop']['ID']
-                        with st.spinner(f"'{st.session_state['last_selected_shop']['상호명']}' 데이터 재검색 및 자동 업데이트 중..."):
+                        shop_info = st.session_state['last_selected_shop']
+                        shop_id = shop_info['ID']
+                        with st.spinner(f"'{shop_info['상호명']}' 데이터 재검색 및 자동 업데이트 중..."):
                             script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'research_single_shop.py'))
                             try:
-                                # Run synchronously to wait for completion
-                                subprocess.run([sys.executable, script_path, str(shop_id)], check=True, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+                                # Create environment with Firebase secrets for sub-process
+                                my_env = os.environ.copy()
+                                if "firebase" in st.secrets:
+                                    my_env["FIREBASE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(st.secrets["firebase"]))
+                                
+                                # Run synchronously and capture output for debugging
+                                res = subprocess.run(
+                                    [sys.executable, script_path, str(shop_id)], 
+                                    check=True, 
+                                    capture_output=True, 
+                                    text=True,
+                                    env=my_env,
+                                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                                )
+                                st.success("데이터 재검색 완료!")
                                 st.cache_data.clear()
                                 st.rerun()
+                            except subprocess.CalledProcessError as e:
+                                st.error(f"재검색 스크립트 실행 실패 (코드 {e.returncode})")
+                                with st.expander("상세 에러 내용 확인"):
+                                    st.code(e.stderr if e.stderr else e.stdout)
                             except Exception as e:
-                                st.error(f"재검색 실패: {e}")
+                                st.error(f"재검색 중 알 수 없는 오류 발생: {e}")
                     st.markdown('</div>', unsafe_allow_html=True)
 
         selection = st.dataframe(

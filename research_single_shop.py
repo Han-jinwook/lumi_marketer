@@ -37,9 +37,13 @@ def research_shop(shop_id):
             shop = doc.to_dict()
             shop['_doc_id'] = doc.id
     
+    if not db.db_fs:
+        print("[-] Firebase Firestore not initialized. Check your credentials/secrets.")
+        sys.exit(1)
+        
     if not shop:
         print(f"[-] Shop not found in Firebase: {shop_id}")
-        return
+        sys.exit(1)
     
     name = shop.get('name') or shop.get('상호명')
     link = shop.get('source_link') or shop.get('플레이스링크')
