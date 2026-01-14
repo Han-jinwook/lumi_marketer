@@ -18,6 +18,31 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import config
 from messenger.email_sender import send_gmail
 
+# --- Helper: Engine Monitoring ---
+ENGINE_PID_FILE = os.path.join(os.getcwd(), "engine.pid")
+ENGINE_LOG_FILE = os.path.join(os.getcwd(), "engine.log")
+
+def get_engine_pid():
+    if os.path.exists(ENGINE_PID_FILE):
+        try:
+            with open(ENGINE_PID_FILE, "r") as f:
+                pid = int(f.read().strip())
+                # Check if process is alive (Windows)
+                res = subprocess.run(['tasklist', '/FI', f'PID eq {pid}', '/NH'], capture_output=True, text=True)
+                if str(pid) in res.stdout: return pid
+        except: pass
+    return None
+
+def stop_engine():
+    pid = get_engine_pid()
+    if pid:
+        try:
+            subprocess.run(['taskkill', '/F', '/PID', str(pid)], capture_output=True)
+            if os.path.exists(ENGINE_PID_FILE): os.remove(ENGINE_PID_FILE)
+            return True
+        except: pass
+    return False
+
 # ---------------------------------------------------------
 # 1. Config & Setup
 # ---------------------------------------------------------
@@ -94,18 +119,48 @@ with st.sidebar:
     s_dist = st.text_input("상세 지역 (군/구/명칭)", placeholder="부평동, 강남역 등", key="sb_dist")
     s_count = st.slider("수집 개수", 5, 100, 10, step=5, key="sb_count")
     
-    if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
-        target = f"{s_city} {s_dist}" if s_dist else s_city
-        st.toast(f"'{target}' 수집을 시작합니다. (목표: {s_count}개)")
-        try:
-            script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test_detail_10_shops.py'))
-            subprocess.Popen([sys.executable, script_path, target, str(s_count)], creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
-        except Exception as e:
-            st.error(f"엔진 가동 실패: {e}")
+    # Engine Status UI
+    running_pid = get_engine_pid()
+    if running_pid:
+        st.success(f"● 엔진 가동 중 (PID: {running_pid})")
+        if st.button("🛑 엔진 강제 정지", use_container_width=True, key="btn_sb_stop"):
+            if stop_engine():
+                st.toast("엔진을 정지시켰습니다.")
+                st.rerun()
+    else:
+        st.error("○ 엔진 정지")
+        if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
+            target = f"{s_city} {s_dist}" if s_dist else s_city
+            st.toast(f"'{target}' 수집을 시작합니다.")
+            try:
+                script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test_detail_10_shops.py'))
+                # Redirection to log and capture PID
+                log_f = open(ENGINE_LOG_FILE, "a", encoding="utf-8")
+                log_f.write(f"\n--- NEW ENGINE RUN: {time.strftime('%Y-%m-%d %H:%M:%S')} (Target: {target}, Count: {s_count}) ---\n")
+                p = subprocess.Popen(
+                    [sys.executable, script_path, target, str(s_count)], 
+                    stdout=log_f, stderr=log_f,
+                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                )
+                with open(ENGINE_PID_FILE, "w") as f: f.write(str(p.pid))
+                st.cache_data.clear()
+                st.rerun()
+            except Exception as e:
+                st.error(f"엔진 가동 실패: {e}")
             
     if st.button("🔄 데이터 새로고침", use_container_width=True, key="btn_sb_refresh"):
         st.cache_data.clear()
         st.rerun()
+    
+    # Log Viewer Expander
+    if os.path.exists(ENGINE_LOG_FILE):
+        with st.expander("📄 엔진 실행 로그 보기"):
+            try:
+                with open(ENGINE_LOG_FILE, "r", encoding="utf-8") as f:
+                    logs = f.readlines()
+                    st.code("".join(logs[-30:]), language="text") # Last 30 lines
+            except: st.write("로그를 읽어올 수 없습니다.")
+    
     st.write("---")
     st.info("완료 후 '데이터 새로고침'을 눌러주세요.")
 
