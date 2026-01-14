@@ -7,6 +7,11 @@ import time
 import json
 import subprocess
 import base64
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Add parent dir to path to import config
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -287,8 +292,10 @@ st.divider()
 # --- 2.2 Data Logic ---
 @st.cache_data(ttl=60)
 def load_data():
-    # 2. Load from Firebase
     f_df = pd.DataFrame()
+    mandatory_cols = ["상호명", "주소", "플레이스링크", "번호", "이메일", "인스타", "톡톡링크", "블로그ID"]
+    
+    # 1. Load from Firebase
     try:
         from crawler.db_handler import DBHandler
         db = DBHandler()
@@ -297,50 +304,48 @@ def load_data():
             data_list = []
             for doc in docs:
                 d = doc.to_dict()
-                d['id'] = doc.id # Ensure we have an ID for selection
+                d['id'] = doc.id
                 data_list.append(d)
-                
             if data_list:
                 f_df = pd.DataFrame(data_list)
     except Exception as e:
-        st.warning(f"Firebase 로드 실패: {e}")
+        if "logger" in globals():
+            logger.error(f"Firebase 로드 실패: {e}")
+        else:
+            print(f"Firebase 로드 실패: {e}")
+        # Note: 'firebase_admin' might be missing until redeploy finishes
+        if "firebase_admin" in str(e):
+             st.warning("Firebase 모듈을 설치 중입니다. 잠시 후 새로고침 해주세요.")
 
-    if f_df.empty: return f_df
-
-    # Mapping English keys to Korean keys (consistent with standard dashboard)
+    # 2. Rename and Normalize Columns
     rename_map = {
-        "name": "상호명", 
-        "email": "이메일", 
-        "address": "주소", 
-        "phone": "번호", 
-        "talktalk": "톡톡링크", 
-        "instagram": "인스타", 
-        "source_link": "플레이스링크",
-        "blog_id": "블로그ID",
-        "owner_name": "대표자"
+        "name": "상호명", "email": "이메일", "address": "주소", "phone": "번호", 
+        "talktalk": "톡톡링크", "instagram": "인스타", "source_link": "플레이스링크",
+        "blog_id": "블로그ID", "owner_name": "대표자", "talk_url": "톡톡링크", 
+        "instagram_handle": "인스타", "naver_blog_id": "블로그ID"
     }
     f_df = f_df.rename(columns=rename_map)
     
-    # Ensure mandatory columns exist to avoid KeyError later
-    mandatory_cols = ["상호명", "주소", "플레이스링크", "번호", "이메일", "인스타", "톡톡링크", "블로그ID"]
+    # Ensure mandatory columns exist even if empty
     for col in mandatory_cols:
         if col not in f_df.columns:
             f_df[col] = ""
 
-    # Simple deduplication strategy (now using Korean keys)
+    if f_df.empty: 
+        return f_df
+
+    # 3. Deduplicate and Format
     combined = f_df.drop_duplicates(subset=['상호명', '플레이스링크'], keep='last')
     
     def n_i(v):
         if not v or v == "None": return ""
         v = str(v)
-        if v.startswith("http"): return v
+        if v.startswith("http") or v.startswith("https"): return v
         return f"https://www.instagram.com/{v.replace('@', '').strip()}/"
     
     if '인스타' in combined.columns: 
         combined['인스타'] = combined['인스타'].apply(n_i)
     
-    # Reorder columns for a cleaner view if possible
-    # (Optional: select only what we need or keep all)
     return combined
 
 def delete_shop(shop_id):
@@ -375,6 +380,15 @@ def render_page_header(title, key):
 
 # --- Helper: Render Filter Bar (Full Width) ---
 def render_filters_v14(df_input, key):
+    if df_input.empty:
+        st.info("표시할 데이터가 없습니다.")
+        return df_input
+
+    # Ensure required columns for filtering exist
+    for col in ['주소', '상호명']:
+        if col not in df_input.columns:
+            df_input[col] = ""
+
     with st.container(border=False):
         c1, c2, c3 = st.columns([1, 1, 2.5])
         with c1:

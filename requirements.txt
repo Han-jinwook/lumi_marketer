@@ -1,4 +1,3 @@
-# Emergency Fix: Minimal requirements for Cloud Dashboard stability
 streamlit
 pandas
 requests
@@ -8,3 +7,4 @@ beautifulsoup4
 lxml
 geopy
 playwright
+firebase-admin
