@@ -335,7 +335,7 @@ def load_data():
         return f_df
 
     # 3. Deduplicate and Format
-    combined = f_df.drop_duplicates(subset=['상호명', '플레이스링크'], keep='last')
+    combined = f_df.drop_duplicates(subset=['상호명', '플레이스링크'], keep='last').reset_index(drop=True)
     
     def n_i(v):
         if v is None: return ""
@@ -460,7 +460,7 @@ def render_page_header(title, key):
     st.markdown(f"#### {title}")
 
 # --- Helper: Render Filter Bar (Full Width) ---
-def render_filters_v14(df_input, key):
+    df_input = df_input.copy()
     if df_input.empty:
         st.info("표시할 데이터가 없습니다.")
         return df_input
