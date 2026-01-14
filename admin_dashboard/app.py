@@ -338,9 +338,10 @@ def load_data():
     combined = f_df.drop_duplicates(subset=['상호명', '플레이스링크'], keep='last')
     
     def n_i(v):
-        if not v or v == "None": return ""
-        v = str(v)
-        if v.startswith("http") or v.startswith("https"): return v
+        if pd.isna(v) or v == "None": return ""
+        v = str(v).strip()
+        if not v or v.lower() == "none" or v == "": return ""
+        if v.startswith("http"): return v
         return f"https://www.instagram.com/{v.replace('@', '').strip()}/"
     
     if '인스타' in combined.columns: 
