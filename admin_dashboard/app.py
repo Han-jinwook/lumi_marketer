@@ -348,53 +348,99 @@ def load_data():
     
     return combined
 
-def delete_shop(shop_id, place_link=None):
-    # Firebase Delete
+def delete_shop(shop_id, place_link=None, shop_name=None):
+    """지정된 샵과 관련된 모든 중복 데이터를 삭제합니다."""
     success = False
+    deleted_count = 0
     try:
         from crawler.db_handler import DBHandler
         db = DBHandler()
         if db.db_fs:
-            # 1. Delete by doc ID directly
+            # 1. 문서 ID로 직접 삭제
             if shop_id:
                 try:
-                    doc_ref = db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id)
-                    doc_ref.delete()
+                    db.db_fs.collection(config.FIREBASE_COLLECTION).document(shop_id).delete()
+                    deleted_count += 1
                     success = True
                 except Exception as e:
                     logger.warning(f"ID 기반 삭제 실패 (ID: {shop_id}): {e}")
             
-            # 2. Identifier-based mass deletion (Handle duplicates)
+            # 2. 식별자(링크, 상호명) 기반 중복 삭제
+            search_queries = []
             if place_link:
-                # Use common identifier keys used in the DB
-                # Avoiding direct Korean field names in where() if possible to prevent 'Path not consumed' error
-                search_fields = ["source_link", "detail_url", "url", "플레이스링크"]
-                for field in search_fields:
-                    try:
-                        docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where(field, "==", place_link).stream()
-                        for doc in docs:
-                            doc.reference.delete()
-                            success = True
-                    except Exception as e:
-                        # Log error but continue with other fields
-                        if "플레이스링크" in field:
-                            # Skip legacy Korean field names if they cause issues
-                            continue
-                        logger.warning(f"필드 {field} 검색 중 오류: {e}")
+                search_queries.extend([("source_link", "==", place_link), ("플레이스링크", "==", place_link), ("detail_url", "==", place_link)])
+            if shop_name:
+                search_queries.append(("상호명", "==", shop_name))
+                search_queries.append(("name", "==", shop_name))
+
+            for field, op, val in search_queries:
+                try:
+                    docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where(field, op, val).stream()
+                    for doc in docs:
+                        doc.reference.delete()
+                        deleted_count += 1
+                        success = True
+                except:
+                    continue
                 
             if not success:
                  st.warning("삭제할 수 있는 데이터를 찾지 못했습니다.")
         else:
-            st.error("데이터베이스 연결에 실패했습니다. (DBHandler.db_fs is None)")
+            st.error("데이터베이스 연결에 실패했습니다.")
     except Exception as e:
         st.error(f"삭제 작업 중 오류 발생: {e}")
     
     if success:
-        st.toast("데이터가 성공적으로 삭제되었습니다.")
+        st.toast(f"데이터가 삭제되었습니다. (관련 문서 {deleted_count}개 제거)")
         st.cache_data.clear()
         st.session_state['last_selected_shop'] = None
         time.sleep(0.5)
         st.rerun()
+
+def delete_shops_batch(shops_list):
+    """선택된 여러 항목을 일괄 삭제합니다."""
+    if not shops_list:
+        return
+        
+    total = len(shops_list)
+    progress_text = "데이터를 일괄 삭제 중입니다..."
+    my_bar = st.progress(0, text=progress_text)
+    
+    deleted_total = 0
+    try:
+        from crawler.db_handler import DBHandler
+        db = DBHandler()
+        if not db.db_fs:
+            st.error("데이터베이스 연결 실패")
+            return
+
+        for i, shop in enumerate(shops_list):
+            sid = shop.get('ID')
+            link = shop.get('플레이스링크') or shop.get('source_link')
+            name = shop.get('상호명')
+            
+            # 1. 문서 ID 삭제
+            try: db.db_fs.collection(config.FIREBASE_COLLECTION).document(sid).delete()
+            except: pass
+            
+            # 2. 링크/상호명 기반 중복 삭제
+            if link:
+                for f in ["source_link", "플레이스링크", "detail_url"]:
+                    try:
+                        docs = db.db_fs.collection(config.FIREBASE_COLLECTION).where(f, "==", link).stream()
+                        for d in docs: d.reference.delete()
+                    except: continue
+            
+            my_bar.progress((i + 1) / total, text=f"삭제 진행 중 ({i+1}/{total})")
+            
+        st.success(f"{total}개의 항목(및 관련 중복 데이터)이 모두 삭제되었습니다.")
+        st.cache_data.clear()
+        st.session_state['last_selected_shop'] = None
+        st.session_state['prev_rows'] = []
+        time.sleep(1)
+        st.rerun()
+    except Exception as e:
+        st.error(f"일괄 삭제 중 오류: {e}")
 
 df = load_data()
 
@@ -510,7 +556,7 @@ def render_track(track_id, label, icon, column_filter, config_expander_name, df)
 
                 t_df['선택'] = [st.session_state[f'sel_track_{track_id}'].get(i, False) for i in t_df.index]
                 editor_cols = ['선택', '상호명', column_filter, '주소']
-                edited_df = st.data_editor(t_df[editor_cols].reset_index(drop=True), use_container_width=True, hide_index=True, key=f"editor_{track_id}")
+                edited_df = st.data_editor(t_df[editor_cols].reset_index(drop=True), width='stretch', hide_index=True, key=f"editor_{track_id}")
                 for i, row in edited_df.iterrows():
                     orig_idx = t_df.index[i]
                     st.session_state[f'sel_track_{track_id}'][orig_idx] = row['선택']
@@ -599,14 +645,20 @@ if page == 'Shop Search':
     with m_col:
         h_col1, h_col2, h_col3 = st.columns([1.1, 2.2, 2.8], vertical_alignment="center")
         h_col1.markdown('<p style="font-size:0.85rem; color:#64748b; margin:0;">✦ 수집 데이터 리스트</p>', unsafe_allow_html=True)
-        if st.session_state['last_selected_shop'] is not None:
+        if st.session_state['last_selected_shop'] is not None or (st.session_state.get('prev_rows') and len(st.session_state['prev_rows']) > 0):
             with h_col2:
-                c_del, c_res = st.columns([0.8, 1.4])
+                c_del, c_res = st.columns([1.2, 1.4])
                 with c_del:
                     st.markdown('<div class="delete-btn">', unsafe_allow_html=True)
-                    if st.button("✕ 삭제", key="btn_del_shop"):
-                        shop_to_del = st.session_state['last_selected_shop']
-                        delete_shop(shop_to_del['ID'], place_link=shop_to_del.get('플레이스링크'))
+                    sel_count = len(st.session_state.get('prev_rows', []))
+                    btn_label = f"✕ {sel_count}개 삭제" if sel_count > 1 else "✕ 삭제"
+                    if st.button(btn_label, key="btn_del_shop"):
+                        if sel_count > 1:
+                            shops_to_del = [f_df.iloc[r] for r in st.session_state['prev_rows']]
+                            delete_shops_batch(shops_to_del)
+                        else:
+                            shop_to_del = st.session_state['last_selected_shop']
+                            delete_shop(shop_to_del['ID'], place_link=shop_to_del.get('플레이스링크'), shop_name=shop_to_del.get('상호명'))
                     st.markdown('</div>', unsafe_allow_html=True)
                 with c_res:
                     st.markdown('<div class="research-btn">', unsafe_allow_html=True)
@@ -625,7 +677,7 @@ if page == 'Shop Search':
 
         selection = st.dataframe(
             f_df[['상호명', '주소', '번호', '이메일', '인스타', '톡톡링크']].reset_index(drop=True),
-            use_container_width=True, hide_index=True, selection_mode="multi-row", on_select="rerun", height=600
+            width='stretch', hide_index=True, selection_mode="multi-row", on_select="rerun", height=600
         )
         s_rows = selection.get("selection", {}).get("rows", [])
         
