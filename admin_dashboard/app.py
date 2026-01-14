@@ -304,7 +304,7 @@ def load_data():
             data_list = []
             for doc in docs:
                 d = doc.to_dict()
-                d['id'] = doc.id
+                d['ID'] = doc.id
                 data_list.append(d)
             if data_list:
                 f_df = pd.DataFrame(data_list)
