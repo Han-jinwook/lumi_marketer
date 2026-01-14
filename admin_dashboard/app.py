@@ -471,20 +471,26 @@ def render_filters_v14(df_input, key):
         st.info("표시할 데이터가 없습니다.")
         return df_input
 
-    # Ensure required columns for filtering exist
+    # Ensure required columns for filtering exist and handle NaN
     for col in ['주소', '상호명']:
         if col not in df_input.columns:
             df_input[col] = ""
+        else:
+            df_input[col] = df_input[col].fillna("").astype(str)
 
     with st.container(border=False):
         c1, c2, c3 = st.columns([1, 1, 2.5])
         with c1:
-            df_input['시/도'] = df_input['주소'].apply(lambda x: x.split()[0] if isinstance(x, str) and x.split() else "")
+            df_input['시/도'] = df_input['주소'].apply(lambda x: x.split()[0] if x.strip() else "")
             sel_city = st.selectbox("지역 (시/도)", ["전체"] + sorted(list(df_input['시/도'].unique())), key=f"{key}_city_v14")
         with c2:
             d_list = ["전체"]
             if sel_city != "전체":
-                d_list = ["전체"] + sorted(list(df_input[df_input['시/도'] == sel_city]['주소'].apply(lambda x: x.split()[1] if len(x.split()) > 1 else "").unique()))
+                # Safely get district (second word of address)
+                dist_series = df_input[df_input['시/도'] == sel_city]['주소'].apply(
+                    lambda x: x.split()[1] if len(x.split()) > 1 else ""
+                )
+                d_list = ["전체"] + sorted(list(dist_series.unique()))
             sel_dist = st.selectbox("지역 (군/구)", d_list, key=f"{key}_dist_v14")
         with c3:
             s_q = st.text_input("업체명 검색", key=f"{key}_q_v14", placeholder="업체명을 입력하세요...")
