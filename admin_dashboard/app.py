@@ -326,10 +326,25 @@ def load_data():
     }
     f_df = f_df.rename(columns=rename_map)
     
-    # 2.1 Handle duplicate columns (e.g., from multiple sources mapping to same UI label)
+    # 2.1 Merge duplicate columns (e.g., from multiple sources like 'name' and '상호명' mapping to same label)
     if not f_df.empty:
-        # Keep the one with more data/not null if possible, or just the last one
-        f_df = f_df.loc[:, ~f_df.columns.duplicated(keep='last')]
+        # Get list of duplicated column names
+        cols = f_df.columns
+        unique_cols = cols.unique()
+        if len(cols) != len(unique_cols):
+            new_df = pd.DataFrame(index=f_df.index)
+            for col in unique_cols:
+                # Find all columns with this name
+                col_data = f_df.loc[:, f_df.columns == col]
+                if col_data.shape[1] > 1:
+                    # Merge multiple columns: start with the first, fill with subsequent
+                    merged = col_data.iloc[:, 0]
+                    for i in range(1, col_data.shape[1]):
+                        merged = merged.fillna(col_data.iloc[:, i])
+                    new_df[col] = merged
+                else:
+                    new_df[col] = col_data
+            f_df = new_df
     
     # Ensure mandatory columns exist even if empty
     for col in mandatory_cols:
