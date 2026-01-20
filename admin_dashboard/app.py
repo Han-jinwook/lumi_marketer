@@ -109,241 +109,7 @@ if 'templates_loaded' not in st.session_state:
     st.session_state['insta_user'] = saved_tpls.get("insta_user", "")
     st.session_state['insta_pw'] = saved_tpls.get("insta_pw", "")
     st.session_state['templates_loaded'] = True
-
-# --- Sidebar: Crawler Command Center (Moved to Top) ---
-with st.sidebar:
-    st.markdown("### 🛰 데이터 수집 엔진")
-    st.caption("네이버 플레이스 실시간 수집")
-    st.write("---")
-    s_city = st.selectbox("수집 지역 (시/도)", ["서울", "인천", "경기", "부산", "대구", "대전", "광주", "울산", "세종", "제주"], key="sb_city")
-    s_dist = st.text_input("상세 지역 (군/구/명칭)", placeholder="부평동, 강남역 등", key="sb_dist")
-    s_count = st.slider("수집 개수", 5, 100, 10, step=5, key="sb_count")
     
-    # Engine Status UI
-    running_pid = get_engine_pid()
-    if running_pid:
-        st.success(f"● 엔진 가동 중 (PID: {running_pid})")
-        if st.button("🛑 엔진 강제 정지", use_container_width=True, key="btn_sb_stop"):
-            if stop_engine():
-                st.toast("엔진을 정지시켰습니다.")
-                st.rerun()
-    else:
-        st.error("○ 엔진 정지")
-        if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
-            target = f"{s_city} {s_dist}" if s_dist else s_city
-            st.toast(f"'{target}' 수집을 시작합니다.")
-            try:
-                script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test_detail_10_shops.py'))
-                # Redirection to log and capture PID
-                log_f = open(ENGINE_LOG_FILE, "a", encoding="utf-8")
-                log_f.write(f"\n--- NEW ENGINE RUN: {time.strftime('%Y-%m-%d %H:%M:%S')} (Target: {target}, Count: {s_count}) ---\n")
-                p = subprocess.Popen(
-                    [sys.executable, script_path, target, str(s_count)], 
-                    stdout=log_f, stderr=log_f,
-                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
-                )
-                with open(ENGINE_PID_FILE, "w") as f: f.write(str(p.pid))
-                st.cache_data.clear()
-                st.rerun()
-            except Exception as e:
-                st.error(f"엔진 가동 실패: {e}")
-            
-    if st.button("🔄 데이터 새로고침", use_container_width=True, key="btn_sb_refresh"):
-        st.cache_data.clear()
-        st.rerun()
-    
-    # Log Viewer Expander
-    if os.path.exists(ENGINE_LOG_FILE):
-        with st.expander("📄 엔진 실행 로그 보기"):
-            try:
-                with open(ENGINE_LOG_FILE, "r", encoding="utf-8") as f:
-                    logs = f.readlines()
-                    st.code("".join(logs[-30:]), language="text") # Last 30 lines
-            except: st.write("로그를 읽어올 수 없습니다.")
-    
-    st.write("---")
-    st.info("완료 후 '데이터 새로고침'을 눌러주세요.")
-
-# Helper for Logo
-def get_base64_logo(path):
-    if os.path.exists(path):
-        with open(path, "rb") as f:
-            data = f.read()
-            return base64.b64encode(data).decode()
-    return ""
-
-logo_base64 = get_base64_logo(os.path.join(os.path.dirname(__file__), "logo.png"))
-
-# ---------------------------------------------------------
-# 1.1 UI CSS (V13: Ultimate Minimalism & Top-Ref)
-# ---------------------------------------------------------
-st.markdown(f"""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    
-    :root {{
-        --primary: #9d7dfa;
-        --bg: #ffffff;
-        --text-main: #1e293b;
-        --text-muted: #94a3b8;
-        --border: #f1f5f9;
-        --radius: 16px;
-    }}
-
-    html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
-    .stApp {{ background: white; }}
-
-    /* Tighten Layout Space */
-    .block-container {{
-        padding-top: 3rem !important;
-        padding-bottom: 2rem !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-    }}
-    
-    hr {{ margin: 0.5rem 0 !important; }}
-
-    /* Minimal CSS to allow Streamlit defaults for sidebar/header */
-
-    /* Navigation Styles */
-    .nav-link-box button {{
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 8px 12px !important;
-        min-height: 0 !important;
-        height: auto !important;
-        width: 100% !important;
-        margin: 0 !important;
-        display: flex !important;
-        justify-content: center !important;
-        transition: all 0.2s ease !important;
-    }}
-    
-    .nav-btn-active button p {{
-        color: var(--text-main) !important;
-        font-weight: 700 !important;
-        font-size: 0.95rem !important;
-        border-bottom: 2px solid var(--primary);
-        white-space: nowrap !important;
-    }}
-    
-    .nav-btn-inactive button p {{
-        color: var(--text-muted) !important;
-        font-weight: 500 !important;
-        font-size: 0.95rem !important;
-        white-space: nowrap !important;
-    }}
-    
-    .nav-btn-inactive button:hover p {{ color: var(--primary) !important; }}
-
-    /* Detail Panel Alignment (Calibrated to Table Header) */
-    .detail-panel-box {{
-        background: #fcfaff;
-        border: 1px solid #f1f5f9;
-        border-radius: var(--radius);
-        padding: 1.5rem;
-        margin-top: 42px; /* Alignment with Table Header */
-    }}
-
-    /* Container Styling */
-    div.stBlock, [data-testid="stExpander"] {{
-        background: white;
-        border: 1px solid #f8fafc;
-        border-radius: var(--radius);
-        padding: 2rem;
-    }}
-
-    /* Data Table */
-    div.stDataFrame {{
-        border: 1px solid #f1f5f9;
-        border-radius: 14px;
-        overflow: hidden;
-    }}
-
-    /* Primary Buttons */
-    .stButton > button[kind="primary"] {{
-        background: var(--primary);
-        border: none;
-        border-radius: 10px;
-        font-weight: 700;
-        padding: 0.6rem 1.5rem;
-    }}
-    
-    /* Header Micro Refresh Button */
-    .micro-ref-btn button, .research-btn button {{
-        background: transparent !important;
-        color: var(--text-muted) !important;
-        border: 1px solid #f1f5f9 !important;
-        padding: 4px 12px !important;
-        font-size: 0.75rem !important;
-        border-radius: 8px !important;
-        height: auto !important;
-        min-height: 0 !important;
-        transition: all 0.2s ease !important;
-        white-space: nowrap !important;
-    }}
-    
-    .micro-ref-btn button:hover, .research-btn button:hover {{
-        background: #f8fafc !important;
-        color: var(--primary) !important;
-        border-color: var(--primary) !important;
-    }}
-    
-    /* Delete Button Style */
-    .delete-btn button {{
-        background: #fee2e2 !important;
-        color: #ef4444 !important;
-        border: none !important;
-        padding: 2px 10px !important;
-        font-size: 0.8rem !important;
-        border-radius: 6px !important;
-    }}
-    
-    /* Compact Card Styling */
-    .compact-card {{
-        background: white;
-        border: 1px solid #f1f5f9;
-        border-radius: 12px;
-        padding: 1.2rem;
-        margin-bottom: 0.4rem;
-        transition: all 0.2s ease;
-    }}
-    .compact-card:hover {{
-        border-color: var(--primary);
-        box-shadow: 0 4px 12px rgba(157, 125, 250, 0.05);
-    }}
-</style>
-""", unsafe_allow_html=True)
-
-# --- 1.2 Header Navigation ---
-with st.container():
-    # Optimized layout: [Logo][M1][M2][M3][M4][Profile] - Removed manual refresh button
-    h_cols = st.columns([0.8, 1.6, 1.6, 1.6, 1.6, 0.4], vertical_alignment="center")
-    
-    with h_cols[0]:
-        if logo_base64:
-            st.markdown(f'<img src="data:image/png;base64,{logo_base64}" style="height: 48px; object-fit: contain;">', unsafe_allow_html=True)
-        else:
-            st.markdown('<div style="font-weight:800; font-size:1.6rem; color:#1e293b;">루미PLUS</div>', unsafe_allow_html=True)
-            
-    pages = ["Shop Search", "Track A", "Track B", "Track C"]
-    labels = ["검색 및 분석", "Track A: 이메일", "Track B: 톡톡", "Track C: 인스타"]
-    
-    for i, (p, label) in enumerate(zip(pages, labels)):
-        with h_cols[1+i]: 
-            is_active = st.session_state['active_page'] == p
-            st.markdown(f'<div class="nav-link-box {"nav-btn-active" if is_active else "nav-btn-inactive"}">', unsafe_allow_html=True)
-            if st.button(label, key=f"n_v16_{p}"):
-                st.session_state['active_page'] = p
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
-
-    with h_cols[5]:
-        st.markdown('<div style="width:34px; height:34px; background:#fcfcfc; border:1px solid #f1f5f9; border-radius:50%; margin-left:auto;"></div>', unsafe_allow_html=True)
-
-st.divider()
-
 # --- 2.2 Data Logic ---
 @st.cache_data(ttl=60)
 def load_data():
@@ -431,6 +197,17 @@ def load_data():
     
     if '인스타' in combined.columns: 
         combined['인스타'] = combined['인스타'].apply(n_i)
+    
+    # 3.1 Normalize other link columns
+    def normalize_link(v):
+        if pd.isna(v) or v is None: return ""
+        v_str = str(v).strip()
+        if v_str.lower() in ["none", "nan", ""]: return ""
+        return v_str
+
+    for col in ['플레이스링크', '톡톡링크', '블로그ID']:
+        if col in combined.columns:
+            combined[col] = combined[col].apply(normalize_link)
     
     return combined
 
@@ -529,6 +306,324 @@ def delete_shops_batch(shops_list):
         st.error(f"일괄 삭제 중 오류: {e}")
 
 df = load_data()
+
+# --- Sidebar: Crawler Command Center (Moved to Top) ---
+
+with st.sidebar:
+    st.markdown("### 🛰 데이터 수집 엔진")
+    st.caption("네이버 플레이스 실시간 수집")
+    st.write("---")
+    s_city = st.selectbox("수집 지역 (시/도)", ["서울", "인천", "경기", "부산", "대구", "대전", "광주", "울산", "세종", "제주"], key="sb_city")
+    # Removed s_dist and s_count as per user request
+
+
+    
+    # Engine Status UI
+    running_pid = get_engine_pid()
+    
+    # Progress Parser (Robust)
+    def get_crawler_progress():
+        if os.path.exists(ENGINE_LOG_FILE):
+            try:
+                with open(ENGINE_LOG_FILE, "r", encoding="utf-8", errors="replace") as f:
+                    lines = f.readlines()
+                    
+                    # Find last start index
+                    start_idx = 0
+                    for i, line in enumerate(reversed(lines)):
+                        if "NEW ENGINE RUN" in line:
+                            start_idx = len(lines) - 1 - i
+                            break
+                    
+                    # Search for progress after start_idx
+                    for line in reversed(lines[start_idx:]):
+                        if "Progress:" in line:
+                            parts = line.split("Progress:")[-1].strip().split("/")
+                            if len(parts) == 2:
+                                return int(parts[0]), int(parts[1])
+            except: pass
+        return 0, 0
+
+    curr, total = get_crawler_progress()
+    
+    if running_pid:
+        st.success(f"● 가동 중 (PID: {running_pid})")
+        
+        # Progress Bar
+        if total > 0:
+            pct = min(curr / total, 1.0)
+            st.progress(pct, text=f"수집 진행률: {curr}/{total} ({int(pct*100)}%)")
+        else:
+            st.info("수집 시작 준비 중...")
+            
+        if st.button("🛑 엔진 강제 정지", use_container_width=True, key="btn_sb_stop"):
+            if stop_engine():
+                st.toast("엔진을 정지시켰습니다.")
+                st.rerun()
+        
+        # Auto-refresh for real-time progress
+        time.sleep(2)
+        if curr % 5 == 0: # Periodically clear data cache during run to update stats
+            st.cache_data.clear()
+        st.rerun()
+            
+    else:
+        if not (total > 0 and curr >= total):
+            st.error("○ 엔진 정지")
+
+        
+        if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
+            target = s_city
+            default_count = 200 
+            st.toast(f"'{target}' 전체 수집을 시작합니다. (목표: {default_count}개)")
+            try:
+                # Redirection to log and capture PID with Unbuffered UTF-8
+                my_env = os.environ.copy()
+                my_env["PYTHONIOENCODING"] = "utf-8"
+                my_env["PYTHONUNBUFFERED"] = "1"
+                
+                log_f = open(ENGINE_LOG_FILE, "a", encoding="utf-8")
+                log_f.write(f"\n--- NEW ENGINE RUN: {time.strftime('%Y-%m-%d %H:%M:%S')} (Target: {target}, Count: {default_count}) ---\n")
+                log_f.flush() # Ensure header is written
+                
+                # Define the script path correctly
+                script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'step1_refined_crawler.py'))
+                
+                p = subprocess.Popen(
+                    [sys.executable, script_path, target, str(default_count)], 
+                    stdout=log_f, stderr=log_f,
+                    env=my_env,
+                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                )
+                with open(ENGINE_PID_FILE, "w") as f: f.write(str(p.pid))
+                st.cache_data.clear()
+                st.rerun()
+            except Exception as e:
+                st.error(f"엔진 가동 실패: {e}")
+            
+    st.write("---")
+    
+    # --- Data Statistics Summary ---
+    st.markdown("### 📊 수집 현황 요약")
+    if not df.empty:
+        # Extract City and District from address
+        temp_df = df.copy()
+        temp_df['city_stat'] = temp_df['주소'].apply(lambda x: x.split()[0] if isinstance(x, str) and x.strip() else "기타")
+        temp_df['dist_stat'] = temp_df['주소'].apply(lambda x: x.split()[1] if isinstance(x, str) and len(x.split()) > 1 else "")
+        
+        # Filter by selected city
+        city_data = temp_df[temp_df['city_stat'] == s_city]
+        total_in_city = len(city_data)
+        
+        st.write(f"**{s_city} 전체:** {total_in_city}개")
+        
+        if total_in_city > 0:
+            dist_counts = city_data.groupby('dist_stat').size().reset_index(name='count').sort_values('count', ascending=False)
+            
+            # Show as a scrollable component if many districts
+            with st.container(height=250):
+                for _, row in dist_counts.iterrows():
+                    d_name = row['dist_stat'] if row['dist_stat'] else "상세불명"
+                    st.markdown(f"""
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f8fafc;">
+                        <span style="font-size: 0.85rem; color: #1e293b;">{d_name}</span>
+                        <span style="font-size: 0.85rem; font-weight: 700; color: #9d7dfa;">{row['count']}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+        else:
+            st.caption("수집된 데이터가 없습니다.")
+    else:
+        st.caption("데이터베이스가 비어있습니다.")
+    
+    st.write("---")
+
+
+# Helper for Logo
+def get_base64_logo(path):
+    if os.path.exists(path):
+        with open(path, "rb") as f:
+            data = f.read()
+            return base64.b64encode(data).decode()
+    return ""
+
+logo_base64 = get_base64_logo(os.path.join(os.path.dirname(__file__), "logo.png"))
+
+# ---------------------------------------------------------
+# 1.1 UI CSS (V13: Ultimate Minimalism & Top-Ref)
+# ---------------------------------------------------------
+st.markdown(f"""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    :root {{
+        --primary: #9d7dfa;
+        --bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #94a3b8;
+        --border: #f1f5f9;
+        --radius: 16px;
+    }}
+
+    html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
+    .stApp {{ background: white; }}
+
+    /* Tighten Layout Space */
+    .block-container {{
+        padding-top: 3rem !important;
+        padding-bottom: 2rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }}
+    
+    hr {{ margin: 0.5rem 0 !important; }}
+    
+    hr {{ margin: 0.5rem 0 !important; }}
+
+    /* Minimal CSS to allow Streamlit defaults for sidebar/header */
+
+    /* Header Navigation Buttons (Targeting first horizontal block in main) */
+    div[data-testid="stHorizontalBlock"]:nth-of-type(1) button {{
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0px 8px !important;
+        color: #94a3b8 !important; /* Muted default */
+        transition: color 0.2s !important;
+    }}
+    
+    div[data-testid="stHorizontalBlock"]:nth-of-type(1) button:hover {{
+        color: #1e293b !important;
+        background: transparent !important;
+    }}
+
+    div[data-testid="stHorizontalBlock"]:nth-of-type(1) button p {{
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        padding-bottom: 4px !important;
+        border-bottom: 2px solid transparent !important;
+    }}
+
+    /* Detail Panel Alignment (Calibrated to Table Header) */
+    .detail-panel-box {{
+        background: #fcfaff;
+        border: 1px solid #f1f5f9;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-top: 42px; /* Alignment with Table Header */
+    }}
+
+    /* Container Styling */
+    div.stBlock, [data-testid="stExpander"] {{
+        background: white;
+        border: 1px solid #f8fafc;
+        border-radius: var(--radius);
+        padding: 2rem;
+    }}
+
+    /* Data Table */
+    div.stDataFrame {{
+        border: 1px solid #f1f5f9;
+        border-radius: 14px;
+        overflow: hidden;
+    }}
+
+    /* Primary Buttons */
+    .stButton > button[kind="primary"] {{
+        background: var(--primary);
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        padding: 0.6rem 1.5rem;
+    }}
+    
+    /* Header Micro Refresh Button */
+    .micro-ref-btn button, .research-btn button {{
+        background: transparent !important;
+        color: var(--text-muted) !important;
+        border: 1px solid #f1f5f9 !important;
+        padding: 4px 12px !important;
+        font-size: 0.75rem !important;
+        border-radius: 8px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        transition: all 0.2s ease !important;
+        white-space: nowrap !important;
+    }}
+    
+    .micro-ref-btn button:hover, .research-btn button:hover {{
+        background: #f8fafc !important;
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }}
+    
+    /* Delete Button Style */
+    .delete-btn button {{
+        background: #fee2e2 !important;
+        color: #ef4444 !important;
+        border: none !important;
+        padding: 2px 10px !important;
+        font-size: 0.8rem !important;
+        border-radius: 6px !important;
+    }}
+    
+    /* Compact Card Styling */
+    .compact-card {{
+        background: white;
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-bottom: 0.4rem;
+        transition: all 0.2s ease;
+    }}
+    .compact-card:hover {{
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(157, 125, 250, 0.05);
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+# --- 1.2 Header Navigation ---
+with st.container():
+    # Optimized layout: [Logo][M1][M2][M3][M4][Profile] - Removed manual refresh button
+    h_cols = st.columns([0.8, 1.6, 1.6, 1.6, 1.6, 0.4], vertical_alignment="center")
+    
+    with h_cols[0]:
+        if logo_base64:
+            st.markdown(f'<img src="data:image/png;base64,{logo_base64}" style="height: 38px; object-fit: contain;">', unsafe_allow_html=True)
+        else:
+            st.markdown('<div style="font-weight:800; font-size:1.6rem; color:#1e293b;">루미PLUS</div>', unsafe_allow_html=True)
+            
+    pages = ["Shop Search", "Track A", "Track B", "Track C"]
+    labels = ["검색 및 분석", "Track A: 이메일", "Track B: 톡톡", "Track C: 인스타"]
+    
+    # Dynamic CSS for Active Tab (Underline effect)
+    active_idx = 2 # Default offset for first button (Logo is #1)
+    if st.session_state['active_page'] == 'Track A': active_idx = 3
+    elif st.session_state['active_page'] == 'Track B': active_idx = 4
+    elif st.session_state['active_page'] == 'Track C': active_idx = 5
+    
+    st.markdown(f"""
+    <style>
+    div[data-testid="stHorizontalBlock"]:nth-of-type(1) > div:nth-of-type({active_idx}) button p {{
+        color: #1e293b !important;
+        font-weight: 800 !important;
+        border-bottom: 2px solid #1e293b !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
+    for i, (p, label) in enumerate(zip(pages, labels)):
+        with h_cols[1+i]: 
+            if st.button(label, key=f"n_v16_{p}", use_container_width=True):
+                st.session_state['active_page'] = p
+                st.rerun()
+
+    with h_cols[5]:
+        st.markdown('<div style="width:34px; height:34px; background:#fcfcfc; border:1px solid #f1f5f9; border-radius:50%; margin-left:auto;"></div>', unsafe_allow_html=True)
+
+st.divider()
+
+# Helper for Page Header
 
 # --- Helper: Page Header with Ref Button ---
 def render_page_header(title, key):
@@ -772,8 +867,11 @@ if page == 'Shop Search':
                             try:
                                 # Create environment with Firebase secrets for sub-process
                                 my_env = os.environ.copy()
-                                if "firebase" in st.secrets:
-                                    my_env["FIREBASE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(st.secrets["firebase"]))
+                                try:
+                                    if "firebase" in st.secrets:
+                                        my_env["FIREBASE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(st.secrets["firebase"]))
+                                except:
+                                    pass
                                 
                                 # Run synchronously and capture output for debugging
                                 res = subprocess.run(
@@ -838,9 +936,25 @@ if page == 'Shop Search':
             
             st.write("<div style='margin-top:10px'></div>", unsafe_allow_html=True)
             c1, c2, c3 = st.columns(3)
-            if shop['인스타']: c1.link_button("◈ 인스타", shop['인스타'], use_container_width=True)
-            if shop['톡톡링크']: c2.link_button("🗨 톡톡", shop['톡톡링크'], use_container_width=True)
-            if shop['플레이스링크']: c3.link_button("✦ 플레이스", shop['플레이스링크'], use_container_width=True)
+            # Robust link buttons
+            insta_url = str(shop.get('인스타', '')).strip()
+            talk_url = str(shop.get('톡톡링크', '')).strip()
+            place_url = str(shop.get('플레이스링크', '')).strip()
+
+            if insta_url and insta_url.startswith("http"):
+                c1.link_button("◈ 인스타", insta_url, use_container_width=True)
+            else:
+                c1.button("◈ 인스타 (없음)", disabled=True, use_container_width=True)
+
+            if talk_url and talk_url.startswith("http"):
+                c2.link_button("🗨 톡톡", talk_url, use_container_width=True)
+            else:
+                c2.button("🗨 톡톡 (없음)", disabled=True, use_container_width=True)
+
+            if place_url and place_url.startswith("http"):
+                c3.link_button("✦ 플레이스", place_url, use_container_width=True)
+            else:
+                c3.button("✦ 플레이스 (없음)", disabled=True, use_container_width=True)
             
             st.write("")
             st.markdown("##### ✦ 주변 경쟁 업체 분석 (TOP 9)")

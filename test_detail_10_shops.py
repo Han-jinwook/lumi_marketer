@@ -33,9 +33,8 @@ import sys
 
 async def run_crawler():
     # Target Keywords (from CLI or default)
-    target_count = 10
+    raw_keyword = ""
     if len(sys.argv) > 1:
-        # Try to see if the last argument is a number (count)
         try:
             if sys.argv[-1].isdigit():
                 target_count = int(sys.argv[-1])
@@ -45,13 +44,11 @@ async def run_crawler():
         except:
             raw_keyword = " ".join(sys.argv[1:])
             
-        if not raw_keyword:
-            raw_keyword = "인천 부평구 부평동"
-            
-        keywords = [f"{raw_keyword} 피부관리샵"]
-        logger.info(f"🚀 CLI Triggered: Searching for '{keywords[0]}' (Target: {target_count})")
-    else:
-        keywords = ["인천 부평구 부평동 피부관리샵"] 
+    if not raw_keyword:
+        raw_keyword = "인천 부평구 부평동"
+        
+    keywords = [f"{raw_keyword} 피부관리샵"]
+    logger.info(f"🚀 CLI Triggered: Searching for '{keywords[0]}' (Target: {target_count})")
     
     total_saved = 0
     
@@ -127,20 +124,31 @@ async def run_crawler():
                 # Check for items
                 # Try multiple common selectors
                 selectors = [
+                    "li[data-id]",
                     "div.ApCpt", 
                     "li.VLTHu", 
                     "div[data-shop-id]", 
-                    "a[href*='/place/']", # Fallback to any place link
-                    ".place_bluelink"
+                    "a[href*='/place/']", 
+                    ".place_bluelink",
+                    "li:has(a[href*='/place/'])"
                 ]
                 
                 list_items = []
                 for sel in selectors:
-                    items = await page.locator(sel).all()
-                    if len(items) > 0:
-                        logger.info(f"🔍 Found {len(items)} items with selector '{sel}'")
-                        list_items = items
-                        break
+                    try:
+                        items = await page.locator(sel).all()
+                        if len(items) > 0:
+                            # Filter out duplicates or irrelevant ones
+                            valid_items = []
+                            for item in items:
+                                if await item.locator("a[href*='/place/']").count() > 0:
+                                    valid_items.append(item)
+                            
+                            if len(valid_items) > 0:
+                                logger.info(f"🔍 Found {len(valid_items)} valid items with selector '{sel}'")
+                                list_items = valid_items
+                                break
+                    except: continue
                 
                 if len(list_items) == 0:
                     # Very broad fallback
@@ -155,17 +163,23 @@ async def run_crawler():
                     if len(shops_to_process) >= target_count: break
                     
                     try:
-                        # Prioritize the Title Link which usually has class 'place_bluelink'
-                        link_node = li.locator("a.place_bluelink[href*='/place/']")
-                        if await link_node.count() == 0:
-                             link_node = li.locator("a[href*='/place/']")
-                        link_node = link_node.first
+                        # Prioritize the Title Link
+                        link_node = li.locator("a[href*='/place/']").first
                         
-                        if await link_node.count() == 0: continue
+                        if await link_node.count() == 0:
+                            # Try to see if the li itself is an 'a' tag
+                            if await li.evaluate("node => node.tagName === 'A' && node.href.includes('/place/')"):
+                                link_node = li
+                            else:
+                                logger.debug("Skipping item: No place link found")
+                                continue
                         
                         href = await link_node.get_attribute("href")
                         match = re.search(r'/place/(\d+)', href)
-                        if not match: continue
+                        if not match: 
+                            logger.debug(f"Skipping item: Invalid href: {href}")
+                            continue
+                        
                         place_id = match.group(1)
                         detail_url = f"https://m.place.naver.com/place/{place_id}/home"
                         

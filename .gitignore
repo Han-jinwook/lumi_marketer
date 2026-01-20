@@ -18,6 +18,8 @@ Thumbs.db
 # Sessions & Data
 browser_session/
 *.log
+!engine.log
+!messenger.log
 crawled_shops_full.json
 debug_search_results.png
 naver_block_detected.png

@@ -11,7 +11,7 @@ from playwright.async_api import async_playwright
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import config
 
-def research_shop(shop_id):
+async def research_shop(shop_id):
     from crawler.db_handler import DBHandler
     db = DBHandler()
     

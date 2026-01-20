@@ -4,6 +4,9 @@ import logging
 import requests
 import json
 import csv
+import sys
+import os
+import re
 from playwright.async_api import async_playwright
 import config
 from crawler.db_handler import DBHandler
@@ -12,9 +15,7 @@ from crawler.db_handler import DBHandler
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Supabase Config
-SUPABASE_URL = config.SUPABASE_URL
-SUPABASE_KEY = config.SUPABASE_KEY
+# Config
 TABLE_NAME = "t_crawled_shops"
 
 def save_to_db(shop_data):
@@ -29,15 +30,132 @@ def save_to_db(shop_data):
         logger.error(f"❌ Firebase Save Failed: {shop_data.get('name')}")
         return False
 
-async def run_crawler():
-    # Target Keywords - using specific dong to keep list small and relevant
-    keywords = ["서울 강남구 피부관리샵"] 
+async def extract_detail_info(page, shop_data):
+    """
+    Visits the detail page and extracts rich information using Apollo State and DOM fallback.
+    """
+    try:
+        url = shop_data['detail_url']
+        logger.info(f"🔍 Visiting detail page: {shop_data['name']}")
+        await page.goto(url, wait_until="networkidle", timeout=60000)
+        await asyncio.sleep(random.uniform(3, 5))
+        
+        # 1. Extract via Apollo State (Most Accurate)
+        state = await page.evaluate("window.__APOLLO_STATE__")
+        if state:
+            for key, val in state.items():
+                if not isinstance(val, dict): continue
+                
+                # PlaceDetailBase contains the core info
+                if "PlaceDetailBase" in key:
+                    # Clean Name
+                    if "name" in val and val["name"]:
+                        raw_name = val["name"].strip()
+                        shop_data["name"] = raw_name.replace("알림받기", "").strip()
+                    
+                    # Full Address
+                    if "roadAddress" in val and val["roadAddress"]:
+                        shop_data["address"] = val["roadAddress"]
+                    elif "address" in val and val["address"]:
+                        shop_data["address"] = val["address"]
+                    
+                    # Coordinates
+                    if "coordinate" in val:
+                        coord = val["coordinate"]
+                        shop_data["longitude"] = float(coord.get("x", 0.0))
+                        shop_data["latitude"] = float(coord.get("y", 0.0))
+                    
+                    # TalkTalk
+                    if "talktalkUrl" in val and val["talktalkUrl"]:
+                        shop_data["talk_url"] = val["talktalkUrl"].strip()
+                
+                # Extract SNS Links from homepages section
+                if "homepages" in val and val["homepages"]:
+                    for hp in val["homepages"]:
+                        if not isinstance(hp, dict): continue
+                        hp_url = hp.get("url", "")
+                        if "instagram.com" in hp_url:
+                            # Normalize Instagram URL
+                            insta_handle = hp_url.strip("/").split("/")[-1].split("?")[0]
+                            if insta_handle and insta_handle not in ['p', 'reels', 'stories', 'explore']:
+                                shop_data["instagram_handle"] = f"https://www.instagram.com/{insta_handle}"
+                        elif "blog.naver.com" in hp_url:
+                            shop_data["naver_blog_id"] = hp_url.strip()
+                            # Fallback email from blog ID
+                            if not shop_data.get("email"):
+                                handle = hp_url.strip("/").split("/")[-1].split("?")[0]
+                                if handle:
+                                    shop_data["email"] = f"{handle}@naver.com"
+
+        # 2. DOM Fallback & Advanced Extraction (Email from description)
+        content = await page.content()
+        
+        # Email Extraction from Description if not found yet
+        if not shop_data.get("email"):
+            emails = re.findall(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', content)
+            if emails:
+                # Filter out image-like extensions in emails
+                filtered_emails = [e for e in emails if not any(ext in e.lower() for ext in ['.png', '.jpg', '.jpeg', '.gif', '.webp'])]
+                if filtered_emails:
+                    shop_data["email"] = filtered_emails[0]
+                    logger.info(f"📧 Found email in page content: {shop_data['email']}")
+
+        # Owner Name (Representative)
+        if not shop_data.get("owner_name"):
+            owner_match = re.search(r'대표자\s*[:]\s*([가-힣]+)', content)
+            if owner_match:
+                shop_data["owner_name"] = owner_match.group(1)
+
+        # 3. DOM Link Fallback (If Apollo failed)
+        if not shop_data.get("instagram_handle") or not shop_data.get("naver_blog_id") or not shop_data.get("talk_url"):
+            # Find all http/https links in content roughly (faster than parsing all anchors)
+            # or better, use simple regex for specific domains
+            
+            # Instagram
+            if not shop_data.get("instagram_handle"):
+                insta_match = re.search(r'href="(https://www\.instagram\.com/[^"]+)"', content)
+                if insta_match:
+                    shop_data["instagram_handle"] = insta_match.group(1).split("?")[0]
+                    # Clean generic paths
+                    if any(x in shop_data["instagram_handle"] for x in ['/p/', '/reels/', '/explore/']):
+                        shop_data["instagram_handle"] = "" # Discard non-profile links
+            
+            # Naver Blog
+            if not shop_data.get("naver_blog_id"):
+                blog_match = re.search(r'href="(https://blog\.naver\.com/[^"]+)"', content)
+                if blog_match:
+                    shop_data["naver_blog_id"] = blog_match.group(1).split("?")[0]
+                    # Also try to extract email from blog url
+                    if not shop_data.get("email"):
+                        handle = shop_data["naver_blog_id"].strip("/").split("/")[-1]
+                        if handle: shop_data["email"] = f"{handle}@naver.com"
+
+            # TalkTalk
+            if not shop_data.get("talk_url"):
+                talk_match = re.search(r'href="(https://talk\.naver\.com/[^"]+)"', content)
+                if talk_match:
+                    shop_data["talk_url"] = talk_match.group(1)
+
+        return True
+    except Exception as e:
+        logger.warning(f"Failed to extract details for {shop_data.get('name')}: {e}")
+        return False
+
+async def run_crawler(target_area=None, target_count=10):
+    # Target Keywords
+    if target_area:
+        keywords = [f"{target_area} 피부관리샵"]
+    else:
+        keywords = ["서울 강남구 피부관리샵"] 
+    
+    total_saved = 0
     
     async with async_playwright() as p:
         try:
+            # Try to launch with chrome channel if available
             browser = await p.chromium.launch(
                 channel="chrome", 
-                headless=False,
+                headless=True,
                 args=[
                     "--disable-blink-features=AutomationControlled", 
                     "--no-sandbox", 
@@ -49,7 +167,7 @@ async def run_crawler():
         except:
              logger.warning("Chrome channel failed, trying default.")
              browser = await p.chromium.launch(
-                headless=False,
+                headless=True,
                 args=[
                     "--disable-blink-features=AutomationControlled", 
                     "--no-sandbox", 
@@ -61,7 +179,9 @@ async def run_crawler():
         
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            viewport={"width": 412, "height": 915}
+            viewport={"width": 412, "height": 915},
+            locale="ko-KR",
+            timezone_id="Asia/Seoul"
         )
         
         await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
@@ -69,6 +189,8 @@ async def run_crawler():
         page = await context.new_page()
         
         for keyword in keywords:
+            if total_saved >= target_count: break
+            
             logger.info(f"🔍 Searching: {keyword}")
             url = f"https://m.place.naver.com/place/list?query={keyword}"
             
@@ -76,99 +198,100 @@ async def run_crawler():
                 await page.goto(url, wait_until="networkidle")
                 await asyncio.sleep(random.uniform(2, 4))
                 
+                # Check for Map View and switch to list if necessary
+                list_view_btn = page.locator("a:has-text('목록보기'), button:has-text('목록보기')")
+                if await list_view_btn.count() > 0:
+                    logger.info("🗺️ Map view detected. Switching to list view...")
+                    await list_view_btn.first.click()
+                    await asyncio.sleep(random.uniform(2, 4))
+
                 # Scroll to load more
                 for _ in range(3):
+                     if total_saved >= target_count: break
                      await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
                      await asyncio.sleep(random.uniform(1, 2))
                 
-                # Extract List Items directly
-                # Naver Place List Item Container usually has role="list" or similar.
-                # Items are 'li'
-                
                 # Wait for items
-                # Try specific selector based on observation or generic
-                list_items = await page.locator("li").all()
-                logger.info(f"Found {len(list_items)} list items (potential shops).")
+                selectors = ["li.VLTHu", "li[data-id]", "li.item_root"]
+                list_items = []
+                for sel in selectors:
+                    items = await page.locator(sel).all()
+                    if len(items) > 0:
+                        list_items = items
+                        break
                 
-                count = 0
+                if not list_items:
+                    list_items = await page.locator("li").all()
+
+                logger.info(f"Found {len(list_items)} list items. Extracting basic info...")
+                
+                shops_to_visit = []
                 for li in list_items:
-                    # Check if it's a shop item (has a link to /place/)
+                    if len(shops_to_visit) >= (target_count - total_saved): break
+                    
                     try:
                         link_node = li.locator("a[href*='/place/']").first
                         if await link_node.count() > 0:
                             href = await link_node.get_attribute("href")
                             
-                            # ID Extraction
-                            import re
                             match = re.search(r'/place/(\d+)', href)
                             if not match: continue
                             place_id = match.group(1)
-                            detail_url = f"https://m.place.naver.com/place/{place_id}"
+                            detail_url = f"https://m.place.naver.com/place/{place_id}/home"
                             
-                            # HEURISTIC EXTRACTION
-                            text_content = await li.text_content()
+                            raw_name = await link_node.text_content()
+                            name = raw_name.replace("알림받기", "").strip()
                             
-                            # Address Extraction using Regex
-                            # Matches "Region District Dong" pattern commonly found in Korea addresses
-                            import re
-                            # Match generic Korean address pattern: City/Prov District Dong/Road
-                            addr_match = re.search(r'((?:서울|경기|인천|부산|대구|광주|대전|울산|세종|강원|충북|충남|전북|전남|경북|경남|제주)[가-힣]*\s+[가-힣]+(?:시|군|구)?\s+[가-힣]+(?:동|읍|면|가|로))', text_content)
-                            address = addr_match.group(1) if addr_match else ""
-                            
-                            # Phone Extraction (Look for tel: link)
                             phone = ""
                             try:
                                 tel_link = li.locator("a[href^='tel:']").first
                                 if await tel_link.count() > 0:
                                     tel_href = await tel_link.get_attribute("href")
-                                    # href="tel:0507-1234-5678"
                                     phone = tel_href.replace("tel:", "")
                             except: pass
-
-                            # Name Cleaning
-                            # Try to extract just the name span if possible
-                            # Usually the first non-empty span in the title block
-                            # Or just split raw_name by known categories
-                            name = raw_name.replace("알림받기", "").strip()
-                            if name.endswith("피부,체형관리"):
-                                name = name.replace("피부,체형관리", "").strip()
-                                
-                            if not name or "네이버 플레이스" in name:
-                                if count < 5: logger.info(f"Skipping: Name {name}")
-                                continue
                             
-                            if count < 3:
-                                logger.info(f"debug item: {name}, {address}, {phone}")
-
-                            shop_data = {
+                            shops_to_visit.append({
                                 "name": name,
-                                "address": address, 
                                 "phone": phone,
                                 "detail_url": detail_url,
-                                "owner_name": "", 
-                                "latitude": 0.0,
-                                "longitude": 0.0,
                                 "source_link": detail_url,
-                            }
-                            
-                            # Attempt DB Save
+                                "keyword": keyword
+                            })
+                    except: continue
+
+                # Visit each shop's detail page
+                for shop_data in shops_to_visit:
+                    if total_saved >= target_count: break
+                    
+                    shop_data.update({
+                        "owner_name": "",
+                        "address": "",
+                        "latitude": 0.0,
+                        "longitude": 0.0,
+                        "email": "",
+                        "instagram_handle": "",
+                        "naver_blog_id": "",
+                        "talk_url": ""
+                    })
+
+                    if await extract_detail_info(page, shop_data):
+                        if shop_data.get("name") and shop_data.get("address"):
                             if save_to_db(shop_data):
-                                count += 1
-                            
-                    except Exception as e:
-                        logger.warning(f"Item parse error: {e}")
-                        pass
-                
-                logger.info(f"Processed {count} items for {keyword}")
+                                total_saved += 1
+                                logger.info(f"Progress: {total_saved}/{target_count}")
+                        else:
+                            logger.warning(f"⏩ Skipping shop {shop_data.get('name')} due to missing critical info (Address).")
+                    
+                    await asyncio.sleep(random.uniform(15, 20))
 
             except Exception as e:
                  logger.error(f"Error processing keyword {keyword}: {e}")
 
         await browser.close()
-
-# Remove the extract_detail function as we are doing list-only for now to stabilize
-async def extract_detail(page, url):
-    return {}
+        logger.info(f"✅ Finished. Total saved: {total_saved}")
 
 if __name__ == "__main__":
-    asyncio.run(run_crawler())
+    target = sys.argv[1] if len(sys.argv) > 1 else None
+    count = int(sys.argv[2]) if len(sys.argv) > 2 else 10
+    
+    asyncio.run(run_crawler(target, count))

@@ -549,3 +549,289 @@
 2025-12-26 10:49:48,848 - crawler.searcher - INFO - Found 5 Naver blogs for '에스테티션 일상'
 2025-12-26 10:49:51,850 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 매출 올리기
 2025-12-26 10:49:51,850 - crawler.safe_crawler - INFO - Waiting for 12.98 seconds...
+2026-01-16 10:21:17,203 - __main__ - INFO - Starting Skin Shop Blog Crawler...
+2026-01-16 10:21:17,434 - crawler.db_handler - INFO - Firebase Firestore initialized successfully
+2026-01-16 10:21:17,434 - __main__ - INFO - Loaded 20 keywords across 4 categories.
+2026-01-16 10:21:20,005 - __main__ - INFO - Skipping 107 already collected URLs.
+2026-01-16 10:21:20,005 - crawler.searcher - INFO - Searching Naver blogs for: 여드름 관리 후기
+2026-01-16 10:21:20,052 - crawler.safe_crawler - INFO - Waiting for 10.06 seconds...
+2026-01-16 10:21:30,138 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:21:34,070 - crawler.searcher - INFO - Found 5 Naver blogs for '여드름 관리 후기'
+2026-01-16 10:21:37,122 - crawler.searcher - INFO - Searching Naver blogs for: 성인 여드름 관리
+2026-01-16 10:21:37,127 - crawler.safe_crawler - INFO - Waiting for 14.95 seconds...
+2026-01-16 10:21:52,075 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:21:52,768 - crawler.searcher - INFO - Found 5 Naver blogs for '성인 여드름 관리'
+2026-01-16 10:21:55,769 - crawler.searcher - INFO - Searching Naver blogs for: 부산 피부미백 관리
+2026-01-16 10:21:55,769 - crawler.safe_crawler - INFO - Waiting for 12.43 seconds...
+2026-01-16 10:22:08,204 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:22:08,848 - crawler.searcher - INFO - Found 5 Naver blogs for '부산 피부미백 관리'
+2026-01-16 10:22:11,849 - crawler.searcher - INFO - Searching Naver blogs for: 대구 리프팅 케어
+2026-01-16 10:22:11,849 - crawler.safe_crawler - INFO - Waiting for 11.50 seconds...
+2026-01-16 10:22:23,347 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:22:24,095 - crawler.searcher - INFO - Found 5 Naver blogs for '대구 리프팅 케어'
+2026-01-16 10:22:27,096 - crawler.searcher - INFO - Searching Naver blogs for: 주름 개선 관리
+2026-01-16 10:22:27,096 - crawler.safe_crawler - INFO - Waiting for 13.64 seconds...
+2026-01-16 10:22:40,735 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:22:41,357 - crawler.searcher - INFO - Found 4 Naver blogs for '주름 개선 관리'
+2026-01-16 10:22:44,359 - crawler.searcher - INFO - Searching Naver blogs for: 고주파 관리
+2026-01-16 10:22:44,359 - crawler.safe_crawler - INFO - Waiting for 5.95 seconds...
+2026-01-16 10:22:50,314 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:22:51,147 - crawler.searcher - INFO - Found 5 Naver blogs for '고주파 관리'
+2026-01-16 10:22:54,148 - crawler.searcher - INFO - Searching Naver blogs for: 민감성 피부 관리 후기
+2026-01-16 10:22:54,148 - crawler.safe_crawler - INFO - Waiting for 7.28 seconds...
+2026-01-16 10:23:01,428 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:23:02,309 - crawler.searcher - INFO - Found 5 Naver blogs for '민감성 피부 관리 후기'
+2026-01-16 10:23:05,309 - crawler.searcher - INFO - Searching Naver blogs for: 피부 수분 관리
+2026-01-16 10:23:05,309 - crawler.safe_crawler - INFO - Waiting for 5.35 seconds...
+2026-01-16 10:23:10,661 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:23:11,521 - crawler.searcher - INFO - Found 5 Naver blogs for '피부 수분 관리'
+2026-01-16 10:23:14,522 - crawler.searcher - INFO - Searching Naver blogs for: 블랙헤드 제거 후기
+2026-01-16 10:23:14,522 - crawler.safe_crawler - INFO - Waiting for 12.55 seconds...
+2026-01-16 10:23:27,072 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:23:27,860 - crawler.searcher - INFO - Found 5 Naver blogs for '블랙헤드 제거 후기'
+2026-01-16 10:23:30,861 - crawler.searcher - INFO - Searching Naver blogs for: 인천 피부 재생 관리
+2026-01-16 10:23:30,861 - crawler.safe_crawler - INFO - Waiting for 6.29 seconds...
+2026-01-16 10:23:37,149 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:23:37,866 - crawler.searcher - INFO - Found 5 Naver blogs for '인천 피부 재생 관리'
+2026-01-16 10:23:40,873 - crawler.searcher - INFO - Searching Naver blogs for: LDM 관리
+2026-01-16 10:23:40,874 - crawler.safe_crawler - INFO - Waiting for 5.04 seconds...
+2026-01-16 10:23:45,920 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:23:46,664 - crawler.searcher - INFO - Found 5 Naver blogs for 'LDM 관리'
+2026-01-16 10:23:49,667 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 창업
+2026-01-16 10:23:49,667 - crawler.safe_crawler - INFO - Waiting for 12.01 seconds...
+2026-01-16 10:24:01,676 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:24:02,488 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 창업'
+2026-01-16 10:24:05,490 - crawler.searcher - INFO - Searching Naver blogs for: 1인 피부샵 운영
+2026-01-16 10:24:05,490 - crawler.safe_crawler - INFO - Waiting for 8.26 seconds...
+2026-01-16 10:24:13,756 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:24:14,489 - crawler.searcher - INFO - Found 5 Naver blogs for '1인 피부샵 운영'
+2026-01-16 10:24:17,490 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 마케팅
+2026-01-16 10:24:17,490 - crawler.safe_crawler - INFO - Waiting for 14.53 seconds...
+2026-01-16 10:24:32,017 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:24:32,728 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 마케팅'
+2026-01-16 10:24:35,729 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 운영 노하우
+2026-01-16 10:24:35,729 - crawler.safe_crawler - INFO - Waiting for 9.79 seconds...
+2026-01-16 10:24:45,518 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:24:46,341 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 운영 노하우'
+2026-01-16 10:24:49,343 - crawler.searcher - INFO - Searching Naver blogs for: 에스테티션 일상
+2026-01-16 10:24:49,343 - crawler.safe_crawler - INFO - Waiting for 10.30 seconds...
+2026-01-16 10:24:59,646 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:25:00,199 - crawler.searcher - INFO - Found 5 Naver blogs for '에스테티션 일상'
+2026-01-16 10:25:03,200 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 매출 올리기
+2026-01-16 10:25:03,200 - crawler.safe_crawler - INFO - Waiting for 8.44 seconds...
+2026-01-16 10:25:11,644 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:25:12,452 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 매출 올리기'
+2026-01-16 10:25:15,470 - crawler.searcher - INFO - Searching Naver blogs for: 피부샵 추천
+2026-01-16 10:25:15,471 - crawler.safe_crawler - INFO - Waiting for 14.62 seconds...
+2026-01-16 10:25:30,098 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:25:30,806 - crawler.searcher - INFO - Found 5 Naver blogs for '피부샵 추천'
+2026-01-16 10:25:33,807 - crawler.searcher - INFO - Searching Naver blogs for: 내돈내산 피부샵 후기
+2026-01-16 10:25:33,807 - crawler.safe_crawler - INFO - Waiting for 8.61 seconds...
+2026-01-16 10:25:42,416 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:25:43,335 - crawler.searcher - INFO - Found 5 Naver blogs for '내돈내산 피부샵 후기'
+2026-01-16 10:25:46,336 - crawler.searcher - INFO - Searching Naver blogs for: 결혼 전 피부관리
+2026-01-16 10:25:46,336 - crawler.safe_crawler - INFO - Waiting for 10.05 seconds...
+2026-01-16 10:25:56,390 - crawler.safe_crawler - INFO - Requesting URL: https://search.naver.com/search.naver (Attempt 1/3)
+2026-01-16 10:25:57,129 - crawler.searcher - INFO - Found 5 Naver blogs for '결혼 전 피부관리'
+2026-01-16 10:26:00,131 - __main__ - INFO - Total unique blogs found in search: 39
+2026-01-16 10:26:00,131 - __main__ - INFO - New blogs to crawl: 39
+2026-01-16 10:26:00,131 - __main__ - INFO - Processing (1/39): https://blog.naver.com/dieuesthetic
+2026-01-16 10:26:00,131 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/dieuesthetic
+2026-01-16 10:26:00,131 - crawler.safe_crawler - INFO - Waiting for 12.29 seconds...
+2026-01-16 10:26:12,418 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/dieuesthetic (Attempt 1/3)
+2026-01-16 10:26:13,483 - crawler.extractor - INFO - No email found in https://blog.naver.com/dieuesthetic
+2026-01-16 10:26:13,483 - __main__ - INFO - Processing (2/39): https://blog.naver.com/nc27410
+2026-01-16 10:26:13,483 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/nc27410
+2026-01-16 10:26:13,483 - crawler.safe_crawler - INFO - Waiting for 12.51 seconds...
+2026-01-16 10:26:25,996 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/nc27410 (Attempt 1/3)
+2026-01-16 10:26:26,251 - crawler.extractor - INFO - No email found in https://blog.naver.com/nc27410
+2026-01-16 10:26:26,252 - __main__ - INFO - Processing (3/39): https://blog.naver.com/nahee049
+2026-01-16 10:26:26,252 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/nahee049
+2026-01-16 10:26:26,252 - crawler.safe_crawler - INFO - Waiting for 12.99 seconds...
+2026-01-16 10:26:39,242 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/nahee049 (Attempt 1/3)
+2026-01-16 10:26:39,424 - crawler.extractor - INFO - No email found in https://blog.naver.com/nahee049
+2026-01-16 10:26:39,424 - __main__ - INFO - Processing (4/39): https://blog.naver.com/noah517/224068100219
+2026-01-16 10:26:39,424 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/noah517/224068100219
+2026-01-16 10:26:39,425 - crawler.safe_crawler - INFO - Waiting for 8.71 seconds...
+2026-01-16 10:26:48,131 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/noah517/224068100219 (Attempt 1/3)
+2026-01-16 10:26:48,256 - crawler.extractor - INFO - No email found in https://blog.naver.com/noah517/224068100219
+2026-01-16 10:26:48,256 - __main__ - INFO - Processing (5/39): https://blog.naver.com/hestia305/223569726814
+2026-01-16 10:26:48,256 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/hestia305/223569726814
+2026-01-16 10:26:48,256 - crawler.safe_crawler - INFO - Waiting for 7.47 seconds...
+2026-01-16 10:26:55,728 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/hestia305/223569726814 (Attempt 1/3)
+2026-01-16 10:26:55,858 - crawler.extractor - INFO - No email found in https://blog.naver.com/hestia305/223569726814
+2026-01-16 10:26:55,858 - __main__ - INFO - Processing (6/39): https://blog.naver.com/assin_04/224126392275
+2026-01-16 10:26:55,858 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/assin_04/224126392275
+2026-01-16 10:26:55,858 - crawler.safe_crawler - INFO - Waiting for 8.80 seconds...
+2026-01-16 10:27:04,662 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/assin_04/224126392275 (Attempt 1/3)
+2026-01-16 10:27:04,774 - crawler.extractor - INFO - No email found in https://blog.naver.com/assin_04/224126392275
+2026-01-16 10:27:04,774 - __main__ - INFO - Processing (7/39): https://blog.naver.com/jjuly232/223894532948
+2026-01-16 10:27:04,774 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/jjuly232/223894532948
+2026-01-16 10:27:04,774 - crawler.safe_crawler - INFO - Waiting for 12.67 seconds...
+2026-01-16 10:27:17,445 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/jjuly232/223894532948 (Attempt 1/3)
+2026-01-16 10:27:17,604 - crawler.extractor - INFO - No email found in https://blog.naver.com/jjuly232/223894532948
+2026-01-16 10:27:17,604 - __main__ - INFO - Processing (8/39): https://blog.naver.com/comma-esthetic/223191004563
+2026-01-16 10:27:17,604 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/comma-esthetic/223191004563
+2026-01-16 10:27:17,605 - crawler.safe_crawler - INFO - Waiting for 6.48 seconds...
+2026-01-16 10:27:24,086 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/comma-esthetic/223191004563 (Attempt 1/3)
+2026-01-16 10:27:24,250 - crawler.extractor - INFO - No email found in https://blog.naver.com/comma-esthetic/223191004563
+2026-01-16 10:27:24,250 - __main__ - INFO - Processing (9/39): https://blog.naver.com/iamnani_j
+2026-01-16 10:27:24,250 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/iamnani_j
+2026-01-16 10:27:24,250 - crawler.safe_crawler - INFO - Waiting for 6.34 seconds...
+2026-01-16 10:27:30,591 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/iamnani_j (Attempt 1/3)
+2026-01-16 10:27:30,825 - crawler.csv_handler - INFO - Appended to CSV: https://blog.naver.com/iamnani_j
+2026-01-16 10:27:31,127 - crawler.db_handler - INFO - Successfully saved shop to Firebase: None
+2026-01-16 10:27:31,127 - __main__ - INFO - Processing (10/39): https://blog.naver.com/comma-esthetic
+2026-01-16 10:27:31,128 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/comma-esthetic
+2026-01-16 10:27:31,128 - crawler.safe_crawler - INFO - Waiting for 11.24 seconds...
+2026-01-16 10:27:42,370 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/comma-esthetic (Attempt 1/3)
+2026-01-16 10:27:42,584 - crawler.extractor - INFO - No email found in https://blog.naver.com/comma-esthetic
+2026-01-16 10:27:42,584 - __main__ - INFO - Processing (11/39): https://blog.naver.com/vknqfglocg/224127441776
+2026-01-16 10:27:42,584 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/vknqfglocg/224127441776
+2026-01-16 10:27:42,584 - crawler.safe_crawler - INFO - Waiting for 8.39 seconds...
+2026-01-16 10:27:50,979 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/vknqfglocg/224127441776 (Attempt 1/3)
+2026-01-16 10:27:51,133 - crawler.extractor - INFO - No email found in https://blog.naver.com/vknqfglocg/224127441776
+2026-01-16 10:27:51,133 - __main__ - INFO - Processing (12/39): https://blog.naver.com/lala1010/223948083624
+2026-01-16 10:27:51,133 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/lala1010/223948083624
+2026-01-16 10:27:51,133 - crawler.safe_crawler - INFO - Waiting for 14.70 seconds...
+2026-01-16 10:28:05,834 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/lala1010/223948083624 (Attempt 1/3)
+2026-01-16 10:28:06,162 - crawler.extractor - INFO - No email found in https://blog.naver.com/lala1010/223948083624
+2026-01-16 10:28:06,162 - __main__ - INFO - Processing (13/39): https://blog.naver.com/assin_04
+2026-01-16 10:28:06,162 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/assin_04
+2026-01-16 10:28:06,162 - crawler.safe_crawler - INFO - Waiting for 8.80 seconds...
+2026-01-16 10:28:14,960 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/assin_04 (Attempt 1/3)
+2026-01-16 10:28:15,195 - crawler.extractor - INFO - No email found in https://blog.naver.com/assin_04
+2026-01-16 10:28:15,195 - __main__ - INFO - Processing (14/39): https://blog.naver.com/dermahills
+2026-01-16 10:28:15,195 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/dermahills
+2026-01-16 10:28:15,196 - crawler.safe_crawler - INFO - Waiting for 5.11 seconds...
+2026-01-16 10:28:20,307 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/dermahills (Attempt 1/3)
+2026-01-16 10:28:20,509 - crawler.extractor - INFO - No email found in https://blog.naver.com/dermahills
+2026-01-16 10:28:20,510 - __main__ - INFO - Processing (15/39): https://blog.naver.com/fraagile/223598729579
+2026-01-16 10:28:20,510 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/fraagile/223598729579
+2026-01-16 10:28:20,510 - crawler.safe_crawler - INFO - Waiting for 10.93 seconds...
+2026-01-16 10:28:31,443 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/fraagile/223598729579 (Attempt 1/3)
+2026-01-16 10:28:31,827 - crawler.extractor - INFO - No email found in https://blog.naver.com/fraagile/223598729579
+2026-01-16 10:28:31,827 - __main__ - INFO - Processing (16/39): https://blog.naver.com/noah517
+2026-01-16 10:28:31,827 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/noah517
+2026-01-16 10:28:31,827 - crawler.safe_crawler - INFO - Waiting for 10.93 seconds...
+2026-01-16 10:28:42,759 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/noah517 (Attempt 1/3)
+2026-01-16 10:28:43,073 - crawler.extractor - INFO - No email found in https://blog.naver.com/noah517
+2026-01-16 10:28:43,073 - __main__ - INFO - Processing (17/39): https://blog.naver.com/misoskin/223225841703
+2026-01-16 10:28:43,073 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/misoskin/223225841703
+2026-01-16 10:28:43,073 - crawler.safe_crawler - INFO - Waiting for 14.71 seconds...
+2026-01-16 10:28:57,781 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/misoskin/223225841703 (Attempt 1/3)
+2026-01-16 10:28:57,947 - crawler.extractor - INFO - No email found in https://blog.naver.com/misoskin/223225841703
+2026-01-16 10:28:57,947 - __main__ - INFO - Processing (18/39): https://blog.naver.com/inter1304/223691641352
+2026-01-16 10:28:57,948 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/inter1304/223691641352
+2026-01-16 10:28:57,948 - crawler.safe_crawler - INFO - Waiting for 12.46 seconds...
+2026-01-16 10:29:10,405 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/inter1304/223691641352 (Attempt 1/3)
+2026-01-16 10:29:10,560 - crawler.extractor - INFO - No email found in https://blog.naver.com/inter1304/223691641352
+2026-01-16 10:29:10,560 - __main__ - INFO - Processing (19/39): https://blog.naver.com/binaesthetic
+2026-01-16 10:29:10,561 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/binaesthetic
+2026-01-16 10:29:10,561 - crawler.safe_crawler - INFO - Waiting for 11.86 seconds...
+2026-01-16 10:29:22,420 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/binaesthetic (Attempt 1/3)
+2026-01-16 10:29:22,691 - crawler.extractor - INFO - No email found in https://blog.naver.com/binaesthetic
+2026-01-16 10:29:22,692 - __main__ - INFO - Processing (20/39): https://blog.naver.com/iamnani_j/224112027461
+2026-01-16 10:29:22,692 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/iamnani_j/224112027461
+2026-01-16 10:29:22,692 - crawler.safe_crawler - INFO - Waiting for 14.18 seconds...
+2026-01-16 10:29:36,870 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/iamnani_j/224112027461 (Attempt 1/3)
+2026-01-16 10:29:37,049 - crawler.extractor - INFO - No email found in https://blog.naver.com/iamnani_j/224112027461
+2026-01-16 10:29:37,049 - __main__ - INFO - Processing (21/39): https://blog.naver.com/nc27410/223893633688
+2026-01-16 10:29:37,049 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/nc27410/223893633688
+2026-01-16 10:29:37,049 - crawler.safe_crawler - INFO - Waiting for 14.22 seconds...
+2026-01-16 10:29:51,272 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/nc27410/223893633688 (Attempt 1/3)
+2026-01-16 10:29:51,532 - crawler.extractor - INFO - No email found in https://blog.naver.com/nc27410/223893633688
+2026-01-16 10:29:51,533 - __main__ - INFO - Processing (22/39): https://blog.naver.com/myunghwak/224114817191
+2026-01-16 10:29:51,533 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/myunghwak/224114817191
+2026-01-16 10:29:51,533 - crawler.safe_crawler - INFO - Waiting for 11.47 seconds...
+2026-01-16 10:30:03,002 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/myunghwak/224114817191 (Attempt 1/3)
+2026-01-16 10:30:03,152 - crawler.extractor - INFO - No email found in https://blog.naver.com/myunghwak/224114817191
+2026-01-16 10:30:03,152 - __main__ - INFO - Processing (23/39): https://blog.naver.com/qhwn0130/224101552387
+2026-01-16 10:30:03,153 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/qhwn0130/224101552387
+2026-01-16 10:30:03,153 - crawler.safe_crawler - INFO - Waiting for 6.16 seconds...
+2026-01-16 10:30:09,312 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/qhwn0130/224101552387 (Attempt 1/3)
+2026-01-16 10:30:09,507 - crawler.extractor - INFO - No email found in https://blog.naver.com/qhwn0130/224101552387
+2026-01-16 10:30:09,507 - __main__ - INFO - Processing (24/39): https://blog.naver.com/sumin_j_/224114715324
+2026-01-16 10:30:09,507 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/sumin_j_/224114715324
+2026-01-16 10:30:09,508 - crawler.safe_crawler - INFO - Waiting for 10.17 seconds...
+2026-01-16 10:30:19,674 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/sumin_j_/224114715324 (Attempt 1/3)
+2026-01-16 10:30:19,849 - crawler.extractor - INFO - No email found in https://blog.naver.com/sumin_j_/224114715324
+2026-01-16 10:30:19,849 - __main__ - INFO - Processing (25/39): https://blog.naver.com/jjuly232
+2026-01-16 10:30:19,849 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/jjuly232
+2026-01-16 10:30:19,849 - crawler.safe_crawler - INFO - Waiting for 12.69 seconds...
+2026-01-16 10:30:32,544 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/jjuly232 (Attempt 1/3)
+2026-01-16 10:30:32,744 - crawler.extractor - INFO - No email found in https://blog.naver.com/jjuly232
+2026-01-16 10:30:32,745 - __main__ - INFO - Processing (26/39): https://blog.naver.com/dermahills/224083834869
+2026-01-16 10:30:32,745 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/dermahills/224083834869
+2026-01-16 10:30:32,745 - crawler.safe_crawler - INFO - Waiting for 5.40 seconds...
+2026-01-16 10:30:38,148 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/dermahills/224083834869 (Attempt 1/3)
+2026-01-16 10:30:38,339 - crawler.extractor - INFO - No email found in https://blog.naver.com/dermahills/224083834869
+2026-01-16 10:30:38,339 - __main__ - INFO - Processing (27/39): https://blog.naver.com/lbeauty-365/223687439082
+2026-01-16 10:30:38,339 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/lbeauty-365/223687439082
+2026-01-16 10:30:38,339 - crawler.safe_crawler - INFO - Waiting for 13.76 seconds...
+2026-01-16 10:30:52,103 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/lbeauty-365/223687439082 (Attempt 1/3)
+2026-01-16 10:30:52,240 - crawler.extractor - INFO - No email found in https://blog.naver.com/lbeauty-365/223687439082
+2026-01-16 10:30:52,241 - __main__ - INFO - Processing (28/39): https://blog.naver.com/okimina80/224140440973
+2026-01-16 10:30:52,241 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/okimina80/224140440973
+2026-01-16 10:30:52,241 - crawler.safe_crawler - INFO - Waiting for 9.14 seconds...
+2026-01-16 10:31:01,384 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/okimina80/224140440973 (Attempt 1/3)
+2026-01-16 10:31:01,540 - crawler.extractor - INFO - No email found in https://blog.naver.com/okimina80/224140440973
+2026-01-16 10:31:01,541 - __main__ - INFO - Processing (29/39): https://blog.naver.com/nahee049/224121152281
+2026-01-16 10:31:01,541 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/nahee049/224121152281
+2026-01-16 10:31:01,541 - crawler.safe_crawler - INFO - Waiting for 10.20 seconds...
+2026-01-16 10:31:11,744 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/nahee049/224121152281 (Attempt 1/3)
+2026-01-16 10:31:11,878 - crawler.extractor - INFO - No email found in https://blog.naver.com/nahee049/224121152281
+2026-01-16 10:31:11,878 - __main__ - INFO - Processing (30/39): https://blog.naver.com/dagam3040/222986511404
+2026-01-16 10:31:11,878 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/dagam3040/222986511404
+2026-01-16 10:31:11,878 - crawler.safe_crawler - INFO - Waiting for 11.64 seconds...
+2026-01-16 10:31:23,520 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/dagam3040/222986511404 (Attempt 1/3)
+2026-01-16 10:31:23,677 - crawler.extractor - INFO - No email found in https://blog.naver.com/dagam3040/222986511404
+2026-01-16 10:31:23,678 - __main__ - INFO - Processing (31/39): https://blog.naver.com/okimina80
+2026-01-16 10:31:23,678 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/okimina80
+2026-01-16 10:31:23,678 - crawler.safe_crawler - INFO - Waiting for 14.53 seconds...
+2026-01-16 10:31:38,212 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/okimina80 (Attempt 1/3)
+2026-01-16 10:31:38,487 - crawler.extractor - INFO - No email found in https://blog.naver.com/okimina80
+2026-01-16 10:31:38,487 - __main__ - INFO - Processing (32/39): https://blog.naver.com/yjmk1123/223344813982
+2026-01-16 10:31:38,488 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/yjmk1123/223344813982
+2026-01-16 10:31:38,488 - crawler.safe_crawler - INFO - Waiting for 6.10 seconds...
+2026-01-16 10:31:44,584 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/yjmk1123/223344813982 (Attempt 1/3)
+2026-01-16 10:31:44,771 - crawler.extractor - INFO - No email found in https://blog.naver.com/yjmk1123/223344813982
+2026-01-16 10:31:44,771 - __main__ - INFO - Processing (33/39): https://blog.naver.com/dayeonbeauty/223850469660
+2026-01-16 10:31:44,771 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/dayeonbeauty/223850469660
+2026-01-16 10:31:44,771 - crawler.safe_crawler - INFO - Waiting for 9.78 seconds...
+2026-01-16 10:31:54,574 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/dayeonbeauty/223850469660 (Attempt 1/3)
+2026-01-16 10:31:54,714 - crawler.extractor - INFO - No email found in https://blog.naver.com/dayeonbeauty/223850469660
+2026-01-16 10:31:54,714 - __main__ - INFO - Processing (34/39): https://blog.naver.com/pathean/223359687863
+2026-01-16 10:31:54,715 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/pathean/223359687863
+2026-01-16 10:31:54,715 - crawler.safe_crawler - INFO - Waiting for 13.36 seconds...
+2026-01-16 10:32:08,076 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/pathean/223359687863 (Attempt 1/3)
+2026-01-16 10:32:08,240 - crawler.extractor - INFO - No email found in https://blog.naver.com/pathean/223359687863
+2026-01-16 10:32:08,240 - __main__ - INFO - Processing (35/39): https://blog.naver.com/binaesthetic/224147187060
+2026-01-16 10:32:08,240 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/binaesthetic/224147187060
+2026-01-16 10:32:08,240 - crawler.safe_crawler - INFO - Waiting for 5.85 seconds...
+2026-01-16 10:32:14,093 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/binaesthetic/224147187060 (Attempt 1/3)
+2026-01-16 10:32:14,216 - crawler.extractor - INFO - No email found in https://blog.naver.com/binaesthetic/224147187060
+2026-01-16 10:32:14,216 - __main__ - INFO - Processing (36/39): https://blog.naver.com/myunghwak
+2026-01-16 10:32:14,216 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/myunghwak
+2026-01-16 10:32:14,216 - crawler.safe_crawler - INFO - Waiting for 12.58 seconds...
+2026-01-16 10:32:26,800 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/myunghwak (Attempt 1/3)
+2026-01-16 10:32:27,006 - crawler.csv_handler - INFO - Appended to CSV: https://blog.naver.com/myunghwak
+2026-01-16 10:32:27,400 - crawler.db_handler - INFO - Successfully saved shop to Firebase: None
+2026-01-16 10:32:27,400 - __main__ - INFO - Processing (37/39): https://blog.naver.com/vknqfglocg
+2026-01-16 10:32:27,400 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/vknqfglocg
+2026-01-16 10:32:27,400 - crawler.safe_crawler - INFO - Waiting for 5.11 seconds...
+2026-01-16 10:32:32,512 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/vknqfglocg (Attempt 1/3)
+2026-01-16 10:32:32,761 - crawler.extractor - INFO - No email found in https://blog.naver.com/vknqfglocg
+2026-01-16 10:32:32,762 - __main__ - INFO - Processing (38/39): https://blog.naver.com/sumin_j_
+2026-01-16 10:32:32,762 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/sumin_j_
+2026-01-16 10:32:32,762 - crawler.safe_crawler - INFO - Waiting for 7.56 seconds...
+2026-01-16 10:32:40,336 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/sumin_j_ (Attempt 1/3)
+2026-01-16 10:32:40,522 - crawler.csv_handler - INFO - Appended to CSV: https://blog.naver.com/sumin_j_
+2026-01-16 10:32:40,637 - crawler.db_handler - INFO - Successfully saved shop to Firebase: None
+2026-01-16 10:32:40,638 - __main__ - INFO - Processing (39/39): https://blog.naver.com/fkdaljfdkajlsjakfld
+2026-01-16 10:32:40,638 - crawler.extractor - INFO - Extracting data from: https://blog.naver.com/fkdaljfdkajlsjakfld
+2026-01-16 10:32:40,638 - crawler.safe_crawler - INFO - Waiting for 5.95 seconds...
+2026-01-16 10:32:46,584 - crawler.safe_crawler - INFO - Requesting URL: https://m.blog.naver.com/fkdaljfdkajlsjakfld (Attempt 1/3)
+2026-01-16 10:32:46,819 - crawler.csv_handler - INFO - Appended to CSV: https://blog.naver.com/fkdaljfdkajlsjakfld
+2026-01-16 10:32:46,934 - crawler.db_handler - INFO - Successfully saved shop to Firebase: None
+2026-01-16 10:32:46,934 - __main__ - INFO - Crawling finished. Successfully saved 4 new leads.
