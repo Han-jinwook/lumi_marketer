@@ -179,13 +179,7 @@ async def install_playwright_browsers():
         logger.warning(f"⚠️ Playwright install failed or already handled: {e}")
 
 async def run_crawler(target_area=None, target_count=10):
-    # Immediate progress signal for UI
-    target_count = int(target_count) if target_count else 10
-    print(f"Progress: 0/{target_count}", flush=True)
-    logger.info(f"🚀 Engine Started. Target: {target_area}, Count: {target_count}")
-
     # Proactively try to install browsers in Cloud environments
-    # STREAMLIT_SERVER_BASE_URL is often set in Cloud
     is_cloud = os.environ.get("STREAMLIT_RUNTIME_ENV") or "/home/appuser" in os.getcwd() or os.environ.get("STREAMLIT_SERVER_BASE_URL")
     if is_cloud:
         logger.info("☁️ Cloud environment detected. Ensuring Playwright browsers...")
@@ -348,7 +342,21 @@ async def run_crawler(target_area=None, target_count=10):
         logger.info(f"✅ Finished. Total saved: {total_saved}")
 
 if __name__ == "__main__":
+    # Move immediate progress signaling to the ABSOLUTE START of execution
     target = sys.argv[1] if len(sys.argv) > 1 else None
     count = int(sys.argv[2]) if len(sys.argv) > 2 else 10
     
-    asyncio.run(run_crawler(target, count))
+    # 📢 THIS IS THE MOST CRITICAL LINE FOR DASHBOARD FEEDBACK
+    print(f"Progress: 0/{count}", flush=True)
+    
+    # Check Environment
+    is_cloud = os.environ.get("STREAMLIT_RUNTIME_ENV") or "/home/appuser" in os.getcwd() or os.environ.get("STREAMLIT_SERVER_BASE_URL")
+    if is_cloud:
+        print(f"DEBUG: Running on Cloud Environment. Python: {sys.executable}", flush=True)
+    
+    try:
+        asyncio.run(run_crawler(target, count))
+    except Exception as e:
+        print(f"CRITICAL ERROR: {e}", flush=True)
+        logger.error(f"Engine crashed: {e}")
+        sys.exit(1)
