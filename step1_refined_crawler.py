@@ -159,11 +159,26 @@ async def extract_detail_info(page, shop_data):
                     shop_data["talk_url"] = talk_match.group(1)
 
         return True
+async def install_playwright_browsers():
+    """
+    Attempts to install playwright browsers if they are missing.
+    Useful for Streamlit Cloud environments.
+    """
+    import subprocess
+    try:
+        logger.info("📦 Checking Playwright browsers...")
+        # Check if chromium is already available via playwright
+        # We try a simple command to see if it works
+        subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], capture_output=True, check=True)
+        logger.info("✅ Playwright browsers are ready.")
     except Exception as e:
-        logger.warning(f"Failed to extract details for {shop_data.get('name')}: {e}")
-        return False
+        logger.warning(f"⚠️ Playwright install failed or already handled: {e}")
 
 async def run_crawler(target_area=None, target_count=10):
+    # Proactively try to install browsers in Cloud environments
+    if os.environ.get("STREAMLIT_RUNTIME_ENV") or "/home/appuser" in os.getcwd():
+        await install_playwright_browsers()
+
     # Target Keywords
     if target_area:
         keywords = [f"{target_area} 피부관리샵"]

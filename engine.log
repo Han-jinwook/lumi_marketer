@@ -479,3 +479,7 @@
 2026-01-20 15:17:54,893 - INFO - Successfully saved shop to Firebase: 담쟁이피부관리샵
 2026-01-20 15:17:54,893 - INFO - ✅ Firebase Saved: 담쟁이피부관리샵
 2026-01-20 15:17:54,894 - INFO - Progress: 4/200
+
+--- NEW ENGINE RUN: 2026-01-20 16:30:41 (Target: 서울, Count: 200) ---
+2026-01-20 16:30:45,628 - INFO - 🌐 Using Playwright bundled browser
+2026-01-20 16:30:47,339 - INFO - 🔍 Searching: 서울 피부관리샵
