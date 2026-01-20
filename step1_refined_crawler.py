@@ -159,6 +159,10 @@ async def extract_detail_info(page, shop_data):
                     shop_data["talk_url"] = talk_match.group(1)
 
         return True
+    except Exception as e:
+        logger.warning(f"Failed to extract details for {shop_data.get('name')}: {e}")
+        return False
+
 async def install_playwright_browsers():
     """
     Attempts to install playwright browsers if they are missing.
@@ -175,10 +179,18 @@ async def install_playwright_browsers():
         logger.warning(f"⚠️ Playwright install failed or already handled: {e}")
 
 async def run_crawler(target_area=None, target_count=10):
-    # Proactively try to install browsers in Cloud environments
-    if os.environ.get("STREAMLIT_RUNTIME_ENV") or "/home/appuser" in os.getcwd():
-        await install_playwright_browsers()
+    # Immediate progress signal for UI
+    target_count = int(target_count) if target_count else 10
+    print(f"Progress: 0/{target_count}", flush=True)
+    logger.info(f"🚀 Engine Started. Target: {target_area}, Count: {target_count}")
 
+    # Proactively try to install browsers in Cloud environments
+    # STREAMLIT_SERVER_BASE_URL is often set in Cloud
+    is_cloud = os.environ.get("STREAMLIT_RUNTIME_ENV") or "/home/appuser" in os.getcwd() or os.environ.get("STREAMLIT_SERVER_BASE_URL")
+    if is_cloud:
+        logger.info("☁️ Cloud environment detected. Ensuring Playwright browsers...")
+        await install_playwright_browsers()
+    
     # Target Keywords
     if target_area:
         keywords = [f"{target_area} 피부관리샵"]
