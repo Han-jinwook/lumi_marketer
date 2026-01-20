@@ -10,3 +10,5 @@ libpangocairo-1.0-0
 libgtk-3-0
 libgbm1
 libxkbcommon0
+chromium
+chromium-driver

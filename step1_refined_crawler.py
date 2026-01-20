@@ -90,6 +90,17 @@ async def extract_detail_info(page, shop_data):
         # 2. DOM Fallback & Advanced Extraction (Email from description)
         content = await page.content()
         
+        # [NEW] Explicit mailto link check (Strong signal)
+        if not shop_data.get("email"):
+             try:
+                mailto_link = page.locator("a[href^='mailto:']").first
+                if await mailto_link.count() > 0:
+                    href = await mailto_link.get_attribute("href")
+                    if href:
+                        shop_data["email"] = href.replace("mailto:", "").strip()
+                        logger.info(f"📧 Found email via mailto: {shop_data['email']}")
+             except: pass
+
         # Email Extraction from Description if not found yet
         if not shop_data.get("email"):
             emails = re.findall(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', content)
@@ -108,17 +119,28 @@ async def extract_detail_info(page, shop_data):
 
         # 3. DOM Link Fallback (If Apollo failed)
         if not shop_data.get("instagram_handle") or not shop_data.get("naver_blog_id") or not shop_data.get("talk_url"):
-            # Find all http/https links in content roughly (faster than parsing all anchors)
-            # or better, use simple regex for specific domains
             
-            # Instagram
+            # Instagram Logic Improvement
             if not shop_data.get("instagram_handle"):
+                # Strategy A: Regex search in full content (Fast)
                 insta_match = re.search(r'href="(https://www\.instagram\.com/[^"]+)"', content)
                 if insta_match:
-                    shop_data["instagram_handle"] = insta_match.group(1).split("?")[0]
-                    # Clean generic paths
-                    if any(x in shop_data["instagram_handle"] for x in ['/p/', '/reels/', '/explore/']):
-                        shop_data["instagram_handle"] = "" # Discard non-profile links
+                    candidate = insta_match.group(1).split("?")[0]
+                    if not any(x in candidate for x in ['/p/', '/reels/', '/explore/', '/stories/']):
+                         shop_data["instagram_handle"] = candidate
+                
+                # Strategy B: DOM Traversal (More robust for dynamic elements)
+                if not shop_data.get("instagram_handle"):
+                    try:
+                        insta_links = await page.locator("a[href*='instagram.com']").all()
+                        for link in insta_links:
+                            href = await link.get_attribute("href")
+                            if href:
+                                clean_href = href.split("?")[0].strip()
+                                if not any(x in clean_href for x in ['/p/', '/reels/', '/explore/', '/stories/']):
+                                    shop_data["instagram_handle"] = clean_href
+                                    break
+                    except: pass
             
             # Naver Blog
             if not shop_data.get("naver_blog_id"):
@@ -151,31 +173,39 @@ async def run_crawler(target_area=None, target_count=10):
     total_saved = 0
     
     async with async_playwright() as p:
-        try:
-            # Try to launch with chrome channel if available
-            browser = await p.chromium.launch(
-                channel="chrome", 
-                headless=True,
-                args=[
-                    "--disable-blink-features=AutomationControlled", 
-                    "--no-sandbox", 
-                    "--disable-setuid-sandbox", 
-                    "--disable-dev-shm-usage",
-                    "--disable-gpu"
-                ]
-            )
-        except:
-             logger.warning("Chrome channel failed, trying default.")
-             browser = await p.chromium.launch(
-                headless=True,
-                args=[
-                    "--disable-blink-features=AutomationControlled", 
-                    "--no-sandbox", 
-                    "--disable-setuid-sandbox", 
-                    "--disable-dev-shm-usage",
-                    "--disable-gpu"
-                ]
-            )
+        # Cloud-Compatible Browser Launch Logic
+        browser = None
+        launch_args = [
+            "--disable-blink-features=AutomationControlled", 
+            "--no-sandbox", 
+            "--disable-setuid-sandbox", 
+            "--disable-dev-shm-usage",
+            "--disable-gpu"
+        ]
+        
+        # Strategy 1: Try system chromium (for Streamlit Cloud / Linux)
+        if os.path.exists("/usr/bin/chromium"):
+            try:
+                logger.info("🌐 Using system chromium at /usr/bin/chromium")
+                browser = await p.chromium.launch(
+                    executable_path="/usr/bin/chromium",
+                    headless=True,
+                    args=launch_args
+                )
+            except Exception as e:
+                logger.warning(f"System chromium failed: {e}")
+        
+        # Strategy 2: Fallback to Playwright's bundled browser
+        if not browser:
+            try:
+                logger.info("🌐 Using Playwright bundled browser")
+                browser = await p.chromium.launch(
+                    headless=True,
+                    args=launch_args
+                )
+            except Exception as e:
+                logger.error(f"Failed to launch browser: {e}")
+                raise
         
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",

@@ -454,3 +454,28 @@
 2026-01-15 14:59:30,056 - INFO - ✅ Firebase Saved: 휴스킨앤바디
 2026-01-15 14:59:30,056 - INFO - Progress: 10/10
 2026-01-15 14:59:34,061 - INFO - ✅ Finished. Total saved: 10
+
+--- NEW ENGINE RUN: 2026-01-20 15:15:53 (Target: 서울, Count: 200) ---
+2026-01-20 15:16:09,762 - INFO - 🔍 Searching: 서울 피부관리샵
+2026-01-20 15:16:14,819 - INFO - 🗺️ Map view detected. Switching to list view...
+2026-01-20 15:16:23,632 - INFO - Found 110 list items. Extracting basic info...
+2026-01-20 15:16:34,823 - INFO - 🔍 Visiting detail page: 이미지수9
+2026-01-20 15:16:42,602 - INFO - Firebase Firestore initialized successfully
+2026-01-20 15:16:44,403 - INFO - Successfully saved shop to Firebase: 수피부관리샵 화곡점
+2026-01-20 15:16:44,403 - INFO - ✅ Firebase Saved: 수피부관리샵 화곡점
+2026-01-20 15:16:44,403 - INFO - Progress: 1/200
+2026-01-20 15:17:02,261 - INFO - 🔍 Visiting detail page: 이미지수18
+2026-01-20 15:17:08,206 - INFO - Firebase Firestore initialized successfully
+2026-01-20 15:17:08,302 - INFO - Successfully saved shop to Firebase: JNL에스테틱 면목
+2026-01-20 15:17:08,302 - INFO - ✅ Firebase Saved: JNL에스테틱 면목
+2026-01-20 15:17:08,302 - INFO - Progress: 2/200
+2026-01-20 15:17:24,559 - INFO - 🔍 Visiting detail page: 이미지수3
+2026-01-20 15:17:32,418 - INFO - Firebase Firestore initialized successfully
+2026-01-20 15:17:32,517 - INFO - Successfully saved shop to Firebase: 미선에스떼 피부관리샵
+2026-01-20 15:17:32,517 - INFO - ✅ Firebase Saved: 미선에스떼 피부관리샵
+2026-01-20 15:17:32,517 - INFO - Progress: 3/200
+2026-01-20 15:17:48,133 - INFO - 🔍 Visiting detail page: 이미지수3
+2026-01-20 15:17:54,796 - INFO - Firebase Firestore initialized successfully
+2026-01-20 15:17:54,893 - INFO - Successfully saved shop to Firebase: 담쟁이피부관리샵
+2026-01-20 15:17:54,893 - INFO - ✅ Firebase Saved: 담쟁이피부관리샵
+2026-01-20 15:17:54,894 - INFO - Progress: 4/200
