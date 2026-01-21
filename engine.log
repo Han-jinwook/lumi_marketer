@@ -483,3 +483,72 @@
 --- NEW ENGINE RUN: 2026-01-20 16:30:41 (Target: 서울, Count: 200) ---
 2026-01-20 16:30:45,628 - INFO - 🌐 Using Playwright bundled browser
 2026-01-20 16:30:47,339 - INFO - 🔍 Searching: 서울 피부관리샵
+
+--- NEW ENGINE RUN: 2026-01-20 16:40:17 (Target: 서울, Count: 200) ---
+  File "C:\Users\USER\.gemini\antigravity\scratch\skin_shop_crawler\step1_refined_crawler.py", line 162
+    async def install_playwright_browsers():
+SyntaxError: expected 'except' or 'finally' block
+
+--- NEW ENGINE RUN: 2026-01-20 16:40:24 (Target: 서울, Count: 200) ---
+  File "C:\Users\USER\.gemini\antigravity\scratch\skin_shop_crawler\step1_refined_crawler.py", line 162
+    async def install_playwright_browsers():
+SyntaxError: expected 'except' or 'finally' block
+
+--- NEW ENGINE RUN: 2026-01-20 16:44:46 (Target: 서울, Count: 200) ---
+  File "C:\Users\USER\.gemini\antigravity\scratch\skin_shop_crawler\step1_refined_crawler.py", line 162
+    async def install_playwright_browsers():
+SyntaxError: expected 'except' or 'finally' block
+
+--- NEW ENGINE RUN: 2026-01-20 16:45:09 (Target: 서울, Count: 200) ---
+  File "C:\Users\USER\.gemini\antigravity\scratch\skin_shop_crawler\step1_refined_crawler.py", line 162
+    async def install_playwright_browsers():
+SyntaxError: expected 'except' or 'finally' block
+
+--- NEW ENGINE RUN: 2026-01-20 16:45:12 (Target: 인천, Count: 200) ---
+  File "C:\Users\USER\.gemini\antigravity\scratch\skin_shop_crawler\step1_refined_crawler.py", line 162
+    async def install_playwright_browsers():
+SyntaxError: expected 'except' or 'finally' block
+
+--- NEW ENGINE RUN: 2026-01-20 16:52:41 (Target: 서울, Count: 200) ---
+Progress: 0/200
+2026-01-20 16:52:44,233 - INFO - 🚀 Engine Started. Target: 서울, Count: 200
+2026-01-20 16:52:45,114 - INFO - 🌐 Using Playwright bundled browser
+2026-01-20 16:52:46,527 - INFO - 🔍 Searching: 서울 피부관리샵
+
+--- NEW ENGINE RUN: 2026-01-20 16:56:29 (Target: 서울, Count: 200) ---
+Progress: 0/200
+2026-01-20 16:56:38,068 - INFO - 🌐 Using Playwright bundled browser
+2026-01-20 16:56:40,226 - INFO - 🔍 Searching: 서울 피부관리샵
+2026-01-20 16:56:49,111 - INFO - Found 0 list items. Extracting basic info...
+2026-01-20 16:56:49,363 - INFO - ✅ Finished. Total saved: 0
+
+--- NEW ENGINE RUN: 2026-01-20 17:00:55 (Target: 서울, Count: 200) ---
+Progress: 0/200
+2026-01-20 17:00:59,601 - INFO - 🌐 Using Playwright bundled browser
+2026-01-20 17:01:01,092 - INFO - 🔍 Searching: 서울 피부관리샵
+2026-01-20 17:01:09,910 - INFO - Found 0 list items. Extracting basic info...
+2026-01-20 17:01:10,067 - INFO - ✅ Finished. Total saved: 0
+
+--- NEW ENGINE RUN: 2026-01-20 17:04:29 (Target: 서울, Count: 2000) ---
+Progress: 0/2000
+2026-01-20 17:04:33,049 - INFO - 🌐 Using Playwright bundled browser
+2026-01-20 17:04:34,247 - INFO - 🔍 Searching: 서울 피부관리샵
+2026-01-20 17:04:40,898 - INFO - 🔍 Found 0 potential shops. Starting detail extraction...
+2026-01-20 17:04:41,040 - INFO - ✅ Finished. Total saved: 0
+
+--- NEW ENGINE RUN: 2026-01-20 17:05:04 (Target: 서울, Count: 2000) ---
+Progress: 0/2000
+2026-01-20 17:05:07,501 - INFO - 🌐 Using Playwright bundled browser
+2026-01-20 17:05:08,114 - INFO - 🔍 Searching: 서울 피부관리샵
+2026-01-20 17:05:15,460 - INFO - 🔍 Found 0 potential shops. Starting detail extraction...
+2026-01-20 17:05:15,582 - INFO - ✅ Finished. Total saved: 0
+
+--- NEW ENGINE RUN: 2026-01-20 17:07:11 (Target: 서울, Count: 2000) ---
+Progress: 0/2000
+2026-01-20 17:07:14,696 - INFO - 🌐 Using Playwright bundled browser
+2026-01-20 17:07:15,272 - INFO - 🔍 Searching: 서울 피부관리샵
+2026-01-20 17:07:20,905 - INFO - 🖱️ Scrolling to load all items...
+2026-01-20 17:07:22,399 - INFO -   .. scrolled 0 times
+2026-01-20 17:07:25,892 - INFO - 🔍 Found 0 potential shops. Starting detail extraction...
+2026-01-20 17:07:25,892 - INFO - 📍 Scheduled 0 shops for detail extraction.
+2026-01-20 17:07:26,033 - INFO - ✅ Finished. Total saved: 0

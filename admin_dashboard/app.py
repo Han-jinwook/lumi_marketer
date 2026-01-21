@@ -374,8 +374,8 @@ with st.sidebar:
         
         if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
             target = s_city
-            default_count = 200 
-            st.toast(f"'{target}' 전체 수집을 시작합니다. (목표: {default_count}개)")
+            default_count = 2000 
+            st.toast(f"'{target}' 전체 수집을 시작합니다. (목표: 제한 없음)")
             try:
                 # Redirection to log and capture PID with Unbuffered UTF-8
                 my_env = os.environ.copy()
@@ -400,6 +400,20 @@ with st.sidebar:
                 st.rerun()
             except Exception as e:
                 st.error(f"엔진 가동 실패: {e}")
+            
+    st.write("---")
+    
+    # --- Debug: Live Engine Logs ---
+    with st.expander("📝 실시간 엔진 로그", expanded=False):
+        if os.path.exists(ENGINE_LOG_FILE):
+            try:
+                with open(ENGINE_LOG_FILE, "r", encoding="utf-8", errors="replace") as f:
+                    log_tail = f.readlines()[-15:] # Show last 15 lines
+                    st.code("".join(log_tail), language="text")
+            except:
+                st.caption("로그를 읽을 수 없습니다.")
+        else:
+            st.caption("로그 파일이 없습니다.")
             
     st.write("---")
     

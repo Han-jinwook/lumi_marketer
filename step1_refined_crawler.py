@@ -247,68 +247,123 @@ async def run_crawler(target_area=None, target_count=10):
             
             try:
                 await page.goto(url, wait_until="networkidle")
-                await asyncio.sleep(random.uniform(2, 4))
+                await asyncio.sleep(random.uniform(3, 5))
                 
-                # Check for Map View and switch to list if necessary
-                list_view_btn = page.locator("a:has-text('목록보기'), button:has-text('목록보기')")
-                if await list_view_btn.count() > 0:
-                    logger.info("🗺️ Map view detected. Switching to list view...")
-                    await list_view_btn.first.click()
-                    await asyncio.sleep(random.uniform(2, 4))
+                # Check for Map View and switch to list if necessary (Stronger detection)
+                # Naver often shows map first on mobile
+                list_view_selectors = [
+                    "a:has-text('목록보기')", "button:has-text('목록보기')",
+                    "a:has-text('목록')", "button:has-text('목록')",
+                    "._list_view_button", "[data-nclicks-code='listview']"
+                ]
+                
+                for lv_sel in list_view_selectors:
+                    btn = page.locator(lv_sel).first
+                    if await btn.count() > 0 and await btn.is_visible():
+                        logger.info(f"🗺️ Map view detected via '{lv_sel}'. Switching to list view...")
+                        await btn.click()
+                        await asyncio.sleep(random.uniform(3, 5))
+                        break
 
-                # Scroll to load more
-                for _ in range(3):
-                     if total_saved >= target_count: break
+                # Scroll to load more (Deep crawling)
+                logger.info("🖱️ Scrolling to load all items...")
+                last_height = 0
+                for i in range(40): 
                      await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                     await asyncio.sleep(random.uniform(1, 2))
+                     await asyncio.sleep(random.uniform(1.2, 1.8))
+                     
+                     new_height = await page.evaluate("document.body.scrollHeight")
+                     if new_height == last_height: 
+                         # Try one more time with a longer wait
+                         await asyncio.sleep(2)
+                         await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                         new_height = await page.evaluate("document.body.scrollHeight")
+                         if new_height == last_height: break
+                     last_height = new_height
+                     if i % 10 == 0: logger.info(f"  .. scrolled {i} times")
                 
-                # Wait for items
-                selectors = ["li.VLTHu", "li[data-id]", "li.item_root"]
+                # Wait for items (Expanded list of potential selectors)
+                selectors = [
+                    "li.VLTHu", "li[data-id]", "li.item_root", "li.UE77Y", 
+                    "div.UE77Y", "li.rY_pS", "div.rY_pS", "ul > li"
+                ]
                 list_items = []
                 for sel in selectors:
                     items = await page.locator(sel).all()
-                    if len(items) > 0:
-                        list_items = items
+                    # Filter for items that actually look like results (have links)
+                    valid_items = []
+                    for it in items:
+                        if await it.locator("a[href*='/place/']").count() > 0:
+                            valid_items.append(it)
+                    
+                    if len(valid_items) > 1: # Found a list
+                        list_items = valid_items
+                        logger.info(f"✅ Found list using selector: {sel}")
                         break
                 
                 if not list_items:
-                    list_items = await page.locator("li").all()
+                    # Final fallback: any anchor with /place/ inside a list-like structure
+                    list_items = await page.locator("a[href*='/place/']").all()
 
-                logger.info(f"Found {len(list_items)} list items. Extracting basic info...")
+                logger.info(f"🔍 Found {len(list_items)} potential shops. Starting detail extraction...")
                 
                 shops_to_visit = []
                 for li in list_items:
                     if len(shops_to_visit) >= (target_count - total_saved): break
                     
                     try:
-                        link_node = li.locator("a[href*='/place/']").first
-                        if await link_node.count() > 0:
+                        # 1. Detect if li is the link itself or a container
+                        link_node = None
+                        tag_name = await li.evaluate("el => el.tagName.toLowerCase()")
+                        href = await li.get_attribute("href")
+                        
+                        if tag_name == "a" and href and "/place/" in href:
+                            link_node = li
+                        else:
+                            # Search for the primary place link inside container
+                            potential_links = li.locator("a[href*='/place/']")
+                            if await potential_links.count() > 0:
+                                link_node = potential_links.first
+
+                        if link_node:
                             href = await link_node.get_attribute("href")
-                            
                             match = re.search(r'/place/(\d+)', href)
                             if not match: continue
                             place_id = match.group(1)
                             detail_url = f"https://m.place.naver.com/place/{place_id}/home"
                             
+                            # Clean Name extraction
                             raw_name = await link_node.text_content()
-                            name = raw_name.replace("알림받기", "").strip()
+                            if not raw_name or len(raw_name.strip()) < 2:
+                                # Try to find name in a span or div if link text is empty/icon
+                                name_node = li.locator("span.TYpUv, span.name, .title").first
+                                if await name_node.count() > 0:
+                                    raw_name = await name_node.text_content()
+                            
+                            name = raw_name.replace("알림받기", "").replace("N예약", "").strip()
                             
                             phone = ""
                             try:
                                 tel_link = li.locator("a[href^='tel:']").first
                                 if await tel_link.count() > 0:
                                     tel_href = await tel_link.get_attribute("href")
-                                    phone = tel_href.replace("tel:", "")
+                                    phone = tel_href.replace("tel:", "").strip()
                             except: pass
                             
-                            shops_to_visit.append({
-                                "name": name,
-                                "phone": phone,
-                                "detail_url": detail_url,
-                                "source_link": detail_url,
-                                "keyword": keyword
-                            })
-                    except: continue
+                            # Deduplicate in the current batch
+                            if not any(s['detail_url'] == detail_url for s in shops_to_visit):
+                                shops_to_visit.append({
+                                    "name": name if name else f"Shop_{place_id}",
+                                    "phone": phone,
+                                    "detail_url": detail_url,
+                                    "source_link": detail_url,
+                                    "keyword": keyword
+                                })
+                    except Exception as e: 
+                        logger.debug(f"Error parsing list item: {e}")
+                        continue
+
+                logger.info(f"📍 Scheduled {len(shops_to_visit)} shops for detail extraction.")
 
                 # Visit each shop's detail page
                 for shop_data in shops_to_visit:
@@ -329,11 +384,14 @@ async def run_crawler(target_area=None, target_count=10):
                         if shop_data.get("name") and shop_data.get("address"):
                             if save_to_db(shop_data):
                                 total_saved += 1
-                                logger.info(f"Progress: {total_saved}/{target_count}")
+                                # Standardized progress output for dashboard
+                                print(f"Progress: {total_saved}/{target_count}", flush=True)
+                                logger.info(f"✅ Saved ({total_saved}/{target_count}): {shop_data.get('name')}")
                         else:
                             logger.warning(f"⏩ Skipping shop {shop_data.get('name')} due to missing critical info (Address).")
                     
-                    await asyncio.sleep(random.uniform(15, 20))
+                    # Random delay between detail pages to avoid detection
+                    await asyncio.sleep(random.uniform(12, 18))
 
             except Exception as e:
                  logger.error(f"Error processing keyword {keyword}: {e}")
