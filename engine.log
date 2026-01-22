@@ -552,6 +552,7 @@ Progress: 0/2000
 2026-01-20 17:07:25,892 - INFO - 🔍 Found 0 potential shops. Starting detail extraction...
 2026-01-20 17:07:25,892 - INFO - 📍 Scheduled 0 shops for detail extraction.
 2026-01-20 17:07:26,033 - INFO - ✅ Finished. Total saved: 0
+<<<<<<< HEAD
 
 --- NEW ENGINE RUN: 2026-01-21 12:42:29 (Target: 서울, Count: 2000) ---
 Progress: 0/2000
@@ -593,3 +594,5 @@ Progress: 0/2000
 2026-01-21 13:29:44,327 - INFO - 🔍 Found 0 potential shops. Starting detail extraction...
 2026-01-21 13:29:44,327 - INFO - 📍 Scheduled 0 shops for detail extraction.
 2026-01-21 13:29:44,423 - INFO - ✅ Finished. Total saved: 0
+=======
+>>>>>>> 2f609049549d6262236923fd59ef1d3eb9c885f8
