@@ -1,14 +1,23 @@
-import requests
-import json
+import logging
 import math
-import config
+import json
 import time
+from typing import Dict, List
+from crawler.db_handler import DBHandler
+import config
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def haversine(lat1, lon1, lat2, lon2):
     """
     Calculate the great circle distance between two points 
     on the earth (specified in decimal degrees)
     """
+    if not all([lat1, lon1, lat2, lon2]):
+        return 999999
+    
     # Convert decimal degrees to radians 
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
 
@@ -17,75 +26,84 @@ def haversine(lat1, lon1, lat2, lon2):
     dlon = lon2 - lon1 
     a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
     c = 2 * math.asin(math.sqrt(a)) 
-    r = 6371 # Radius of earth in kilometers. Use 6371000 for meters.
+    r = 6371 # Radius of earth in kilometers
     return c * r * 1000 # Distance in meters
 
-def extract_competitors():
-    url = config.SUPABASE_URL
-    key = config.SUPABASE_KEY
-    headers = {
-        "apikey": key,
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json"
-    }
-    
-    # 1. Fetch all shops with valid coordinates
-    # For now, we focus on shops that have non-zero coordinates
-    query_url = f"{url}/rest/v1/t_crawled_shops?latitude=neq.0&select=id,name,address,latitude,longitude"
-    resp = requests.get(query_url, headers=headers)
-    
-    if resp.status_code != 200:
-        print(f"[-] Failed to fetch shops: {resp.status_code} {resp.text}")
-        return
-    
-    all_shops = resp.json()
-    print(f"[*] Loaded {len(all_shops)} shops with coordinates.")
-    
-    if not all_shops:
-        print("[-] No shops found with valid coordinates.")
+def run_competitor_extraction():
+    """
+    Fetches all shops from Firebase, calculates the top 9 closest competitors for each,
+    and updates the Firebase records.
+    """
+    logger.info("🚀 Starting Competitor Extraction (Firebase Architecture)...")
+    db = DBHandler()
+    if not db.db_fs:
+        logger.error("❌ Firebase fails to initialize. Aborting.")
         return
 
-    # 2. Iterate through each shop to find its competitors
-    for target in all_shops:
-        target_id = target['id']
-        target_name = target['name']
-        t_lat = target['latitude']
-        t_lng = target['longitude']
-        
-        print(f"[*] Calculating competitors for: {target_name}")
+    # 1. Fetch all shops
+    try:
+        docs = db.db_fs.collection(config.FIREBASE_COLLECTION).stream()
+        all_shops = []
+        for doc in docs:
+            data = doc.to_dict()
+            data['_fs_id'] = doc.id # Store Firestore document ID for updating
+            all_shops.append(data)
+    except Exception as e:
+        logger.error(f"❌ Failed to fetch shops from Firebase: {e}")
+        return
+
+    logger.info(f"📊 Total shops loaded: {len(all_shops)}")
+    
+    # Filter shops with valid coordinates
+    valid_shops = [s for s in all_shops if s.get('latitude') and s.get('longitude') and s.get('latitude') != 0]
+    logger.info(f"📍 Shops with valid coordinates: {len(valid_shops)}")
+
+    if len(valid_shops) < 2:
+        logger.warning("⚠️ Not enough shops with coordinates to calculate competitors.")
+        return
+
+    # 2. Process each shop
+    updated_count = 0
+    for target in valid_shops:
+        target_name = target.get('name') or target.get('상호명', 'Unknown')
+        t_lat = target.get('latitude')
+        t_lng = target.get('longitude')
         
         distances = []
-        for other in all_shops:
-            if other['id'] == target_id:
-                continue # Don't compare with self
+        for other in valid_shops:
+            if other.get('_fs_id') == target.get('_fs_id'):
+                continue
             
-            dist = haversine(t_lat, t_lng, other['latitude'], other['longitude'])
+            dist = haversine(t_lat, t_lng, other.get('latitude'), other.get('longitude'))
+            
+            # Map necessary fields for competitor display
             distances.append({
-                "name": other['name'],
-                "address": other['address'],
+                "name": other.get('name') or other.get('상호명'),
+                "address": other.get('address') or other.get('주소'),
+                "phone": other.get('phone') or other.get('번호'),
+                "detail_url": other.get('detail_url') or other.get('플레이스링크'),
                 "distance_m": round(dist)
             })
         
-        # Sort by distance
+        # Sort by proximity
         distances.sort(key=lambda x: x['distance_m'])
         
-        # Take top 9
+        # Take best 9
         top_9 = distances[:9]
         
-        # Convert to string for DB storage
-        top_9_json = json.dumps(top_9, ensure_ascii=False)
-        
-        # Update DB
-        update_url = f"{url}/rest/v1/t_crawled_shops?id=eq.{target_id}"
-        upd_resp = requests.patch(update_url, headers=headers, json={"top_9_competitors": top_9_json})
-        
-        if upd_resp.status_code in [200, 204]:
-            print(f"    [+] Updated top 9 competitors for {target_name} ({len(top_9)} found)")
-        else:
-            print(f"    [-] Failed to update {target_name}: {upd_resp.status_code}")
-        
-        # Small sleep to be nice to the API
-        time.sleep(0.1)
+        # 3. Update Firebase
+        try:
+            db.db_fs.collection(config.FIREBASE_COLLECTION).document(target['_fs_id']).update({
+                "top_9_competitors": top_9,
+                "competitors_updated_at": time.strftime('%Y-%m-%d %H:%M:%S')
+            })
+            updated_count += 1
+            if updated_count % 10 == 0:
+                logger.info(f"✅ Processed {updated_count}/{len(valid_shops)} shops...")
+        except Exception as e:
+            logger.error(f"❌ Failed to update {target_name}: {e}")
+
+    logger.info(f"🎉 Competitor extraction finished. Total {updated_count} shops updated.")
 
 if __name__ == "__main__":
-    extract_competitors()
+    run_competitor_extraction()

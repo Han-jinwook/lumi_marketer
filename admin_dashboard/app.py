@@ -314,7 +314,7 @@ with st.sidebar:
     st.caption("네이버 플레이스 실시간 수집")
     st.write("---")
     s_city = st.selectbox("수집 지역 (시/도)", ["서울", "인천", "경기", "부산", "대구", "대전", "광주", "울산", "세종", "제주"], key="sb_city")
-    # Removed s_dist and s_count as per user request
+    # Removed s_dist and s_count as per user request (Full Collection Mode)
 
 
     
@@ -375,7 +375,7 @@ with st.sidebar:
         if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
             target = s_city
             default_count = 2000 
-            st.toast(f"'{target}' 전체 수집을 시작합니다. (목표: 제한 없음)")
+            st.toast(f"'{target}' 전체 수집을 시작합니다. (목표: 제한 없음/2000)")
             try:
                 # Redirection to log and capture PID with Unbuffered UTF-8
                 my_env = os.environ.copy()

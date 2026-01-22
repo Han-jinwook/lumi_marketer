@@ -17,8 +17,9 @@ logger = logging.getLogger(__name__)
 # Actor ID for Naver Map Scraper
 # Using a reliable actor. 'crawlers-collection/naver-map-scraper' or 'compass/naver-map-scraper' are common.
 # 'curious_coder/naver-place-scraper' was in the previous code.
-# Let's use 'compass/naver-map-scraper' which is often the most robust 'official-like' one.
-ACTOR_ID = "compass/naver-map-scraper"
+# Let's try 'sunshine/naver-place-crawler' which is a known public actor or fallback to custom scraping.
+# Actually 'crawlers-collection' might work.
+ACTOR_ID = "crawlers-collection/naver-map-scraper"
 
 def run_apify_crawler(keywords: List[str] = None, max_items_per_query: int = 50):
     """
@@ -136,6 +137,7 @@ def process_apify_item(item: Dict[str, Any], keyword: str) -> Dict[str, Any]:
     }
 
 if __name__ == "__main__":
-    # Test run with a simple keyword
-    # Use a small number to save credits/time
-    run_apify_crawler(["서울 강남구 피부관리샵"], max_items_per_query=5)
+    # Test run with Seoul skin shops
+    # Crawl 10 shops for testing
+    print("🚀 Starting Apify crawler test - 서울 피부샵 10개 크롤링")
+    run_apify_crawler(["서울 피부관리샵"], max_items_per_query=10)

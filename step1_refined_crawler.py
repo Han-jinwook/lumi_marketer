@@ -8,6 +8,7 @@ import sys
 import os
 import re
 from playwright.async_api import async_playwright
+from playwright_stealth import stealth_async
 import config
 from crawler.db_handler import DBHandler
 
@@ -21,14 +22,38 @@ TABLE_NAME = "t_crawled_shops"
 def save_to_db(shop_data):
     """
     Saves a single shop dict to Firebase via DBHandler.
+    Falls back to local JSON if Firebase fails.
     """
-    db = DBHandler()
-    if db.insert_shop_fs(shop_data):
-        logger.info(f"✅ Firebase Saved: {shop_data.get('name')}")
-        return True
-    else:
-        logger.error(f"❌ Firebase Save Failed: {shop_data.get('name')}")
-        return False
+    try:
+        db = DBHandler()
+        if db.insert_shop_fs(shop_data):
+            logger.info(f"✅ Firebase Saved: {shop_data.get('name')}")
+            return True
+        else:
+            logger.error(f"❌ Firebase Save Failed: {shop_data.get('name')}")
+            return False
+    except Exception as e:
+        logger.warning(f"⚠️ Firebase connection error: {e}")
+        # Fallback: Save to local JSON
+        try:
+            local_file = "crawled_shops_emergency.json"
+            data_list = []
+            if os.path.exists(local_file):
+                with open(local_file, "r", encoding="utf-8") as f:
+                    try:
+                        data_list = json.load(f)
+                    except: pass
+            
+            data_list.append(shop_data)
+            
+            with open(local_file, "w", encoding="utf-8") as f:
+                json.dump(data_list, f, ensure_ascii=False, indent=2)
+                
+            logger.info(f"💾 Saved to local file instead: {shop_data.get('name')}")
+            return True
+        except Exception as local_e:
+            logger.error(f"❌ Local save also failed: {local_e}")
+            return False
 
 async def extract_detail_info(page, shop_data):
     """
@@ -236,12 +261,19 @@ async def run_crawler(target_area=None, target_count=10):
             user_agent=user_agent,
             viewport={"width": random.randint(375, 414), "height": random.randint(667, 915)},
             locale="ko-KR",
-            timezone_id="Asia/Seoul"
+            timezone_id="Asia/Seoul",
+            permissions=["geolocation"]
         )
         
-        await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        # Disable webdriver flag proactively
+        # await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
         page = await context.new_page()
+        
+        # 🕵️ ACTIVATE STEALTH MODE
+        logger.info("🕵️ Activating Playwright Stealth Mode...")
+        await stealth_async(page)
+
         
         for keyword in keywords:
             if total_saved >= target_count: break
@@ -429,6 +461,17 @@ if __name__ == "__main__":
     
     try:
         asyncio.run(run_crawler(target, count))
+        
+        # 🎯 AUTOMATIC COMPETITOR EXTRACTION AFTER CRAWLING
+        print("Progress: Finalizing...", flush=True)
+        logger.info("🎯 Crawling complete. Starting automatic competitor extraction...")
+        try:
+            from extract_competitors import run_competitor_extraction
+            run_competitor_extraction()
+            logger.info("✅ All tasks (Crawl + Competitor Analysis) finished successfully!")
+        except Exception as ce:
+            logger.error(f"⚠️ Competitor extraction failed: {ce}")
+            
     except Exception as e:
         print(f"CRITICAL ERROR: {e}", flush=True)
         logger.error(f"Engine crashed: {e}")

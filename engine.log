@@ -596,3 +596,51 @@ Progress: 0/2000
 2026-01-21 13:29:44,423 - INFO - ✅ Finished. Total saved: 0
 =======
 >>>>>>> 2f609049549d6262236923fd59ef1d3eb9c885f8
+
+--- NEW ENGINE RUN: 2026-01-22 16:27:38 (Target: 서울, Count: 2000) ---
+Progress: 0/2000
+2026-01-22 16:27:42,748 - INFO - 🌐 Using Playwright bundled browser
+2026-01-22 16:27:44,839 - INFO - 🎭 Using User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15
+2026-01-22 16:27:45,280 - INFO - 🕵️ Activating Playwright Stealth Mode...
+2026-01-22 16:27:45,432 - INFO - 🔍 Searching: 서울 피부관리샵
+2026-01-22 16:27:54,345 - INFO - 🗺️ Map view detected via 'a:has-text('목록보기')'. Switching to list view...
+2026-01-22 16:27:58,267 - INFO - 🖱️ Scrolling to load all items...
+2026-01-22 16:27:59,495 - INFO -   .. scrolled 0 times
+2026-01-22 16:28:04,808 - INFO - ✅ Found list using selector: li.VLTHu
+2026-01-22 16:28:04,808 - INFO - 🔍 Found 100 potential shops. Starting detail extraction...
+2026-01-22 16:28:15,054 - INFO - 📍 Scheduled 100 shops for detail extraction.
+2026-01-22 16:28:15,054 - INFO - 🔍 Visiting detail page: 이미지수9
+2026-01-22 16:28:21,373 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:28:22,752 - INFO - Successfully saved shop to Firebase: 수피부관리샵 화곡점
+2026-01-22 16:28:22,752 - INFO - ✅ Firebase Saved: 수피부관리샵 화곡점
+Progress: 1/2000
+2026-01-22 16:28:22,752 - INFO - ✅ Saved (1/2000): 수피부관리샵 화곡점
+2026-01-22 16:28:22,752 - INFO - ⏳ Waiting 30.5s before next shop...
+2026-01-22 16:28:53,209 - INFO - 🔍 Visiting detail page: 이미지수18
+2026-01-22 16:28:59,029 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:28:59,134 - INFO - Successfully saved shop to Firebase: JNL에스테틱 면목
+2026-01-22 16:28:59,135 - INFO - ✅ Firebase Saved: JNL에스테틱 면목
+Progress: 2/2000
+2026-01-22 16:28:59,135 - INFO - ✅ Saved (2/2000): JNL에스테틱 면목
+2026-01-22 16:28:59,135 - INFO - ⏳ Waiting 29.1s before next shop...
+2026-01-22 16:29:28,208 - INFO - 🔍 Visiting detail page: 이미지수3
+2026-01-22 16:29:35,799 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:29:35,905 - INFO - Successfully saved shop to Firebase: 미선에스떼 피부관리샵
+2026-01-22 16:29:35,905 - INFO - ✅ Firebase Saved: 미선에스떼 피부관리샵
+Progress: 3/2000
+2026-01-22 16:29:35,905 - INFO - ✅ Saved (3/2000): 미선에스떼 피부관리샵
+2026-01-22 16:29:35,905 - INFO - ⏳ Waiting 44.8s before next shop...
+2026-01-22 16:30:20,756 - INFO - 🔍 Visiting detail page: 이미지수11
+2026-01-22 16:30:26,483 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:30:26,584 - INFO - Successfully saved shop to Firebase: 쉼 피부관리샵
+2026-01-22 16:30:26,584 - INFO - ✅ Firebase Saved: 쉼 피부관리샵
+Progress: 4/2000
+2026-01-22 16:30:26,584 - INFO - ✅ Saved (4/2000): 쉼 피부관리샵
+2026-01-22 16:30:26,584 - INFO - ⏳ Waiting 27.4s before next shop...
+2026-01-22 16:30:53,969 - INFO - 🔍 Visiting detail page: 이미지수3
+2026-01-22 16:31:01,354 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:31:01,448 - INFO - Successfully saved shop to Firebase: 담쟁이피부관리샵
+2026-01-22 16:31:01,448 - INFO - ✅ Firebase Saved: 담쟁이피부관리샵
+Progress: 5/2000
+2026-01-22 16:31:01,448 - INFO - ✅ Saved (5/2000): 담쟁이피부관리샵
+2026-01-22 16:31:01,448 - INFO - ⏳ Waiting 38.5s before next shop...
