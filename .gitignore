@@ -1,0 +1,29 @@
+# Supabase
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sessions & Data
+browser_session/
+*.log
+!engine.log
+!messenger.log
+crawled_shops_full.json
+debug_search_results.png
+naver_block_detected.png
+
+# Firebase Key (SENSITIVE)
+firebase_key.json
+write_key.py

@@ -1,0 +1,11 @@
+streamlit
+pandas
+requests
+python-dotenv
+supabase
+beautifulsoup4
+lxml
+geopy
+playwright
+firebase-admin
+apify-client
