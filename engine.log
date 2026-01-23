@@ -644,3 +644,884 @@ Progress: 4/2000
 Progress: 5/2000
 2026-01-22 16:31:01,448 - INFO - ✅ Saved (5/2000): 담쟁이피부관리샵
 2026-01-22 16:31:01,448 - INFO - ⏳ Waiting 38.5s before next shop...
+2026-01-22 16:31:39,918 - INFO - 🔍 Visiting detail page: 이미지수2
+2026-01-22 16:31:45,828 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:31:45,918 - INFO - Successfully saved shop to Firebase: 민피부관리샵
+2026-01-22 16:31:45,918 - INFO - ✅ Firebase Saved: 민피부관리샵
+Progress: 6/2000
+2026-01-22 16:31:45,918 - INFO - ✅ Saved (6/2000): 민피부관리샵
+2026-01-22 16:31:45,918 - INFO - ⏳ Waiting 55.2s before next shop...
+2026-01-22 16:32:41,087 - INFO - 🔍 Visiting detail page: 이미지수4
+2026-01-22 16:32:46,607 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:32:46,715 - INFO - Successfully saved shop to Firebase: 샤론피부관리
+2026-01-22 16:32:46,715 - INFO - ✅ Firebase Saved: 샤론피부관리
+Progress: 7/2000
+2026-01-22 16:32:46,716 - INFO - ✅ Saved (7/2000): 샤론피부관리
+2026-01-22 16:32:46,716 - INFO - ⏳ Waiting 27.6s before next shop...
+2026-01-22 16:33:14,357 - INFO - 🔍 Visiting detail page: Shop_1536556921
+2026-01-22 16:33:21,051 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:33:21,166 - INFO - Successfully saved shop to Firebase: 솔향기피부관리샵
+2026-01-22 16:33:21,166 - INFO - ✅ Firebase Saved: 솔향기피부관리샵
+Progress: 8/2000
+2026-01-22 16:33:21,167 - INFO - ✅ Saved (8/2000): 솔향기피부관리샵
+2026-01-22 16:33:21,167 - INFO - ⏳ Waiting 64.2s before next shop...
+2026-01-22 16:34:25,396 - INFO - 🔍 Visiting detail page: 라인힐링피부관리샵피부,체형관리
+2026-01-22 16:34:33,543 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:34:33,650 - INFO - Successfully saved shop to Firebase: 라인힐링피부관리샵
+2026-01-22 16:34:33,651 - INFO - ✅ Firebase Saved: 라인힐링피부관리샵
+Progress: 9/2000
+2026-01-22 16:34:33,651 - INFO - ✅ Saved (9/2000): 라인힐링피부관리샵
+2026-01-22 16:34:33,651 - INFO - ⏳ Waiting 54.3s before next shop...
+2026-01-22 16:35:27,928 - INFO - 🔍 Visiting detail page: 이미지수2
+2026-01-22 16:35:35,632 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:35:35,757 - INFO - Successfully saved shop to Firebase: 샤론피부미용
+2026-01-22 16:35:35,757 - INFO - ✅ Firebase Saved: 샤론피부미용
+Progress: 10/2000
+2026-01-22 16:35:35,757 - INFO - ✅ Saved (10/2000): 샤론피부미용
+2026-01-22 16:35:35,757 - INFO - ⏳ Waiting 45.7s before next shop...
+2026-01-22 16:36:21,498 - INFO - 🔍 Visiting detail page: Shop_34356416
+2026-01-22 16:36:27,213 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:36:27,315 - INFO - Successfully saved shop to Firebase: 권피부관리샵
+2026-01-22 16:36:27,315 - INFO - ✅ Firebase Saved: 권피부관리샵
+Progress: 11/2000
+2026-01-22 16:36:27,315 - INFO - ✅ Saved (11/2000): 권피부관리샵
+2026-01-22 16:36:27,315 - INFO - ⏳ Waiting 65.9s before next shop...
+2026-01-22 16:37:33,245 - INFO - 🔍 Visiting detail page: 정앤정피부관리실피부,체형관리
+2026-01-22 16:37:41,265 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:37:41,380 - INFO - Successfully saved shop to Firebase: 정앤정피부관리실
+2026-01-22 16:37:41,380 - INFO - ✅ Firebase Saved: 정앤정피부관리실
+Progress: 12/2000
+2026-01-22 16:37:41,380 - INFO - ✅ Saved (12/2000): 정앤정피부관리실
+2026-01-22 16:37:41,380 - INFO - ⏳ Waiting 20.8s before next shop...
+2026-01-22 16:38:02,229 - INFO - 🔍 Visiting detail page: 이미지수4
+2026-01-22 16:38:09,312 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:38:09,418 - INFO - Successfully saved shop to Firebase: 아델라피부관리샵
+2026-01-22 16:38:09,418 - INFO - ✅ Firebase Saved: 아델라피부관리샵
+Progress: 13/2000
+2026-01-22 16:38:09,418 - INFO - ✅ Saved (13/2000): 아델라피부관리샵
+2026-01-22 16:38:09,418 - INFO - ⏳ Waiting 59.4s before next shop...
+2026-01-22 16:39:08,824 - INFO - 🔍 Visiting detail page: 명동피부샵피부,체형관리
+2026-01-22 16:39:14,227 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:39:14,330 - INFO - Successfully saved shop to Firebase: 명동피부샵
+2026-01-22 16:39:14,330 - INFO - ✅ Firebase Saved: 명동피부샵
+Progress: 14/2000
+2026-01-22 16:39:14,330 - INFO - ✅ Saved (14/2000): 명동피부샵
+2026-01-22 16:39:14,330 - INFO - ⏳ Waiting 62.7s before next shop...
+2026-01-22 16:40:17,012 - INFO - 🔍 Visiting detail page: 김추자피부관리샵피부,체형관리
+2026-01-22 16:40:23,611 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:40:23,783 - INFO - Successfully saved shop to Firebase: 김추자피부관리샵
+2026-01-22 16:40:23,784 - INFO - ✅ Firebase Saved: 김추자피부관리샵
+Progress: 15/2000
+2026-01-22 16:40:23,784 - INFO - ✅ Saved (15/2000): 김추자피부관리샵
+2026-01-22 16:40:23,784 - INFO - ⏳ Waiting 55.3s before next shop...
+2026-01-22 16:41:19,064 - INFO - 🔍 Visiting detail page: 이미지수38
+2026-01-22 16:41:24,292 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:41:24,384 - INFO - Successfully saved shop to Firebase: 카시아타이마사지 홍대본점
+2026-01-22 16:41:24,384 - INFO - ✅ Firebase Saved: 카시아타이마사지 홍대본점
+Progress: 16/2000
+2026-01-22 16:41:24,384 - INFO - ✅ Saved (16/2000): 카시아타이마사지 홍대본점
+2026-01-22 16:41:24,384 - INFO - ⏳ Waiting 53.4s before next shop...
+2026-01-22 16:42:17,841 - INFO - 🔍 Visiting detail page: 이미지수12
+2026-01-22 16:42:25,132 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:42:25,226 - INFO - Successfully saved shop to Firebase: 인생마사지 신도림점
+2026-01-22 16:42:25,226 - INFO - ✅ Firebase Saved: 인생마사지 신도림점
+Progress: 17/2000
+2026-01-22 16:42:25,226 - INFO - ✅ Saved (17/2000): 인생마사지 신도림점
+2026-01-22 16:42:25,226 - INFO - ⏳ Waiting 54.6s before next shop...
+2026-01-22 16:43:19,854 - INFO - 🔍 Visiting detail page: 이미지수37
+2026-01-22 16:43:24,990 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:43:25,089 - INFO - Successfully saved shop to Firebase: 프롬미 강남본점
+2026-01-22 16:43:25,090 - INFO - ✅ Firebase Saved: 프롬미 강남본점
+Progress: 18/2000
+2026-01-22 16:43:25,090 - INFO - ✅ Saved (18/2000): 프롬미 강남본점
+2026-01-22 16:43:25,090 - INFO - ⏳ Waiting 37.2s before next shop...
+2026-01-22 16:44:02,319 - INFO - 🔍 Visiting detail page: 이미지수16
+2026-01-22 16:44:09,217 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:44:09,321 - INFO - Successfully saved shop to Firebase: 김서희건강연구소
+2026-01-22 16:44:09,321 - INFO - ✅ Firebase Saved: 김서희건강연구소
+Progress: 19/2000
+2026-01-22 16:44:09,321 - INFO - ✅ Saved (19/2000): 김서희건강연구소
+2026-01-22 16:44:09,321 - INFO - ⏳ Waiting 24.8s before next shop...
+2026-01-22 16:44:34,171 - INFO - 🔍 Visiting detail page: 이미지수63
+2026-01-22 16:44:40,764 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:44:40,875 - INFO - Successfully saved shop to Firebase: 바디튠 마사지살롱 오목교역점
+2026-01-22 16:44:40,875 - INFO - ✅ Firebase Saved: 바디튠 마사지살롱 오목교역점
+Progress: 20/2000
+2026-01-22 16:44:40,876 - INFO - ✅ Saved (20/2000): 바디튠 마사지살롱 오목교역점
+2026-01-22 16:44:40,876 - INFO - ⏳ Waiting 45.7s before next shop...
+2026-01-22 16:45:26,589 - INFO - 🔍 Visiting detail page: 이미지수12
+2026-01-22 16:45:32,434 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:45:32,531 - INFO - Successfully saved shop to Firebase: 더풋샵마사지 문정법조타운점
+2026-01-22 16:45:32,531 - INFO - ✅ Firebase Saved: 더풋샵마사지 문정법조타운점
+Progress: 21/2000
+2026-01-22 16:45:32,531 - INFO - ✅ Saved (21/2000): 더풋샵마사지 문정법조타운점
+2026-01-22 16:45:32,531 - INFO - ⏳ Waiting 42.1s before next shop...
+2026-01-22 16:46:14,663 - INFO - 🔍 Visiting detail page: 이미지수103
+2026-01-22 16:46:20,021 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:46:20,125 - INFO - Successfully saved shop to Firebase: 엠테라피 마사지 문정본점
+2026-01-22 16:46:20,125 - INFO - ✅ Firebase Saved: 엠테라피 마사지 문정본점
+Progress: 22/2000
+2026-01-22 16:46:20,125 - INFO - ✅ Saved (22/2000): 엠테라피 마사지 문정본점
+2026-01-22 16:46:20,125 - INFO - ⏳ Waiting 53.3s before next shop...
+2026-01-22 16:47:13,427 - INFO - 🔍 Visiting detail page: 이미지수24
+2026-01-22 16:47:19,740 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:47:19,840 - INFO - Successfully saved shop to Firebase: 벨라인 에스테틱 강남선릉점
+2026-01-22 16:47:19,840 - INFO - ✅ Firebase Saved: 벨라인 에스테틱 강남선릉점
+Progress: 23/2000
+2026-01-22 16:47:19,840 - INFO - ✅ Saved (23/2000): 벨라인 에스테틱 강남선릉점
+2026-01-22 16:47:19,840 - INFO - ⏳ Waiting 42.5s before next shop...
+2026-01-22 16:48:02,343 - INFO - 🔍 Visiting detail page: 이미지수12
+2026-01-22 16:48:09,454 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:48:09,557 - INFO - Successfully saved shop to Firebase: 미르테 바이 혜정
+2026-01-22 16:48:09,558 - INFO - ✅ Firebase Saved: 미르테 바이 혜정
+Progress: 24/2000
+2026-01-22 16:48:09,558 - INFO - ✅ Saved (24/2000): 미르테 바이 혜정
+2026-01-22 16:48:09,558 - INFO - ⏳ Waiting 34.2s before next shop...
+2026-01-22 16:48:43,734 - INFO - 🔍 Visiting detail page: 이미지수65
+2026-01-22 16:48:49,266 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:48:49,370 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 목동41타워점
+2026-01-22 16:48:49,370 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 목동41타워점
+Progress: 25/2000
+2026-01-22 16:48:49,370 - INFO - ✅ Saved (25/2000): 더하노이풋앤바디 목동41타워점
+2026-01-22 16:48:49,370 - INFO - ⏳ Waiting 58.1s before next shop...
+2026-01-22 16:49:47,473 - INFO - 🔍 Visiting detail page: 이미지수36
+2026-01-22 16:49:52,827 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:49:52,916 - INFO - Successfully saved shop to Firebase: 라운지스파 마사지 마곡본점
+2026-01-22 16:49:52,916 - INFO - ✅ Firebase Saved: 라운지스파 마사지 마곡본점
+Progress: 26/2000
+2026-01-22 16:49:52,916 - INFO - ✅ Saved (26/2000): 라운지스파 마사지 마곡본점
+2026-01-22 16:49:52,916 - INFO - ⏳ Waiting 31.8s before next shop...
+2026-01-22 16:50:24,714 - INFO - 🔍 Visiting detail page: 이미지수16
+2026-01-22 16:50:31,860 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:50:31,951 - INFO - Successfully saved shop to Firebase: 선에스테스파 마곡점
+2026-01-22 16:50:31,951 - INFO - ✅ Firebase Saved: 선에스테스파 마곡점
+Progress: 27/2000
+2026-01-22 16:50:31,951 - INFO - ✅ Saved (27/2000): 선에스테스파 마곡점
+2026-01-22 16:50:31,951 - INFO - ⏳ Waiting 63.0s before next shop...
+2026-01-22 16:51:34,996 - INFO - 🔍 Visiting detail page: 이미지수23
+2026-01-22 16:51:41,113 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:51:41,213 - INFO - Successfully saved shop to Firebase: 청심재스파 화곡본점
+2026-01-22 16:51:41,213 - INFO - ✅ Firebase Saved: 청심재스파 화곡본점
+Progress: 28/2000
+2026-01-22 16:51:41,213 - INFO - ✅ Saved (28/2000): 청심재스파 화곡본점
+2026-01-22 16:51:41,213 - INFO - ⏳ Waiting 66.4s before next shop...
+2026-01-22 16:52:47,571 - INFO - 🔍 Visiting detail page: 이미지수68
+2026-01-22 16:52:54,775 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:52:54,880 - INFO - Successfully saved shop to Firebase: 온에스테틱 압구정점
+2026-01-22 16:52:54,880 - INFO - ✅ Firebase Saved: 온에스테틱 압구정점
+Progress: 29/2000
+2026-01-22 16:52:54,880 - INFO - ✅ Saved (29/2000): 온에스테틱 압구정점
+2026-01-22 16:52:54,880 - INFO - ⏳ Waiting 32.6s before next shop...
+2026-01-22 16:53:27,531 - INFO - 🔍 Visiting detail page: 이미지수10
+2026-01-22 16:53:33,564 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:53:33,660 - INFO - Successfully saved shop to Firebase: 더록시 논현점
+2026-01-22 16:53:33,660 - INFO - ✅ Firebase Saved: 더록시 논현점
+Progress: 30/2000
+2026-01-22 16:53:33,660 - INFO - ✅ Saved (30/2000): 더록시 논현점
+2026-01-22 16:53:33,660 - INFO - ⏳ Waiting 27.6s before next shop...
+2026-01-22 16:54:01,280 - INFO - 🔍 Visiting detail page: 이미지수69
+2026-01-22 16:54:07,609 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:54:07,703 - INFO - Successfully saved shop to Firebase: 마곡마사지 라보떼테라피 마곡본점
+2026-01-22 16:54:07,703 - INFO - ✅ Firebase Saved: 마곡마사지 라보떼테라피 마곡본점
+Progress: 31/2000
+2026-01-22 16:54:07,703 - INFO - ✅ Saved (31/2000): 마곡마사지 라보떼테라피 마곡본점
+2026-01-22 16:54:07,703 - INFO - ⏳ Waiting 34.1s before next shop...
+2026-01-22 16:54:41,827 - INFO - 🔍 Visiting detail page: 이미지수3
+2026-01-22 16:54:48,993 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:54:49,095 - INFO - Successfully saved shop to Firebase: 에스테틱공간
+2026-01-22 16:54:49,095 - INFO - ✅ Firebase Saved: 에스테틱공간
+Progress: 32/2000
+2026-01-22 16:54:49,095 - INFO - ✅ Saved (32/2000): 에스테틱공간
+2026-01-22 16:54:49,095 - INFO - ⏳ Waiting 28.4s before next shop...
+2026-01-22 16:55:17,490 - INFO - 🔍 Visiting detail page: 이미지수108
+2026-01-22 16:55:23,253 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:55:23,347 - INFO - Successfully saved shop to Firebase: 스파라엘 몬드리안호텔점 바이 바디튠 마사지살롱
+2026-01-22 16:55:23,347 - INFO - ✅ Firebase Saved: 스파라엘 몬드리안호텔점 바이 바디튠 마사지살롱
+Progress: 33/2000
+2026-01-22 16:55:23,347 - INFO - ✅ Saved (33/2000): 스파라엘 몬드리안호텔점 바이 바디튠 마사지살롱
+2026-01-22 16:55:23,347 - INFO - ⏳ Waiting 67.5s before next shop...
+2026-01-22 16:56:30,884 - INFO - 🔍 Visiting detail page: 이미지수86
+2026-01-22 16:56:36,992 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:56:37,098 - INFO - Successfully saved shop to Firebase: 온에스테틱 선릉점
+2026-01-22 16:56:37,098 - INFO - ✅ Firebase Saved: 온에스테틱 선릉점
+Progress: 34/2000
+2026-01-22 16:56:37,098 - INFO - ✅ Saved (34/2000): 온에스테틱 선릉점
+2026-01-22 16:56:37,098 - INFO - ⏳ Waiting 26.2s before next shop...
+2026-01-22 16:57:03,261 - INFO - 🔍 Visiting detail page: 이미지수8
+2026-01-22 16:57:09,766 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:57:09,875 - INFO - Successfully saved shop to Firebase: 퓨리에 에스테틱 동여의도점
+2026-01-22 16:57:09,875 - INFO - ✅ Firebase Saved: 퓨리에 에스테틱 동여의도점
+Progress: 35/2000
+2026-01-22 16:57:09,876 - INFO - ✅ Saved (35/2000): 퓨리에 에스테틱 동여의도점
+2026-01-22 16:57:09,876 - INFO - ⏳ Waiting 55.1s before next shop...
+2026-01-22 16:58:05,023 - INFO - 🔍 Visiting detail page: 이미지수9
+2026-01-22 16:58:10,899 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:58:10,999 - INFO - Successfully saved shop to Firebase: 디유에스테틱 프리베 청담점
+2026-01-22 16:58:10,999 - INFO - ✅ Firebase Saved: 디유에스테틱 프리베 청담점
+Progress: 36/2000
+2026-01-22 16:58:10,999 - INFO - ✅ Saved (36/2000): 디유에스테틱 프리베 청담점
+2026-01-22 16:58:10,999 - INFO - ⏳ Waiting 21.9s before next shop...
+2026-01-22 16:58:32,941 - INFO - 🔍 Visiting detail page: 이미지수120
+2026-01-22 16:58:39,710 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:58:39,804 - INFO - Successfully saved shop to Firebase: 린에스테틱&헤드스파 송파문정점
+2026-01-22 16:58:39,805 - INFO - ✅ Firebase Saved: 린에스테틱&헤드스파 송파문정점
+Progress: 37/2000
+2026-01-22 16:58:39,805 - INFO - ✅ Saved (37/2000): 린에스테틱&헤드스파 송파문정점
+2026-01-22 16:58:39,805 - INFO - ⏳ Waiting 58.8s before next shop...
+2026-01-22 16:59:38,651 - INFO - 🔍 Visiting detail page: 이미지수78
+2026-01-22 16:59:45,374 - INFO - Firebase Firestore initialized successfully
+2026-01-22 16:59:45,494 - INFO - Successfully saved shop to Firebase: 에스테티아 송파거여 1호점
+2026-01-22 16:59:45,494 - INFO - ✅ Firebase Saved: 에스테티아 송파거여 1호점
+Progress: 38/2000
+2026-01-22 16:59:45,494 - INFO - ✅ Saved (38/2000): 에스테티아 송파거여 1호점
+2026-01-22 16:59:45,494 - INFO - ⏳ Waiting 21.2s before next shop...
+2026-01-22 17:00:06,683 - INFO - 🔍 Visiting detail page: 이미지수15
+2026-01-22 17:00:12,300 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:00:12,410 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 마포 프레스티지자이점
+2026-01-22 17:00:12,410 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 마포 프레스티지자이점
+Progress: 39/2000
+2026-01-22 17:00:12,410 - INFO - ✅ Saved (39/2000): 더하노이풋앤바디 마포 프레스티지자이점
+2026-01-22 17:00:12,410 - INFO - ⏳ Waiting 32.9s before next shop...
+2026-01-22 17:00:45,354 - INFO - 🔍 Visiting detail page: 이미지수18
+2026-01-22 17:00:52,265 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:00:52,371 - INFO - Successfully saved shop to Firebase: 가인미가 잠실새내역점
+2026-01-22 17:00:52,371 - INFO - ✅ Firebase Saved: 가인미가 잠실새내역점
+Progress: 40/2000
+2026-01-22 17:00:52,371 - INFO - ✅ Saved (40/2000): 가인미가 잠실새내역점
+2026-01-22 17:00:52,371 - INFO - ⏳ Waiting 28.1s before next shop...
+2026-01-22 17:01:20,433 - INFO - 🔍 Visiting detail page: 이미지수18
+2026-01-22 17:01:27,904 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:01:28,009 - INFO - Successfully saved shop to Firebase: 세레니끄 왕십리점
+2026-01-22 17:01:28,009 - INFO - ✅ Firebase Saved: 세레니끄 왕십리점
+Progress: 41/2000
+2026-01-22 17:01:28,009 - INFO - ✅ Saved (41/2000): 세레니끄 왕십리점
+2026-01-22 17:01:28,009 - INFO - ⏳ Waiting 67.4s before next shop...
+2026-01-22 17:02:35,463 - INFO - 🔍 Visiting detail page: 이미지수12
+2026-01-22 17:02:42,114 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:02:42,228 - INFO - Successfully saved shop to Firebase: 더풋샵마사지 압구정역점
+2026-01-22 17:02:42,228 - INFO - ✅ Firebase Saved: 더풋샵마사지 압구정역점
+Progress: 42/2000
+2026-01-22 17:02:42,228 - INFO - ✅ Saved (42/2000): 더풋샵마사지 압구정역점
+2026-01-22 17:02:42,228 - INFO - ⏳ Waiting 33.8s before next shop...
+2026-01-22 17:03:16,031 - INFO - 🔍 Visiting detail page: 이미지수21
+2026-01-22 17:03:23,250 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:03:23,344 - INFO - Successfully saved shop to Firebase: 카카오풋앤바디 마사지스파 문정점
+2026-01-22 17:03:23,344 - INFO - ✅ Firebase Saved: 카카오풋앤바디 마사지스파 문정점
+Progress: 43/2000
+2026-01-22 17:03:23,344 - INFO - ✅ Saved (43/2000): 카카오풋앤바디 마사지스파 문정점
+2026-01-22 17:03:23,344 - INFO - ⏳ Waiting 53.1s before next shop...
+2026-01-22 17:04:16,466 - INFO - 🔍 Visiting detail page: 이미지수107
+2026-01-22 17:04:22,755 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:04:22,845 - INFO - Successfully saved shop to Firebase: 바디튠 마사지 오목교역점
+2026-01-22 17:04:22,845 - INFO - ✅ Firebase Saved: 바디튠 마사지 오목교역점
+Progress: 44/2000
+2026-01-22 17:04:22,845 - INFO - ✅ Saved (44/2000): 바디튠 마사지 오목교역점
+2026-01-22 17:04:22,845 - INFO - ⏳ Waiting 24.9s before next shop...
+2026-01-22 17:04:47,714 - INFO - 🔍 Visiting detail page: 이미지수14
+2026-01-22 17:04:52,989 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:04:53,095 - INFO - Successfully saved shop to Firebase: 한스테라피 마사지 문정본점
+2026-01-22 17:04:53,095 - INFO - ✅ Firebase Saved: 한스테라피 마사지 문정본점
+Progress: 45/2000
+2026-01-22 17:04:53,095 - INFO - ✅ Saved (45/2000): 한스테라피 마사지 문정본점
+2026-01-22 17:04:53,095 - INFO - ⏳ Waiting 40.4s before next shop...
+2026-01-22 17:05:33,470 - INFO - 🔍 Visiting detail page: 이미지수20
+2026-01-22 17:05:39,146 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:05:39,250 - INFO - Successfully saved shop to Firebase: 끌리메 목동점
+2026-01-22 17:05:39,250 - INFO - ✅ Firebase Saved: 끌리메 목동점
+Progress: 46/2000
+2026-01-22 17:05:39,250 - INFO - ✅ Saved (46/2000): 끌리메 목동점
+2026-01-22 17:05:39,251 - INFO - ⏳ Waiting 42.3s before next shop...
+2026-01-22 17:06:21,516 - INFO - 🔍 Visiting detail page: 이미지수6
+2026-01-22 17:06:28,327 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:06:28,424 - INFO - Successfully saved shop to Firebase: 가인미가 강남본점신논현역
+2026-01-22 17:06:28,424 - INFO - ✅ Firebase Saved: 가인미가 강남본점신논현역
+Progress: 47/2000
+2026-01-22 17:06:28,424 - INFO - ✅ Saved (47/2000): 가인미가 강남본점신논현역
+2026-01-22 17:06:28,424 - INFO - ⏳ Waiting 56.3s before next shop...
+2026-01-22 17:07:24,756 - INFO - 🔍 Visiting detail page: 이미지수24
+2026-01-22 17:07:31,907 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:07:32,011 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 마곡역점
+2026-01-22 17:07:32,011 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 마곡역점
+Progress: 48/2000
+2026-01-22 17:07:32,011 - INFO - ✅ Saved (48/2000): 더하노이풋앤바디 마곡역점
+2026-01-22 17:07:32,011 - INFO - ⏳ Waiting 29.4s before next shop...
+2026-01-22 17:08:01,380 - INFO - 🔍 Visiting detail page: 이미지수73
+2026-01-22 17:08:07,143 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:08:07,249 - INFO - Successfully saved shop to Firebase: 바디튠 마사지살롱 몬드리안호텔점
+2026-01-22 17:08:07,249 - INFO - ✅ Firebase Saved: 바디튠 마사지살롱 몬드리안호텔점
+Progress: 49/2000
+2026-01-22 17:08:07,249 - INFO - ✅ Saved (49/2000): 바디튠 마사지살롱 몬드리안호텔점
+2026-01-22 17:08:07,250 - INFO - ⏳ Waiting 54.5s before next shop...
+2026-01-22 17:09:01,718 - INFO - 🔍 Visiting detail page: 이미지수12
+2026-01-22 17:09:07,418 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:09:07,525 - INFO - Successfully saved shop to Firebase: 루체테라피 청담 스웨디시
+2026-01-22 17:09:07,525 - INFO - ✅ Firebase Saved: 루체테라피 청담 스웨디시
+Progress: 50/2000
+2026-01-22 17:09:07,525 - INFO - ✅ Saved (50/2000): 루체테라피 청담 스웨디시
+2026-01-22 17:09:07,525 - INFO - ⏳ Waiting 23.4s before next shop...
+2026-01-22 17:09:30,916 - INFO - 🔍 Visiting detail page: 이미지수35
+2026-01-22 17:09:36,803 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:09:36,893 - INFO - Successfully saved shop to Firebase: 벨라테라피 마사지
+2026-01-22 17:09:36,893 - INFO - ✅ Firebase Saved: 벨라테라피 마사지
+Progress: 51/2000
+2026-01-22 17:09:36,893 - INFO - ✅ Saved (51/2000): 벨라테라피 마사지
+2026-01-22 17:09:36,894 - INFO - ⏳ Waiting 23.1s before next shop...
+2026-01-22 17:09:59,988 - INFO - 🔍 Visiting detail page: 이미지수19
+2026-01-22 17:10:06,323 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:10:06,422 - INFO - Successfully saved shop to Firebase: 프리미엄스파엘 강남본점
+2026-01-22 17:10:06,422 - INFO - ✅ Firebase Saved: 프리미엄스파엘 강남본점
+Progress: 52/2000
+2026-01-22 17:10:06,422 - INFO - ✅ Saved (52/2000): 프리미엄스파엘 강남본점
+2026-01-22 17:10:06,422 - INFO - ⏳ Waiting 62.1s before next shop...
+2026-01-22 17:11:08,516 - INFO - 🔍 Visiting detail page: 이미지수16
+2026-01-22 17:11:15,975 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:11:16,087 - INFO - Successfully saved shop to Firebase: 사운드바디 사운드스킨 성신 D.Origin 센터
+2026-01-22 17:11:16,087 - INFO - ✅ Firebase Saved: 사운드바디 사운드스킨 성신 D.Origin 센터
+Progress: 53/2000
+2026-01-22 17:11:16,088 - INFO - ✅ Saved (53/2000): 사운드바디 사운드스킨 성신 D.Origin 센터
+2026-01-22 17:11:16,088 - INFO - ⏳ Waiting 37.6s before next shop...
+2026-01-22 17:11:53,720 - INFO - 🔍 Visiting detail page: 이미지수23
+2026-01-22 17:11:59,858 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:11:59,952 - INFO - Successfully saved shop to Firebase: 더풋샵마사지 한성백제잠실점
+2026-01-22 17:11:59,952 - INFO - ✅ Firebase Saved: 더풋샵마사지 한성백제잠실점
+Progress: 54/2000
+2026-01-22 17:11:59,952 - INFO - ✅ Saved (54/2000): 더풋샵마사지 한성백제잠실점
+2026-01-22 17:11:59,952 - INFO - ⏳ Waiting 54.2s before next shop...
+2026-01-22 17:12:54,129 - INFO - 🔍 Visiting detail page: 이미지수14
+2026-01-22 17:13:00,107 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:13:00,201 - INFO - Successfully saved shop to Firebase: 구동명쾌유마사지 강남본점
+2026-01-22 17:13:00,201 - INFO - ✅ Firebase Saved: 구동명쾌유마사지 강남본점
+Progress: 55/2000
+2026-01-22 17:13:00,202 - INFO - ✅ Saved (55/2000): 구동명쾌유마사지 강남본점
+2026-01-22 17:13:00,202 - INFO - ⏳ Waiting 43.1s before next shop...
+2026-01-22 17:13:43,313 - INFO - 🔍 Visiting detail page: 이미지수70
+2026-01-22 17:13:50,143 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:13:50,248 - INFO - Successfully saved shop to Firebase: 하이필스킨 강남선릉점
+2026-01-22 17:13:50,248 - INFO - ✅ Firebase Saved: 하이필스킨 강남선릉점
+Progress: 56/2000
+2026-01-22 17:13:50,248 - INFO - ✅ Saved (56/2000): 하이필스킨 강남선릉점
+2026-01-22 17:13:50,249 - INFO - ⏳ Waiting 29.6s before next shop...
+2026-01-22 17:14:19,866 - INFO - 🔍 Visiting detail page: 이미지수14
+2026-01-22 17:14:26,396 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:14:26,482 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 잠실새내역점
+2026-01-22 17:14:26,482 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 잠실새내역점
+Progress: 57/2000
+2026-01-22 17:14:26,482 - INFO - ✅ Saved (57/2000): 더하노이풋앤바디 잠실새내역점
+2026-01-22 17:14:26,482 - INFO - ⏳ Waiting 55.0s before next shop...
+2026-01-22 17:15:21,441 - INFO - 🔍 Visiting detail page: 이미지수117
+2026-01-22 17:15:28,334 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:15:28,443 - INFO - Successfully saved shop to Firebase: 바디튠 마사지살롱 목동이마트점
+2026-01-22 17:15:28,443 - INFO - ✅ Firebase Saved: 바디튠 마사지살롱 목동이마트점
+Progress: 58/2000
+2026-01-22 17:15:28,444 - INFO - ✅ Saved (58/2000): 바디튠 마사지살롱 목동이마트점
+2026-01-22 17:15:28,444 - INFO - ⏳ Waiting 41.7s before next shop...
+2026-01-22 17:16:10,174 - INFO - 🔍 Visiting detail page: 이미지수11
+2026-01-22 17:16:15,789 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:16:15,903 - INFO - Successfully saved shop to Firebase: 어메이징빅토리아 강남라운지
+2026-01-22 17:16:15,903 - INFO - ✅ Firebase Saved: 어메이징빅토리아 강남라운지
+Progress: 59/2000
+2026-01-22 17:16:15,903 - INFO - ✅ Saved (59/2000): 어메이징빅토리아 강남라운지
+2026-01-22 17:16:15,904 - INFO - ⏳ Waiting 38.2s before next shop...
+2026-01-22 17:16:54,086 - INFO - 🔍 Visiting detail page: 이미지수23
+2026-01-22 17:17:00,838 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:17:00,942 - INFO - Successfully saved shop to Firebase: 꽁쌤에스테틱
+2026-01-22 17:17:00,943 - INFO - ✅ Firebase Saved: 꽁쌤에스테틱
+Progress: 60/2000
+2026-01-22 17:17:00,943 - INFO - ✅ Saved (60/2000): 꽁쌤에스테틱
+2026-01-22 17:17:00,943 - INFO - ⏳ Waiting 53.9s before next shop...
+2026-01-22 17:17:54,826 - INFO - 🔍 Visiting detail page: 이미지수12
+2026-01-22 17:18:00,572 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:18:00,654 - INFO - Successfully saved shop to Firebase: 얼굴필라테스바이지 신사역점
+2026-01-22 17:18:00,655 - INFO - ✅ Firebase Saved: 얼굴필라테스바이지 신사역점
+Progress: 61/2000
+2026-01-22 17:18:00,655 - INFO - ✅ Saved (61/2000): 얼굴필라테스바이지 신사역점
+2026-01-22 17:18:00,655 - INFO - ⏳ Waiting 37.6s before next shop...
+2026-01-22 17:18:38,295 - INFO - 🔍 Visiting detail page: 이미지수5
+2026-01-22 17:18:45,242 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:18:45,331 - INFO - Successfully saved shop to Firebase: 하이스파
+2026-01-22 17:18:45,331 - INFO - ✅ Firebase Saved: 하이스파
+Progress: 62/2000
+2026-01-22 17:18:45,331 - INFO - ✅ Saved (62/2000): 하이스파
+2026-01-22 17:18:45,331 - INFO - ⏳ Waiting 55.7s before next shop...
+2026-01-22 17:19:41,023 - INFO - 🔍 Visiting detail page: 이미지수13
+2026-01-22 17:19:47,678 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:19:47,772 - INFO - Successfully saved shop to Firebase: 선에스테스파 위례점
+2026-01-22 17:19:47,772 - INFO - ✅ Firebase Saved: 선에스테스파 위례점
+Progress: 63/2000
+2026-01-22 17:19:47,772 - INFO - ✅ Saved (63/2000): 선에스테스파 위례점
+2026-01-22 17:19:47,772 - INFO - ⏳ Waiting 68.7s before next shop...
+2026-01-22 17:20:56,520 - INFO - 🔍 Visiting detail page: 이미지수30
+2026-01-22 17:21:03,178 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:21:03,274 - INFO - Successfully saved shop to Firebase: 마곡마사지 마요미스파&왁싱
+2026-01-22 17:21:03,274 - INFO - ✅ Firebase Saved: 마곡마사지 마요미스파&왁싱
+Progress: 64/2000
+2026-01-22 17:21:03,274 - INFO - ✅ Saved (64/2000): 마곡마사지 마요미스파&왁싱
+2026-01-22 17:21:03,275 - INFO - ⏳ Waiting 55.2s before next shop...
+2026-01-22 17:21:58,442 - INFO - 🔍 Visiting detail page: 이미지수32
+2026-01-22 17:22:05,410 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:22:05,522 - INFO - Successfully saved shop to Firebase: 자하생식 효소찜질
+2026-01-22 17:22:05,522 - INFO - ✅ Firebase Saved: 자하생식 효소찜질
+Progress: 65/2000
+2026-01-22 17:22:05,522 - INFO - ✅ Saved (65/2000): 자하생식 효소찜질
+2026-01-22 17:22:05,522 - INFO - ⏳ Waiting 50.0s before next shop...
+2026-01-22 17:22:55,493 - INFO - 🔍 Visiting detail page: 이미지수38
+2026-01-22 17:23:01,665 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:23:01,778 - INFO - Successfully saved shop to Firebase: 플로우스파
+2026-01-22 17:23:01,779 - INFO - ✅ Firebase Saved: 플로우스파
+Progress: 66/2000
+2026-01-22 17:23:01,779 - INFO - ✅ Saved (66/2000): 플로우스파
+2026-01-22 17:23:01,779 - INFO - ⏳ Waiting 39.7s before next shop...
+2026-01-22 17:23:41,467 - INFO - 🔍 Visiting detail page: 이미지수48
+2026-01-22 17:23:47,915 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:23:48,019 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 마곡나루점
+2026-01-22 17:23:48,019 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 마곡나루점
+Progress: 67/2000
+2026-01-22 17:23:48,019 - INFO - ✅ Saved (67/2000): 더하노이풋앤바디 마곡나루점
+2026-01-22 17:23:48,019 - INFO - ⏳ Waiting 45.1s before next shop...
+2026-01-22 17:24:33,097 - INFO - 🔍 Visiting detail page: 이미지수10
+2026-01-22 17:24:39,911 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:25:00,972 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x0000022994906710>" raised exception!
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] 연결된 구성원으로부터 응답이 없어 연결하지 못했거나, 호스트로부터 응답이 없어 연결이 끊어졌습니다
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connection.py", line 213, in _new_conn
+    raise ConnectTimeoutError(
+urllib3.exceptions.ConnectTimeoutError: (<HTTPSConnection(host='oauth2.googleapis.com', port=443) at 0x22994918810>, 'Connection to oauth2.googleapis.com timed out. (connect timeout=120)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='oauth2.googleapis.com', port=443): Max retries exceeded with url: /token (Caused by ConnectTimeoutError(<HTTPSConnection(host='oauth2.googleapis.com', port=443) at 0x22994918810>, 'Connection to oauth2.googleapis.com timed out. (connect timeout=120)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\auth\transport\requests.py", line 188, in __call__
+    response = self.session.request(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\requests\adapters.py", line 507, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='oauth2.googleapis.com', port=443): Max retries exceeded with url: /token (Caused by ConnectTimeoutError(<HTTPSConnection(host='oauth2.googleapis.com', port=443) at 0x22994918810>, 'Connection to oauth2.googleapis.com timed out. (connect timeout=120)'))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\grpc\_plugin_wrapping.py", line 106, in __call__
+    self._metadata_plugin(
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\auth\transport\grpc.py", line 93, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\auth\transport\grpc.py", line 79, in _get_authorization_headers
+    self._credentials.before_request(
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\auth\credentials.py", line 228, in before_request
+    self._blocking_refresh(request)
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\auth\credentials.py", line 191, in _blocking_refresh
+    self.refresh(request)
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\auth\credentials.py", line 365, in refresh
+    self._perform_refresh_token(request)
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\oauth2\service_account.py", line 457, in _perform_refresh_token
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\oauth2\_client.py", line 303, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\oauth2\_client.py", line 263, in _token_endpoint_request
+    ) = _token_endpoint_request_no_throw(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\oauth2\_client.py", line 192, in _token_endpoint_request_no_throw
+    response = request(
+               ^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Programs\Python\Python311\Lib\site-packages\google\auth\transport\requests.py", line 195, in __call__
+    raise new_exc from caught_exc
+google.auth.exceptions.TransportError: HTTPSConnectionPool(host='oauth2.googleapis.com', port=443): Max retries exceeded with url: /token (Caused by ConnectTimeoutError(<HTTPSConnection(host='oauth2.googleapis.com', port=443) at 0x22994918810>, 'Connection to oauth2.googleapis.com timed out. (connect timeout=120)'))
+2026-01-22 17:25:02,060 - INFO - Successfully saved shop to Firebase: 어메이징빅토리아 노원스테이
+2026-01-22 17:25:02,060 - INFO - ✅ Firebase Saved: 어메이징빅토리아 노원스테이
+Progress: 68/2000
+2026-01-22 17:25:02,060 - INFO - ✅ Saved (68/2000): 어메이징빅토리아 노원스테이
+2026-01-22 17:25:02,060 - INFO - ⏳ Waiting 26.2s before next shop...
+2026-01-22 17:25:28,256 - INFO - 🔍 Visiting detail page: 이미지수75
+2026-01-22 17:25:34,323 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:25:34,429 - INFO - Successfully saved shop to Firebase: 자월에스테틱
+2026-01-22 17:25:34,429 - INFO - ✅ Firebase Saved: 자월에스테틱
+Progress: 69/2000
+2026-01-22 17:25:34,429 - INFO - ✅ Saved (69/2000): 자월에스테틱
+2026-01-22 17:25:34,429 - INFO - ⏳ Waiting 41.5s before next shop...
+2026-01-22 17:26:15,946 - INFO - 🔍 Visiting detail page: Shop_1176831393
+2026-01-22 17:26:23,945 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:26:24,053 - INFO - Successfully saved shop to Firebase: 스파더원
+2026-01-22 17:26:24,054 - INFO - ✅ Firebase Saved: 스파더원
+Progress: 70/2000
+2026-01-22 17:26:24,054 - INFO - ✅ Saved (70/2000): 스파더원
+2026-01-22 17:26:24,054 - INFO - ⏳ Waiting 38.6s before next shop...
+2026-01-22 17:27:02,672 - INFO - 🔍 Visiting detail page: 이미지수8
+2026-01-22 17:27:09,076 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:27:09,188 - INFO - Successfully saved shop to Firebase: 가인미가 신촌이대역점
+2026-01-22 17:27:09,188 - INFO - ✅ Firebase Saved: 가인미가 신촌이대역점
+Progress: 71/2000
+2026-01-22 17:27:09,188 - INFO - ✅ Saved (71/2000): 가인미가 신촌이대역점
+2026-01-22 17:27:09,188 - INFO - ⏳ Waiting 44.0s before next shop...
+2026-01-22 17:27:53,190 - INFO - 🔍 Visiting detail page: 이미지수18
+2026-01-22 17:27:59,325 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:27:59,430 - INFO - Successfully saved shop to Firebase: 약손건강마사지
+2026-01-22 17:27:59,430 - INFO - ✅ Firebase Saved: 약손건강마사지
+Progress: 72/2000
+2026-01-22 17:27:59,430 - INFO - ✅ Saved (72/2000): 약손건강마사지
+2026-01-22 17:27:59,430 - INFO - ⏳ Waiting 52.2s before next shop...
+2026-01-22 17:28:51,624 - INFO - 🔍 Visiting detail page: 이미지수30
+2026-01-22 17:28:58,898 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:28:59,007 - INFO - Successfully saved shop to Firebase: 황제베트남이발소마사지
+2026-01-22 17:28:59,007 - INFO - ✅ Firebase Saved: 황제베트남이발소마사지
+Progress: 73/2000
+2026-01-22 17:28:59,008 - INFO - ✅ Saved (73/2000): 황제베트남이발소마사지
+2026-01-22 17:28:59,008 - INFO - ⏳ Waiting 60.1s before next shop...
+2026-01-22 17:29:59,097 - INFO - 🔍 Visiting detail page: 이미지수10
+2026-01-22 17:30:05,692 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:30:06,079 - INFO - Successfully saved shop to Firebase: 미니쉬 발몽스파 압구정로데오점
+2026-01-22 17:30:06,079 - INFO - ✅ Firebase Saved: 미니쉬 발몽스파 압구정로데오점
+Progress: 74/2000
+2026-01-22 17:30:06,079 - INFO - ✅ Saved (74/2000): 미니쉬 발몽스파 압구정로데오점
+2026-01-22 17:30:06,079 - INFO - ⏳ Waiting 36.4s before next shop...
+2026-01-22 17:30:42,482 - INFO - 🔍 Visiting detail page: 이미지수81
+2026-01-22 17:30:49,268 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:30:49,361 - INFO - Successfully saved shop to Firebase: 바디튠 마사지살롱 왕십리점
+2026-01-22 17:30:49,362 - INFO - ✅ Firebase Saved: 바디튠 마사지살롱 왕십리점
+Progress: 75/2000
+2026-01-22 17:30:49,362 - INFO - ✅ Saved (75/2000): 바디튠 마사지살롱 왕십리점
+2026-01-22 17:30:49,362 - INFO - ⏳ Waiting 38.0s before next shop...
+2026-01-22 17:31:27,392 - INFO - 🔍 Visiting detail page: 이미지수36
+2026-01-22 17:31:33,107 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:31:33,204 - INFO - Successfully saved shop to Firebase: 더풋샵마사지 잠실역점
+2026-01-22 17:31:33,204 - INFO - ✅ Firebase Saved: 더풋샵마사지 잠실역점
+Progress: 76/2000
+2026-01-22 17:31:33,204 - INFO - ✅ Saved (76/2000): 더풋샵마사지 잠실역점
+2026-01-22 17:31:33,204 - INFO - ⏳ Waiting 68.2s before next shop...
+2026-01-22 17:32:41,401 - INFO - 🔍 Visiting detail page: 이미지수15
+2026-01-22 17:32:47,468 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:32:47,594 - INFO - Successfully saved shop to Firebase: 더바디스 마곡 마사지
+2026-01-22 17:32:47,594 - INFO - ✅ Firebase Saved: 더바디스 마곡 마사지
+Progress: 77/2000
+2026-01-22 17:32:47,594 - INFO - ✅ Saved (77/2000): 더바디스 마곡 마사지
+2026-01-22 17:32:47,594 - INFO - ⏳ Waiting 49.6s before next shop...
+2026-01-22 17:33:37,252 - INFO - 🔍 Visiting detail page: 이미지수28
+2026-01-22 17:33:42,682 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:33:42,791 - INFO - Successfully saved shop to Firebase: 미더베스트 홍대점
+2026-01-22 17:33:42,791 - INFO - ✅ Firebase Saved: 미더베스트 홍대점
+Progress: 78/2000
+2026-01-22 17:33:42,791 - INFO - ✅ Saved (78/2000): 미더베스트 홍대점
+2026-01-22 17:33:42,792 - INFO - ⏳ Waiting 29.6s before next shop...
+2026-01-22 17:34:12,370 - INFO - 🔍 Visiting detail page: 이미지수42
+2026-01-22 17:34:19,484 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:34:19,583 - INFO - Successfully saved shop to Firebase: 바나나부띠끄
+2026-01-22 17:34:19,583 - INFO - ✅ Firebase Saved: 바나나부띠끄
+Progress: 79/2000
+2026-01-22 17:34:19,584 - INFO - ✅ Saved (79/2000): 바나나부띠끄
+2026-01-22 17:34:19,584 - INFO - ⏳ Waiting 55.2s before next shop...
+2026-01-22 17:35:14,760 - INFO - 🔍 Visiting detail page: 이미지수33
+2026-01-22 17:35:20,010 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:35:20,132 - INFO - Successfully saved shop to Firebase: 구동명쾌유마사지 압구정점
+2026-01-22 17:35:20,132 - INFO - ✅ Firebase Saved: 구동명쾌유마사지 압구정점
+Progress: 80/2000
+2026-01-22 17:35:20,132 - INFO - ✅ Saved (80/2000): 구동명쾌유마사지 압구정점
+2026-01-22 17:35:20,132 - INFO - ⏳ Waiting 32.2s before next shop...
+2026-01-22 17:35:52,333 - INFO - 🔍 Visiting detail page: 이미지수23
+2026-01-22 17:35:57,962 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:35:58,056 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 성신여대점
+2026-01-22 17:35:58,056 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 성신여대점
+Progress: 81/2000
+2026-01-22 17:35:58,056 - INFO - ✅ Saved (81/2000): 더하노이풋앤바디 성신여대점
+2026-01-22 17:35:58,056 - INFO - ⏳ Waiting 27.1s before next shop...
+2026-01-22 17:36:25,201 - INFO - 🔍 Visiting detail page: 이미지수8
+2026-01-22 17:36:31,111 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:36:31,205 - INFO - Successfully saved shop to Firebase: 힐링포미아로마
+2026-01-22 17:36:31,205 - INFO - ✅ Firebase Saved: 힐링포미아로마
+Progress: 82/2000
+2026-01-22 17:36:31,206 - INFO - ✅ Saved (82/2000): 힐링포미아로마
+2026-01-22 17:36:31,206 - INFO - ⏳ Waiting 36.2s before next shop...
+2026-01-22 17:37:07,371 - INFO - 🔍 Visiting detail page: 이미지수17
+2026-01-22 17:37:14,242 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:37:14,349 - INFO - Successfully saved shop to Firebase: 사운드바디 사운드스킨 반포 Avenue 센터
+2026-01-22 17:37:14,349 - INFO - ✅ Firebase Saved: 사운드바디 사운드스킨 반포 Avenue 센터
+Progress: 83/2000
+2026-01-22 17:37:14,349 - INFO - ✅ Saved (83/2000): 사운드바디 사운드스킨 반포 Avenue 센터
+2026-01-22 17:37:14,349 - INFO - ⏳ Waiting 68.5s before next shop...
+2026-01-22 17:38:22,865 - INFO - 🔍 Visiting detail page: 이미지수10
+2026-01-22 17:38:30,006 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:38:30,118 - INFO - Successfully saved shop to Firebase: 구동명쾌유마사지 잠실점
+2026-01-22 17:38:30,118 - INFO - ✅ Firebase Saved: 구동명쾌유마사지 잠실점
+Progress: 84/2000
+2026-01-22 17:38:30,118 - INFO - ✅ Saved (84/2000): 구동명쾌유마사지 잠실점
+2026-01-22 17:38:30,118 - INFO - ⏳ Waiting 67.2s before next shop...
+2026-01-22 17:39:37,356 - INFO - 🔍 Visiting detail page: 이미지수63
+2026-01-22 17:39:44,319 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:39:44,429 - INFO - Successfully saved shop to Firebase: 케이스파 마사지 압구정점
+2026-01-22 17:39:44,429 - INFO - ✅ Firebase Saved: 케이스파 마사지 압구정점
+Progress: 85/2000
+2026-01-22 17:39:44,429 - INFO - ✅ Saved (85/2000): 케이스파 마사지 압구정점
+2026-01-22 17:39:44,429 - INFO - ⏳ Waiting 25.8s before next shop...
+2026-01-22 17:40:10,252 - INFO - 🔍 Visiting detail page: 이미지수23
+2026-01-22 17:40:16,908 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:40:17,013 - INFO - Successfully saved shop to Firebase: 퓨리에 더 리버뷰
+2026-01-22 17:40:17,014 - INFO - ✅ Firebase Saved: 퓨리에 더 리버뷰
+Progress: 86/2000
+2026-01-22 17:40:17,014 - INFO - ✅ Saved (86/2000): 퓨리에 더 리버뷰
+2026-01-22 17:40:17,014 - INFO - ⏳ Waiting 65.5s before next shop...
+2026-01-22 17:41:22,535 - INFO - 🔍 Visiting detail page: 이미지수93
+2026-01-22 17:41:29,566 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:41:29,677 - INFO - Successfully saved shop to Firebase: 하이필스킨 여의도점
+2026-01-22 17:41:29,677 - INFO - ✅ Firebase Saved: 하이필스킨 여의도점
+Progress: 87/2000
+2026-01-22 17:41:29,677 - INFO - ✅ Saved (87/2000): 하이필스킨 여의도점
+2026-01-22 17:41:29,677 - INFO - ⏳ Waiting 27.4s before next shop...
+2026-01-22 17:41:57,065 - INFO - 🔍 Visiting detail page: 이미지수33
+2026-01-22 17:42:02,776 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:42:02,895 - INFO - Successfully saved shop to Firebase: 러쉬스파 압구정점
+2026-01-22 17:42:02,896 - INFO - ✅ Firebase Saved: 러쉬스파 압구정점
+Progress: 88/2000
+2026-01-22 17:42:02,896 - INFO - ✅ Saved (88/2000): 러쉬스파 압구정점
+2026-01-22 17:42:02,896 - INFO - ⏳ Waiting 50.6s before next shop...
+2026-01-22 17:42:53,476 - INFO - 🔍 Visiting detail page: 이미지수18
+2026-01-22 17:42:59,955 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:43:00,063 - INFO - Successfully saved shop to Firebase: 드타이랜드 마사지
+2026-01-22 17:43:00,063 - INFO - ✅ Firebase Saved: 드타이랜드 마사지
+Progress: 89/2000
+2026-01-22 17:43:00,063 - INFO - ✅ Saved (89/2000): 드타이랜드 마사지
+2026-01-22 17:43:00,063 - INFO - ⏳ Waiting 51.2s before next shop...
+2026-01-22 17:43:51,271 - INFO - 🔍 Visiting detail page: 이미지수7
+2026-01-22 17:43:58,273 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:43:58,383 - INFO - Successfully saved shop to Firebase: 프롬미 신도림점
+2026-01-22 17:43:58,383 - INFO - ✅ Firebase Saved: 프롬미 신도림점
+Progress: 90/2000
+2026-01-22 17:43:58,383 - INFO - ✅ Saved (90/2000): 프롬미 신도림점
+2026-01-22 17:43:58,383 - INFO - ⏳ Waiting 24.9s before next shop...
+2026-01-22 17:44:23,324 - INFO - 🔍 Visiting detail page: 이미지수11
+2026-01-22 17:44:28,839 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:44:28,937 - INFO - Successfully saved shop to Firebase: 프롬미 여의도점
+2026-01-22 17:44:28,937 - INFO - ✅ Firebase Saved: 프롬미 여의도점
+Progress: 91/2000
+2026-01-22 17:44:28,937 - INFO - ✅ Saved (91/2000): 프롬미 여의도점
+2026-01-22 17:44:28,937 - INFO - ⏳ Waiting 69.8s before next shop...
+2026-01-22 17:45:38,719 - INFO - 🔍 Visiting detail page: 이미지수10
+2026-01-22 17:45:46,185 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:45:46,282 - INFO - Successfully saved shop to Firebase: 구동명쾌유마사지 삼성점
+2026-01-22 17:45:46,282 - INFO - ✅ Firebase Saved: 구동명쾌유마사지 삼성점
+Progress: 92/2000
+2026-01-22 17:45:46,282 - INFO - ✅ Saved (92/2000): 구동명쾌유마사지 삼성점
+2026-01-22 17:45:46,283 - INFO - ⏳ Waiting 22.0s before next shop...
+2026-01-22 17:46:08,317 - INFO - 🔍 Visiting detail page: 이미지수13
+2026-01-22 17:46:13,884 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:46:13,982 - INFO - Successfully saved shop to Firebase: 힐링앤바디 마사지 본점
+2026-01-22 17:46:13,982 - INFO - ✅ Firebase Saved: 힐링앤바디 마사지 본점
+Progress: 93/2000
+2026-01-22 17:46:13,982 - INFO - ✅ Saved (93/2000): 힐링앤바디 마사지 본점
+2026-01-22 17:46:13,982 - INFO - ⏳ Waiting 29.3s before next shop...
+2026-01-22 17:46:43,305 - INFO - 🔍 Visiting detail page: 이미지수22
+2026-01-22 17:46:50,464 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:46:50,579 - INFO - Successfully saved shop to Firebase: 더록시 강남점
+2026-01-22 17:46:50,579 - INFO - ✅ Firebase Saved: 더록시 강남점
+Progress: 94/2000
+2026-01-22 17:46:50,579 - INFO - ✅ Saved (94/2000): 더록시 강남점
+2026-01-22 17:46:50,579 - INFO - ⏳ Waiting 51.8s before next shop...
+2026-01-22 17:47:42,393 - INFO - 🔍 Visiting detail page: 이미지수15
+2026-01-22 17:47:49,200 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:47:49,301 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 청량리역점
+2026-01-22 17:47:49,301 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 청량리역점
+Progress: 95/2000
+2026-01-22 17:47:49,301 - INFO - ✅ Saved (95/2000): 더하노이풋앤바디 청량리역점
+2026-01-22 17:47:49,301 - INFO - ⏳ Waiting 24.3s before next shop...
+2026-01-22 17:48:13,627 - INFO - 🔍 Visiting detail page: 이미지수33
+2026-01-22 17:48:19,918 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:48:20,027 - INFO - Successfully saved shop to Firebase: 린에스테틱 영등포당산역점
+2026-01-22 17:48:20,027 - INFO - ✅ Firebase Saved: 린에스테틱 영등포당산역점
+Progress: 96/2000
+2026-01-22 17:48:20,027 - INFO - ✅ Saved (96/2000): 린에스테틱 영등포당산역점
+2026-01-22 17:48:20,027 - INFO - ⏳ Waiting 42.5s before next shop...
+2026-01-22 17:49:02,513 - INFO - 🔍 Visiting detail page: 이미지수62
+2026-01-22 17:49:08,426 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:49:08,525 - INFO - Successfully saved shop to Firebase: 베트남힐링케어
+2026-01-22 17:49:08,525 - INFO - ✅ Firebase Saved: 베트남힐링케어
+Progress: 97/2000
+2026-01-22 17:49:08,525 - INFO - ✅ Saved (97/2000): 베트남힐링케어
+2026-01-22 17:49:08,525 - INFO - ⏳ Waiting 69.6s before next shop...
+2026-01-22 17:50:18,102 - INFO - 🔍 Visiting detail page: 이미지수20
+2026-01-22 17:50:24,548 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:50:24,651 - INFO - Successfully saved shop to Firebase: 케어바이미
+2026-01-22 17:50:24,651 - INFO - ✅ Firebase Saved: 케어바이미
+Progress: 98/2000
+2026-01-22 17:50:24,651 - INFO - ✅ Saved (98/2000): 케어바이미
+2026-01-22 17:50:24,651 - INFO - ⏳ Waiting 44.6s before next shop...
+2026-01-22 17:51:09,258 - INFO - 🔍 Visiting detail page: 이미지수36
+2026-01-22 17:51:16,366 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:51:16,465 - INFO - Successfully saved shop to Firebase: 스완드에스테틱 발산점
+2026-01-22 17:51:16,465 - INFO - ✅ Firebase Saved: 스완드에스테틱 발산점
+Progress: 99/2000
+2026-01-22 17:51:16,465 - INFO - ✅ Saved (99/2000): 스완드에스테틱 발산점
+2026-01-22 17:51:16,465 - INFO - ⏳ Waiting 33.6s before next shop...
+2026-01-22 17:51:50,029 - INFO - 🔍 Visiting detail page: 이미지수25
+2026-01-22 17:51:56,244 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:51:56,350 - INFO - Successfully saved shop to Firebase: 대상마사지
+2026-01-22 17:51:56,350 - INFO - ✅ Firebase Saved: 대상마사지
+Progress: 100/2000
+2026-01-22 17:51:56,350 - INFO - ✅ Saved (100/2000): 대상마사지
+2026-01-22 17:51:56,350 - INFO - ⏳ Waiting 59.9s before next shop...
+2026-01-22 17:52:56,691 - INFO - ✅ Finished. Total saved: 100
+Progress: Finalizing...
+2026-01-22 17:52:56,716 - INFO - 🎯 Crawling complete. Starting automatic competitor extraction...
+2026-01-22 17:52:56,721 - INFO - 🚀 Starting Competitor Extraction (Firebase Architecture)...
+2026-01-22 17:52:56,721 - INFO - Firebase Firestore initialized successfully
+2026-01-22 17:52:56,874 - INFO - 📊 Total shops loaded: 111
+2026-01-22 17:52:56,874 - INFO - 📍 Shops with valid coordinates: 111
+2026-01-22 17:52:57,878 - INFO - ✅ Processed 10/111 shops...
+2026-01-22 17:52:58,794 - INFO - ✅ Processed 20/111 shops...
+2026-01-22 17:52:59,687 - INFO - ✅ Processed 30/111 shops...
+2026-01-22 17:53:00,566 - INFO - ✅ Processed 40/111 shops...
+2026-01-22 17:53:01,423 - INFO - ✅ Processed 50/111 shops...
+2026-01-22 17:53:02,297 - INFO - ✅ Processed 60/111 shops...
+2026-01-22 17:53:03,179 - INFO - ✅ Processed 70/111 shops...
+2026-01-22 17:53:04,060 - INFO - ✅ Processed 80/111 shops...
+2026-01-22 17:53:04,933 - INFO - ✅ Processed 90/111 shops...
+2026-01-22 17:53:05,807 - INFO - ✅ Processed 100/111 shops...
+2026-01-22 17:53:06,687 - INFO - ✅ Processed 110/111 shops...
+2026-01-22 17:53:06,775 - INFO - 🎉 Competitor extraction finished. Total 111 shops updated.
+2026-01-22 17:53:06,775 - INFO - ✅ All tasks (Crawl + Competitor Analysis) finished successfully!
+
+--- NEW ENGINE RUN: 2026-01-23 11:19:50 (Target: 서울, Count: 10) ---
+Progress: 0/10
+2026-01-23 11:20:12,764 - INFO - 🔍 Deep Scan Mode: Expanding '서울' to Dong-level keywords...
+2026-01-23 11:20:12,765 - INFO - 📂 Total sub-keywords to crawl: 295
+2026-01-23 11:20:32,100 - INFO - 🌐 Using Playwright bundled browser
+2026-01-23 11:20:35,581 - INFO - 🎭 Using User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
+2026-01-23 11:20:37,104 - INFO - 🕵️ Activating Playwright Stealth Mode...
+2026-01-23 11:20:39,223 - INFO - 🔍 Searching: 서울 강남구 개포동 피부관리샵
+2026-01-23 11:20:54,325 - INFO - 🗺️ Map view detected via 'a:has-text('목록보기')'. Switching to list view...
+2026-01-23 11:21:01,685 - INFO - 🖱️ Scrolling to load all items...
+2026-01-23 11:21:03,552 - INFO -   .. scrolled 0 times
+2026-01-23 11:21:17,059 - INFO - ✅ Found list using selector: li.VLTHu
+2026-01-23 11:21:17,059 - INFO - 🔍 Found 100 potential shops. Starting detail extraction...
+2026-01-23 11:21:24,784 - INFO - 📍 Scheduled 10 shops for detail extraction.
+2026-01-23 11:21:24,784 - INFO - 🔍 Visiting detail page: Shop_1762549112
+2026-01-23 11:21:34,634 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:21:42,601 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 개포점
+2026-01-23 11:21:42,602 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 개포점
+Progress: 1/10
+2026-01-23 11:21:42,602 - INFO - ✅ Saved (1/10): 더하노이풋앤바디 개포점
+2026-01-23 11:21:42,602 - INFO - ⏳ Waiting 65.0s before next shop...
+2026-01-23 11:22:47,587 - INFO - 🔍 Visiting detail page: 이미지수8
+2026-01-23 11:22:58,710 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:23:00,819 - INFO - Successfully saved shop to Firebase: 휴힐링
+2026-01-23 11:23:00,819 - INFO - ✅ Firebase Saved: 휴힐링
+Progress: 2/10
+2026-01-23 11:23:00,820 - INFO - ✅ Saved (2/10): 휴힐링
+2026-01-23 11:23:00,820 - INFO - ⏳ Waiting 44.0s before next shop...
+2026-01-23 11:23:44,835 - INFO - 🔍 Visiting detail page: 이미지수33
+2026-01-23 11:23:51,113 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:23:51,400 - INFO - Successfully saved shop to Firebase: 더풋샵마사지 개포포이점
+2026-01-23 11:23:51,400 - INFO - ✅ Firebase Saved: 더풋샵마사지 개포포이점
+Progress: 3/10
+2026-01-23 11:23:51,400 - INFO - ✅ Saved (3/10): 더풋샵마사지 개포포이점
+2026-01-23 11:23:51,400 - INFO - ⏳ Waiting 45.3s before next shop...
+2026-01-23 11:24:36,673 - INFO - 🔍 Visiting detail page: 이미지수13
+2026-01-23 11:24:43,683 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:24:43,811 - INFO - Successfully saved shop to Firebase: 더풋샵마사지 개포아이파크점
+2026-01-23 11:24:43,811 - INFO - ✅ Firebase Saved: 더풋샵마사지 개포아이파크점
+Progress: 4/10
+2026-01-23 11:24:43,811 - INFO - ✅ Saved (4/10): 더풋샵마사지 개포아이파크점
+2026-01-23 11:24:43,811 - INFO - ⏳ Waiting 28.3s before next shop...
+2026-01-23 11:25:12,096 - INFO - 🔍 Visiting detail page: 이미지수26
+2026-01-23 11:25:17,448 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:25:17,565 - INFO - Successfully saved shop to Firebase: 더하노이풋앤바디 개포대모산입구역점
+2026-01-23 11:25:17,565 - INFO - ✅ Firebase Saved: 더하노이풋앤바디 개포대모산입구역점
+Progress: 5/10
+2026-01-23 11:25:17,566 - INFO - ✅ Saved (5/10): 더하노이풋앤바디 개포대모산입구역점
+2026-01-23 11:25:17,566 - INFO - ⏳ Waiting 39.9s before next shop...
+2026-01-23 11:25:57,518 - INFO - 🔍 Visiting detail page: 이미지수5
+2026-01-23 11:26:04,814 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:26:04,932 - INFO - Successfully saved shop to Firebase: THE나영에스테라
+2026-01-23 11:26:04,932 - INFO - ✅ Firebase Saved: THE나영에스테라
+Progress: 6/10
+2026-01-23 11:26:04,932 - INFO - ✅ Saved (6/10): THE나영에스테라
+2026-01-23 11:26:04,932 - INFO - ⏳ Waiting 69.8s before next shop...
+2026-01-23 11:27:14,701 - INFO - 🔍 Visiting detail page: 이미지수4
+2026-01-23 11:27:22,411 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:27:22,529 - INFO - Successfully saved shop to Firebase: 오즐리 내몸연구소
+2026-01-23 11:27:22,529 - INFO - ✅ Firebase Saved: 오즐리 내몸연구소
+Progress: 7/10
+2026-01-23 11:27:22,529 - INFO - ✅ Saved (7/10): 오즐리 내몸연구소
+2026-01-23 11:27:22,529 - INFO - ⏳ Waiting 26.8s before next shop...
+2026-01-23 11:27:49,382 - INFO - 🔍 Visiting detail page: 이미지수13
+2026-01-23 11:27:56,439 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:27:56,574 - INFO - Successfully saved shop to Firebase: 올가드림뷰티 개포점
+2026-01-23 11:27:56,575 - INFO - ✅ Firebase Saved: 올가드림뷰티 개포점
+Progress: 8/10
+2026-01-23 11:27:56,576 - INFO - ✅ Saved (8/10): 올가드림뷰티 개포점
+2026-01-23 11:27:56,576 - INFO - ⏳ Waiting 67.1s before next shop...
+2026-01-23 11:29:03,648 - INFO - 🔍 Visiting detail page: 이미지수12
+2026-01-23 11:29:11,329 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:29:11,447 - INFO - Successfully saved shop to Firebase: 피부바디 테라피정
+2026-01-23 11:29:11,447 - INFO - ✅ Firebase Saved: 피부바디 테라피정
+Progress: 9/10
+2026-01-23 11:29:11,447 - INFO - ✅ Saved (9/10): 피부바디 테라피정
+2026-01-23 11:29:11,447 - INFO - ⏳ Waiting 49.2s before next shop...
+2026-01-23 11:30:00,699 - INFO - 🔍 Visiting detail page: 이미지수37
+2026-01-23 11:30:07,169 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:30:07,283 - INFO - Successfully saved shop to Firebase: 은하스킨앤바디
+2026-01-23 11:30:07,283 - INFO - ✅ Firebase Saved: 은하스킨앤바디
+Progress: 10/10
+2026-01-23 11:30:07,283 - INFO - ✅ Saved (10/10): 은하스킨앤바디
+2026-01-23 11:30:07,283 - INFO - ⏳ Waiting 66.5s before next shop...
+2026-01-23 11:31:14,584 - INFO - ✅ Finished. Total saved: 10
+Progress: Finalizing...
+2026-01-23 11:31:14,633 - INFO - 🎯 Crawling complete. Starting automatic competitor extraction...
+2026-01-23 11:31:14,680 - INFO - 🚀 Starting Competitor Extraction (Target subset: ALL)...
+2026-01-23 11:31:14,681 - INFO - Firebase Firestore initialized successfully
+2026-01-23 11:31:14,899 - INFO - 📊 Total reference shops loaded: 121
+2026-01-23 11:31:15,966 - INFO - ✅ Processed 10/121 shops...
+2026-01-23 11:31:16,866 - INFO - ✅ Processed 20/121 shops...
+2026-01-23 11:31:17,742 - INFO - ✅ Processed 30/121 shops...
+2026-01-23 11:31:18,617 - INFO - ✅ Processed 40/121 shops...
+2026-01-23 11:31:19,494 - INFO - ✅ Processed 50/121 shops...
+2026-01-23 11:31:20,437 - INFO - ✅ Processed 60/121 shops...
+2026-01-23 11:31:21,299 - INFO - ✅ Processed 70/121 shops...
+2026-01-23 11:31:22,196 - INFO - ✅ Processed 80/121 shops...
+2026-01-23 11:31:23,114 - INFO - ✅ Processed 90/121 shops...
+2026-01-23 11:31:23,970 - INFO - ✅ Processed 100/121 shops...
+2026-01-23 11:31:24,833 - INFO - ✅ Processed 110/121 shops...
+2026-01-23 11:31:25,695 - INFO - ✅ Processed 120/121 shops...
+2026-01-23 11:31:25,781 - INFO - 🎉 Competitor extraction finished. Total 121 shops updated.
+2026-01-23 11:31:25,782 - INFO - ✅ All tasks (Crawl + Competitor Analysis) finished successfully!

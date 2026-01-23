@@ -211,7 +211,12 @@ async def run_crawler(target_area=None, target_count=10):
         await install_playwright_browsers()
     
     # Target Keywords
-    if target_area:
+    # Target Keywords (Deep Scan Support)
+    if target_area in config.CITY_MAP:
+        logger.info(f"🔍 Deep Scan Mode: Expanding '{target_area}' to Dong-level keywords...")
+        keywords = config.get_deep_keywords(target_area)
+        logger.info(f"📂 Total sub-keywords to crawl: {len(keywords)}")
+    elif target_area:
         keywords = [f"{target_area} 피부관리샵"]
     else:
         keywords = ["서울 강남구 피부관리샵"] 

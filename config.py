@@ -104,33 +104,32 @@ HEADLESS_MODE = False # Set to False for debugging visibility
 # Base Keyword
 BASE_KEYWORD = "피부관리샵"
 
-# Major Korean Regions (Si/Gun/Gu)
-# This is a representative list. For full nationwide, ALL districts should be added.
-REGIONS = [
-    # Seoul
-    "서울 강남구", "서울 서초구", "서울 송파구", "서울 마포구", "서울 용산구", 
-    "서울 영등포구", "서울 종로구", "서울 중구", "서울 성동구", "서울 광진구",
-    "서울 강서구", "서울 양천구", "서울 구로구", "서울 금천구", "서울 관악구",
-    "서울 동작구", "서울 강동구", "서울 성북구", "서울 강북구", "서울 도봉구",
-    "서울 노원구", "서울 은평구", "서울 서대문구", "서울 중랑구", "서울 동대문구",
-    
-    # Gyeonggi
-    "경기 수원시", "경기 성남시", "경기 고양시", "경기 용인시", "경기 부천시",
-    "경기 안산시", "경기 안양시", "경기 남양주시", "경기 화성시", "경기 평택시",
-    "경기 의정부시", "경기 시흥시", "경기 파주시", "경기 김포시", "경기 광명시",
-    "경기 광주시", "경기 군포시", "경기 오산시", "경기 이천시", "경기 양주시",
-    "경기 구리시", "경기 안성시", "경기 하남시", "경기 의왕시",
-    
-    # Incheon
-    "인천 연수구", "인천 남동구", "인천 부평구", "인천 서구", "인천 미추홀구",
-    "인천 중구", "인천 동구", "인천 계양구",
-    
-    # Other Major Cities (Samples)
-    "부산 해운대구", "부산 부산진구", "부산 수영구",
-    "대구 수성구", "대구 중구",
-    "대전 서구", "대전 유성구",
-    "광주 서구", "광주 광산구",
-    "울산 남구", "세종시"
-]
+# Major Korean Regions (State -> Districts -> Dongs mapping)
+# Loaded from a separate JSON for clean maintenance.
+regions_file = os.path.join(os.path.dirname(__file__), 'crawler', 'regions.json')
+CITY_MAP = {}
+if os.path.exists(regions_file):
+    try:
+        import json
+        with open(regions_file, 'r', encoding='utf-8') as f:
+            CITY_MAP = json.load(f)
+    except Exception as e:
+        print(f"Error loading regions.json: {e}")
 
-TARGET_KEYWORDS = [f"{region} {BASE_KEYWORD}" for region in REGIONS]
+def get_deep_keywords(target_city: str) -> list:
+    """
+    Get a list of keywords expanded to Dong level for a given city.
+    Example: '서울' -> ['서울 강남구 역삼동 피부관리샵', ...]
+    """
+    if target_city not in CITY_MAP:
+        return [f"{target_city} {BASE_KEYWORD}"]
+    
+    keywords = []
+    districts = CITY_MAP[target_city]
+    for district, dongs in districts.items():
+        for dong in dongs:
+            keywords.append(f"{target_city} {district} {dong} {BASE_KEYWORD}")
+    return keywords
+
+# DEPRECATED: Standard REGIONS list for dashboard selectbox population
+REGIONS_LIST = list(CITY_MAP.keys()) if CITY_MAP else ["서울", "인천", "경기"]

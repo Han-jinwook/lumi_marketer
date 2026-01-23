@@ -374,8 +374,8 @@ with st.sidebar:
         
         if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
             target = s_city
-            default_count = 2000 
-            st.toast(f"'{target}' 전체 수집을 시작합니다. (목표: 제한 없음/2000)")
+            default_count = 99999 
+            st.toast(f"'{target}' 전지역(동 단위) 무제한 딥스캔을 시작합니다. 🚀")
             try:
                 # Redirection to log and capture PID with Unbuffered UTF-8
                 my_env = os.environ.copy()
@@ -446,7 +446,6 @@ with st.sidebar:
                     """, unsafe_allow_html=True)
         else:
             st.caption("수집된 데이터가 없습니다.")
-    else:
         st.caption("데이터베이스가 비어있습니다.")
     
     st.write("---")
@@ -873,38 +872,55 @@ if page == 'Shop Search':
                     st.markdown('</div>', unsafe_allow_html=True)
                 with c_res:
                     st.markdown('<div class="research-btn">', unsafe_allow_html=True)
-                    if st.button("✦ 데이터 재검색", key="btn_res_shop"):
-                        shop_info = st.session_state['last_selected_shop']
-                        shop_id = shop_info['ID']
-                        with st.spinner(f"'{shop_info['상호명']}' 데이터 재검색 및 자동 업데이트 중..."):
+                    sel_rows = st.session_state.get('prev_rows', [])
+                    sel_count = len(sel_rows)
+                    btn_label = f"✦ {sel_count}개 재분석" if sel_count > 1 else "✦ 데이터 재분석"
+                    
+                    if st.button(btn_label, key="btn_res_shop"):
+                        shops_to_process = []
+                        if sel_count > 1:
+                            shops_to_process = [f_df.iloc[r] for r in sel_rows]
+                        else:
+                            shops_to_process = [st.session_state['last_selected_shop']]
+                        
+                        success_overall = True
+                        updated_ids = []
+
+                        with st.spinner(f"{len(shops_to_process)}개 업체 데이터 재분석 중... (크롤링 + 경쟁샵 분석)"):
                             script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'research_single_shop.py'))
-                            try:
-                                # Create environment with Firebase secrets for sub-process
-                                my_env = os.environ.copy()
+                            
+                            for shop_info in shops_to_process:
+                                shop_id = shop_info['ID']
+                                updated_ids.append(str(shop_id))
                                 try:
+                                    my_env = os.environ.copy()
                                     if "firebase" in st.secrets:
                                         my_env["FIREBASE_SERVICE_ACCOUNT_JSON"] = json.dumps(dict(st.secrets["firebase"]))
-                                except:
-                                    pass
-                                
-                                # Run synchronously and capture output for debugging
-                                res = subprocess.run(
-                                    [sys.executable, script_path, str(shop_id)], 
-                                    check=True, 
-                                    capture_output=True, 
-                                    text=True,
-                                    env=my_env,
-                                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
-                                )
-                                st.success("데이터 재검색 완료!")
-                                st.cache_data.clear()
-                                st.rerun()
-                            except subprocess.CalledProcessError as e:
-                                st.error(f"재검색 스크립트 실행 실패 (코드 {e.returncode})")
-                                with st.expander("상세 에러 내용 확인"):
-                                    st.code(e.stderr if e.stderr else e.stdout)
+                                    
+                                    subprocess.run(
+                                        [sys.executable, script_path, str(shop_id)], 
+                                        check=True, capture_output=True, text=True, env=my_env,
+                                        creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                                    )
+                                except Exception as e:
+                                    logger.error(f"Error re-searching {shop_id}: {e}")
+                                    success_overall = False
+                            
+                            try:
+                                from extract_competitors import run_competitor_extraction
+                                run_competitor_extraction(target_ids=updated_ids)
                             except Exception as e:
-                                st.error(f"재검색 중 알 수 없는 오류 발생: {e}")
+                                logger.error(f"Error re-analyzing competitors: {e}")
+                                success_overall = False
+
+                        if success_overall:
+                            st.success(f"{len(shops_to_process)}개 업체 재분석 완료!")
+                            st.cache_data.clear()
+                            st.rerun()
+                        else:
+                            st.warning("일부 업체 분석 중 오류가 발생했습니다.")
+                            st.cache_data.clear()
+                            st.rerun()
                     st.markdown('</div>', unsafe_allow_html=True)
 
         selection = st.dataframe(
