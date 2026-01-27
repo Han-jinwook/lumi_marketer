@@ -37,11 +37,37 @@ def stop_engine():
     pid = get_engine_pid()
     if pid:
         try:
-            subprocess.run(['taskkill', '/F', '/PID', str(pid)], capture_output=True)
+            import signal
+            os.kill(pid, signal.SIGTERM)
             if os.path.exists(ENGINE_PID_FILE): os.remove(ENGINE_PID_FILE)
             return True
-        except: pass
+        except: return False
     return False
+
+def run_engine_cmd(target, count, resume=False):
+    try:
+        my_env = os.environ.copy()
+        my_env["PYTHONIOENCODING"] = "utf-8"
+        my_env["PYTHONUNBUFFERED"] = "1"
+        
+        log_f = open(ENGINE_LOG_FILE, "a", encoding="utf-8")
+        label = "RESUME" if resume else "NEW RUN"
+        log_f.write(f"\n--- ENGINE {label}: {time.strftime('%Y-%m-%d %H:%M:%S')} (Target: {target}) ---\n")
+        log_f.flush()
+        
+        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'step1_refined_crawler.py'))
+        args = [sys.executable, script_path, str(target) if target else "전체", str(count)]
+        if resume: args.append("--resume")
+        
+        p = subprocess.Popen(
+            args, stdout=log_f, stderr=log_f, env=my_env,
+            creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+        )
+        with open(ENGINE_PID_FILE, "w") as f: f.write(str(p.pid))
+        st.cache_data.clear()
+        st.rerun()
+    except Exception as e:
+        st.error(f"엔진 가동 실패: {e}")
 
 # ---------------------------------------------------------
 # 1. Config & Setup
@@ -111,24 +137,29 @@ if 'templates_loaded' not in st.session_state:
     st.session_state['templates_loaded'] = True
     
 # --- 2.2 Data Logic ---
-@st.cache_data(ttl=60)
 def load_data():
+    st.write("DEBUG: load_data() starting...")
     f_df = pd.DataFrame()
     mandatory_cols = ["상호명", "주소", "플레이스링크", "번호", "이메일", "인스타", "톡톡링크", "블로그ID"]
     
     # 1. Load from Firebase
     try:
         from crawler.db_handler import DBHandler
+        st.write("DEBUG: Initializing DBHandler...")
         db = DBHandler()
         if db.db_fs:
+            st.write("DEBUG: Streaming documents from Firebase...")
             docs = db.db_fs.collection(config.FIREBASE_COLLECTION).stream()
             data_list = []
             for doc in docs:
                 d = doc.to_dict()
                 d['ID'] = doc.id
                 data_list.append(d)
+            st.write(f"DEBUG: Successfully loaded {len(data_list)} documents.")
             if data_list:
                 f_df = pd.DataFrame(data_list)
+        else:
+            st.write("DEBUG: db.db_fs is None.")
     except Exception as e:
         if "logger" in globals():
             logger.error(f"Firebase 로드 실패: {e}")
@@ -370,36 +401,16 @@ with st.sidebar:
     else:
         if not (total > 0 and curr >= total):
             st.error("○ 엔진 정지")
-
         
-        if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
-            target = s_city
-            default_count = 99999 
-            st.toast(f"'{target}' 전지역(동 단위) 무제한 딥스캔을 시작합니다. 🚀")
-            try:
-                # Redirection to log and capture PID with Unbuffered UTF-8
-                my_env = os.environ.copy()
-                my_env["PYTHONIOENCODING"] = "utf-8"
-                my_env["PYTHONUNBUFFERED"] = "1"
-                
-                log_f = open(ENGINE_LOG_FILE, "a", encoding="utf-8")
-                log_f.write(f"\n--- NEW ENGINE RUN: {time.strftime('%Y-%m-%d %H:%M:%S')} (Target: {target}, Count: {default_count}) ---\n")
-                log_f.flush() # Ensure header is written
-                
-                # Define the script path correctly
-                script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'step1_refined_crawler.py'))
-                
-                p = subprocess.Popen(
-                    [sys.executable, script_path, target, str(default_count)], 
-                    stdout=log_f, stderr=log_f,
-                    env=my_env,
-                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
-                )
-                with open(ENGINE_PID_FILE, "w") as f: f.write(str(p.pid))
-                st.cache_data.clear()
-                st.rerun()
-            except Exception as e:
-                st.error(f"엔진 가동 실패: {e}")
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("✦ 엔진 가동", type="primary", use_container_width=True, key="btn_sb_run"):
+                run_engine_cmd(s_city, 99999, resume=False)
+        with c2:
+            checkpoint_file = os.path.join(os.getcwd(), "crawler_checkpoint.json")
+            can_resume = os.path.exists(checkpoint_file)
+            if st.button("⏭️ 이어하기", use_container_width=True, key="btn_sb_resume", disabled=not can_resume, help="마지막으로 중단된 '동'부터 수집을 재개합니다."):
+                run_engine_cmd(s_city, 99999, resume=True)
             
     st.write("---")
     

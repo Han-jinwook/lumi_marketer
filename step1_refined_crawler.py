@@ -203,14 +203,13 @@ async def install_playwright_browsers():
     except Exception as e:
         logger.warning(f"⚠️ Playwright install failed or already handled: {e}")
 
-async def run_crawler(target_area=None, target_count=10):
+async def run_crawler(target_area=None, target_count=10, resume=False):
     # Proactively try to install browsers in Cloud environments
     is_cloud = os.environ.get("STREAMLIT_RUNTIME_ENV") or "/home/appuser" in os.getcwd() or os.environ.get("STREAMLIT_SERVER_BASE_URL")
     if is_cloud:
         logger.info("☁️ Cloud environment detected. Ensuring Playwright browsers...")
         await install_playwright_browsers()
     
-    # Target Keywords
     # Target Keywords (Deep Scan Support)
     if target_area in config.CITY_MAP:
         logger.info(f"🔍 Deep Scan Mode: Expanding '{target_area}' to Dong-level keywords...")
@@ -220,8 +219,25 @@ async def run_crawler(target_area=None, target_count=10):
         keywords = [f"{target_area} 피부관리샵"]
     else:
         keywords = ["서울 강남구 피부관리샵"] 
+
+    checkpoint_file = os.path.join(os.getcwd(), "crawler_checkpoint.json")
+    start_index = 0
     
+    if resume and os.path.exists(checkpoint_file):
+        try:
+            with open(checkpoint_file, "r", encoding="utf-8") as f:
+                checkpoint_data = json.load(f)
+                last_keyword = checkpoint_data.get("last_keyword")
+                if last_keyword in keywords:
+                    start_index = keywords.index(last_keyword) + 1
+                    logger.info(f"⏭️ Resuming from index {start_index} (Last: {last_keyword})")
+                else:
+                    logger.info("ℹ️ Checkpoint keyword not found in current set. Starting from scratch.")
+        except Exception as e:
+            logger.error(f"⚠️ Error loading checkpoint: {e}")
+
     total_saved = 0
+    keywords_to_run = keywords[start_index:]
     
     async with async_playwright() as p:
         # Cloud-Compatible Browser Launch Logic
@@ -280,7 +296,7 @@ async def run_crawler(target_area=None, target_count=10):
         await stealth_async(page)
 
         
-        for keyword in keywords:
+        for keyword in keywords_to_run:
             if total_saved >= target_count: break
             
             logger.info(f"🔍 Searching: {keyword}")
@@ -445,16 +461,31 @@ async def run_crawler(target_area=None, target_count=10):
                     logger.info(f"⏳ Waiting {sleep_time:.1f}s before next shop...")
                     await asyncio.sleep(sleep_time)
 
+                # ✅ Save checkpoint after each successful keyword (Dong)
+                with open(checkpoint_file, "w", encoding="utf-8") as f:
+                    json.dump({"last_keyword": keyword, "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')}, f, ensure_ascii=False)
+                logger.info(f"💾 Checkpoint saved: {keyword}")
+
             except Exception as e:
                  logger.error(f"Error processing keyword {keyword}: {e}")
 
         await browser.close()
         logger.info(f"✅ Finished. Total saved: {total_saved}")
+        
+        # Save final checkpoint as finished
+        if keywords_to_run:
+            with open(checkpoint_file, "w", encoding="utf-8") as f:
+                json.dump({"last_keyword": keywords_to_run[-1], "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')}, f, ensure_ascii=False)
 
 if __name__ == "__main__":
     # Move immediate progress signaling to the ABSOLUTE START of execution
+    # Argument parsing
     target = sys.argv[1] if len(sys.argv) > 1 else None
     count = int(sys.argv[2]) if len(sys.argv) > 2 else 10
+    resume_mode = "--resume" in sys.argv
+    
+    # Clean up '--resume' from sys.argv[1] or [2] if it accidentally slipped in (common via CLI)
+    if target == "--resume": target = None
     
     # 📢 THIS IS THE MOST CRITICAL LINE FOR DASHBOARD FEEDBACK
     print(f"Progress: 0/{count}", flush=True)
@@ -465,7 +496,7 @@ if __name__ == "__main__":
         print(f"DEBUG: Running on Cloud Environment. Python: {sys.executable}", flush=True)
     
     try:
-        asyncio.run(run_crawler(target, count))
+        asyncio.run(run_crawler(target, count, resume=resume_mode))
         
         # 🎯 AUTOMATIC COMPETITOR EXTRACTION AFTER CRAWLING
         print("Progress: Finalizing...", flush=True)
