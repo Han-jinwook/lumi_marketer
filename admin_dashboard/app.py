@@ -138,28 +138,30 @@ if 'templates_loaded' not in st.session_state:
     
 # --- 2.2 Data Logic ---
 def load_data():
-    st.write("DEBUG: load_data() starting...")
+    # st.write("DEBUG: load_data() starting...")
     f_df = pd.DataFrame()
     mandatory_cols = ["상호명", "주소", "플레이스링크", "번호", "이메일", "인스타", "톡톡링크", "블로그ID"]
     
     # 1. Load from Firebase
     try:
         from crawler.db_handler import DBHandler
-        st.write("DEBUG: Initializing DBHandler...")
+        # st.write("DEBUG: Initializing DBHandler...")
         db = DBHandler()
         if db.db_fs:
-            st.write("DEBUG: Streaming documents from Firebase...")
-            docs = db.db_fs.collection(config.FIREBASE_COLLECTION).stream()
-            data_list = []
-            for doc in docs:
-                d = doc.to_dict()
-                d['ID'] = doc.id
-                data_list.append(d)
-            st.write(f"DEBUG: Successfully loaded {len(data_list)} documents.")
-            if data_list:
-                f_df = pd.DataFrame(data_list)
+            with st.spinner("데이터를 불러오는 중입니다..."):
+                # st.write("DEBUG: Streaming documents from Firebase...")
+                docs = db.db_fs.collection(config.FIREBASE_COLLECTION).stream()
+                data_list = []
+                for doc in docs:
+                    d = doc.to_dict()
+                    d['ID'] = doc.id
+                    data_list.append(d)
+                # st.write(f"DEBUG: Successfully loaded {len(data_list)} documents.")
+                if data_list:
+                    f_df = pd.DataFrame(data_list)
         else:
-            st.write("DEBUG: db.db_fs is None.")
+            # st.write("DEBUG: db.db_fs is None.")
+            pass
     except Exception as e:
         if "logger" in globals():
             logger.error(f"Firebase 로드 실패: {e}")

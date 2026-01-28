@@ -8,9 +8,10 @@ import sys
 import os
 import re
 from playwright.async_api import async_playwright
-from playwright_stealth import stealth_async
+from playwright_stealth import Stealth
 import config
 from crawler.db_handler import DBHandler
+import time
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -293,7 +294,7 @@ async def run_crawler(target_area=None, target_count=10, resume=False):
         
         # 🕵️ ACTIVATE STEALTH MODE
         logger.info("🕵️ Activating Playwright Stealth Mode...")
-        await stealth_async(page)
+        await Stealth().apply_stealth_async(page)
 
         
         for keyword in keywords_to_run:
